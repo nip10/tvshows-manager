@@ -1,0 +1,26 @@
+@import 'vendor/normalize';
+@include normalize();
+@import 'vendor/bootstrap';
+
+@import 'base/global';
+@import 'component/global';
+@import 'layout/global';
+
+body {
+    height: 100vh;
+    width: 100vw;
+    background-color: transparent;
+    font-family: 'Open Sans', sans-serif;
+    overflow-y: hidden; // doesnt allow the page to extend vertically (remove after everything is done)
+}
+
+// Needed for full height
+.container-fluid {
+    height: 100%;
+    .row-full {
+        height: 100%;
+    }
+    [class^=col-] {
+        height: 100%;
+    }
+}
