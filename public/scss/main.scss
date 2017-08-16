@@ -6,21 +6,26 @@
 @import 'component/global';
 @import 'layout/global';
 
-body {
-    height: 100vh;
-    width: 100vw;
-    background-color: transparent;
-    font-family: 'Open Sans', sans-serif;
-    overflow-y: hidden; // doesnt allow the page to extend vertically (remove after everything is done)
+html {
+    height: 100%;
 }
 
-// Needed for full height
-.container-fluid {
-    height: 100%;
-    .row-full {
-        height: 100%;
-    }
-    [class^=col-] {
-        height: 100%;
-    }
+body {
+    height: 100%;   
+    // overflow: hidden;  /*makes the body non-scrollable (we will add scrolling to the sidebar and main content containers)*/
+    margin: 0; /*removes default style*/
+    padding: 0; /*removes default style*/
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    cursor: pointer;
+}
+
+a {
+    text-decoration: none;
 }
