@@ -9,6 +9,7 @@ import passport from 'passport';
 import express from 'express';
 
 import index from './routes/index';
+import calendar from './routes/calendar';
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 // app.use(favicon(__dirname + '/public/favicon.ico'));
 
 app.use('/', index);
+app.use('/calendar', calendar);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
