@@ -1,3 +1,49 @@
 extends layout/base
 
 block content
+    include partials/sidebar.pug
+    .container
+        .container--padding
+            h1.title TvShows Manager
+            div.center
+                button(type='button').primary.margin-right-20 Sign-In
+                button(type='button').secondary Register
+            .row-flex.padding-top-80
+                .box-3
+                    h2 Popular Shows
+                    ul
+                        li TvShow Name
+                        li TvShow Name
+                        li TvShow Name
+                        li TvShow Name
+                .box-3
+                    h2 Popular Lists
+                    ul
+                        li List Name
+                        li List Name
+                        li List Name
+                        li List Name
+                .box-3
+                    h2 Something Here
+                    ul
+                        li Something Here
+                        li Something Here
+                        li Something Here
+                        li Something Here
+            h2.center Features
+            .row-flex
+                .box-3
+                    h3 Feature Name
+                    img(src="http://via.placeholder.com/200x150", alt="")
+                    p Description
+                .box-3
+                    h3 Feature Name
+                    img(src="http://via.placeholder.com/200x150", alt="")
+                    p Description
+                .box-3
+                    h3 Feature Name
+                    img(src="http://via.placeholder.com/200x150", alt="")
+                    p Description
+
+        include partials/footer.pug
+            
