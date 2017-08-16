@@ -1,0 +1,20 @@
+@import 'variables';
+
+.center {
+    text-align: center;
+}
+
+.row-flex {
+    margin: 0;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+}
+
+.margin-right-20 {
+    margin-right: 20px;
+}
+
+.padding-top-80 {
+    padding-top: 80px;
+}

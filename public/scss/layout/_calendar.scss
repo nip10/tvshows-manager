@@ -1,0 +1,36 @@
+.calendar {
+    &__table {
+        width: 100%;
+        table-layout: fixed;
+        box-shadow: $shadow;
+        tr td {
+            height: 130px;
+            vertical-align: top;
+            &:not(:last-child) {
+                border-right: 1px solid $black;
+            }
+        }
+    }
+    &--weekday {
+        background-color: $weekday;
+        color: $white;
+        padding: 7px 12px;
+    }
+    &__date {
+        background-color: $grey;
+        padding: 5px;
+    }
+    &__cell {
+        padding: 5px;
+        ul {
+            li {
+                &:not(:last-child) {
+                    padding-bottom: 10px;
+                }
+            }
+        }
+        &--checkbox {
+            display: inline-block;
+        }
+    }
+}
