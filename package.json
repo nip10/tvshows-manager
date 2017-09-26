@@ -10,7 +10,9 @@
     "build:sass": "node-sass --include-path scss public/scss/main.scss public/css/main.css",
     "watch": "npm run watch:sass && npm run watch:server",
     "watch:server": "cls && nodemon server/server.js --exec babel-node",
-    "watch:sass": "cls && node-sass --watch --include-path scss public/scss/main.scss public/css/main.css"
+    "watch:sass": "cls && node-sass --watch --include-path scss public/scss/main.scss public/css/main.css",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "repository": {
     "type": "git",
@@ -36,7 +38,8 @@
     "pg": "^6.4.0",
     "pug": "^2.0.0-rc.2",
     "serve-favicon": "^2.4.3",
-    "validator": "^7.0.0"
+    "validator": "^7.0.0",
+    "snyk": "^1.41.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
@@ -49,5 +52,6 @@
     "eslint-plugin-react": "^7.1.0",
     "node-sass": "^4.5.3",
     "nodemon": "^1.11.0"
-  }
+  },
+  "snyk": true
 }
