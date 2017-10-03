@@ -1,17 +1,11 @@
-.sidebar
-    a(href="/").sidebar__logo
-        img(src='./images/logo.png')
-    ul.sidebar__menu
-        li
-            a(href="/calendar") Calendar
-        li 
-            a My TvShows
-        li 
-            a Features
-        li 
-            a Item 4
-        li 
-            a Item 5
-    div(style='border-top: 1px solid white; width: 100%; height: 70px;')
-        a(style='display: inline-block; float: left;') Username
-        a(style='display: inline-block; float: right;') Logout
+nav.col-sm-3.col-md-2.d-xs-none.mmh-100
+    i(aria-hidden="true").fa.fa-television.fa-5x.d-flex.justify-content-center.my-3
+    ul.nav.nav-pills.flex-column
+        li.nav-item
+            a.nav-link.active(href="/") Home
+        li.nav-item
+            a.nav-link(href="calendar") Calendar
+        li.nav-item
+            a.nav-link(href="") Item 3
+        li.nav-item
+            a.nav-link(href="") Item 4
