@@ -4,7 +4,7 @@ exports.seed = function (knex, Promise) {
        knex('episodes').insert({
          tvshow_id: 1,
          season: 1,
-         num: 1,
+         epnum: 1,
          title: 'Bla Bla',
          description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-01-01',
@@ -12,7 +12,7 @@ exports.seed = function (knex, Promise) {
        .then(() => knex('episodes').insert({
          tvshow_id: 1,
          season: 1,
-         num: 2,
+         epnum: 2,
          title: 'Bla Bla',
          description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-03',
@@ -20,7 +20,7 @@ exports.seed = function (knex, Promise) {
        .then(() => knex('episodes').insert({
          tvshow_id: 1,
          season: 1,
-         num: 3,
+         epnum: 3,
          title: 'Bla Bla',
          description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-05',
@@ -28,7 +28,7 @@ exports.seed = function (knex, Promise) {
        .then(() => knex('episodes').insert({
          tvshow_id: 2,
          season: 4,
-         num: 10,
+         epnum: 10,
          title: 'Bla Bla',
          description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-02',
@@ -36,7 +36,7 @@ exports.seed = function (knex, Promise) {
        .then(() => knex('episodes').insert({
          tvshow_id: 2,
          season: 4,
-         num: 11,
+         epnum: 11,
          title: 'Bla Bla',
          description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-04',
@@ -44,7 +44,7 @@ exports.seed = function (knex, Promise) {
        .then(() => knex('episodes').insert({
          tvshow_id: 3,
          season: 7,
-         num: 5,
+         epnum: 5,
          title: 'Bla Bla',
          description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-01',
@@ -52,7 +52,7 @@ exports.seed = function (knex, Promise) {
        .then(() => knex('episodes').insert({
          tvshow_id: 3,
          season: 4,
-         num: 6,
+         epnum: 6,
          title: 'Bla Bla',
          description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-04',
