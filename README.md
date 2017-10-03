@@ -14,8 +14,8 @@ PostgreSQL database
 1. Clone the repo
 2. Edit and rename .env.sample
 3. Edit and rename /server/db/knexfile.sample.js
-4. Run Knex Migrations (located at /server/db/migrations/*)
-4.1 (Optional) Add seed data (located at /server/db/seeds/*)
+4. Run Knex Migrations (located at /server/db/migrations/)
+4.1 (Optional) Add seed data (located at /server/db/seeds/)
 5. Run "npm start"
 
 # Note
