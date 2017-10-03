@@ -61,4 +61,4 @@ typings/
 .vscode/
 
 # todo files
-.todo
+*.todo
