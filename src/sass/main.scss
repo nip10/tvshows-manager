@@ -1,0 +1,7 @@
+@import 'vendor/normalize';
+@include normalize();
+@import 'vendor/bootstrap';
+
+@import 'base/global';
+@import 'component/global';
+@import 'layout/global';
