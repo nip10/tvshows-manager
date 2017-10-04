@@ -44,8 +44,8 @@ $(() => {
         // prevent form submition
         e.preventDefault();
         const formData = {
-            email: $('#register-email'),
-            password: $('#register-password'),
+            email: $('#register-email').val(),
+            password: $('#register-password').val(),
         };
         $.post('/auth/register', formData)
             .done((data) => {
@@ -53,13 +53,12 @@ $(() => {
             })
             .fail((xhr) => {
                 const resStatusCode = xhr.status;
-                // response code 401 === unauthorized === invalid credentials
                 if (resStatusCode === 401) {
                     $('#register-email').addClass('is-invalid');
                     $('#register-password').addClass('is-invalid');
                     $('#register-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid credentials ! </div>');
-                } else {
-                    $('#register-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
+                } else if (resStatusCode === 422) {
+                    $('#register-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
                 }
             });
     });
