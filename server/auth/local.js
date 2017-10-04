@@ -34,7 +34,7 @@ const options = {
     passwordField: 'password',
 };
 
-passport.use(new LocalStrategy(options, (email, password, done) => {
+passport.use(new LocalStrategy(options, (email, password, done) =>
     // check to see if the email exists
     knex('users').where({ email }).first()
         .then((user) => {
@@ -45,7 +45,6 @@ passport.use(new LocalStrategy(options, (email, password, done) => {
             }
             return done(null, user);
         })
-        .catch(err => done(err));
-}));
+        .catch(err => done(err))));
 
 module.exports = passport;
