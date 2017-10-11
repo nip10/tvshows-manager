@@ -1,0 +1,7 @@
+mixin styleDaysFromOtherMonths(k, j)
+    - if (calendar.daysFromPreviousMonth > k + j || calendar.daysFromNextMonth >= calendar.calendarData.length - (k + j))
+        td.calendar__day.calendar__day-othermonth
+            block
+    - else
+        td.calendar__day
+            block
