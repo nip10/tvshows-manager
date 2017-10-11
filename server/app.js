@@ -14,6 +14,7 @@ import express from 'express';
 import index from './routes/index';
 import calendar from './routes/calendar';
 import auth from './routes/auth';
+import tvshows from './routes/tvshows';
 
 import { isLoggedIn } from './auth/utils';
 
@@ -38,8 +39,9 @@ app.use(express.static(path.join(__dirname, '../dist')));
 app.use(favicon(path.join(__dirname, '../dist/img/favicon.ico')));
 
 app.use('/', index);
-app.use('/calendar', isLoggedIn, calendar);
 app.use('/auth', auth);
+app.use('/tvshows', tvshows);
+app.use('/calendar', isLoggedIn, calendar);
 
 app.use((req, res, next) => {
     const err = new Error('Not Found');
