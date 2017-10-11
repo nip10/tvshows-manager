@@ -3,11 +3,9 @@
 $(() => {
     $('#login-modal').on('shown.bs.modal', () => {
         $('#login-email').focus();
-        console.log('Im here 1');
     });
     // login form
     $('#login-submit').click((e) => {
-        console.log('Im here 2');
         // remove previous alert message
         $('.alert').remove();
         // prevent form submition
@@ -18,11 +16,9 @@ $(() => {
         };
         $.post('/auth/login', formData)
             .done((data) => {
-                console.log(data);
                 if (data && data.message) window.location.replace(data.message);
             })
             .fail((xhr) => {
-                console.log(xhr);
                 const resStatusCode = xhr.status;
                 // response code 401 === unauthorized === invalid credentials
                 if (resStatusCode === 401) {
@@ -61,5 +57,34 @@ $(() => {
                     $('#register-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
                 }
             });
+    });
+    // search input
+    const tvshows = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        remote: {
+            url: '/tvshows/search/%QUERY',
+            wildcard: '%QUERY',
+        },
+    });
+    $('.typeahead').typeahead({
+        hint: true,
+        highlight: true,
+        minLength: 3,
+    }, {
+        name: 'tvshows',
+        displayKey: 'seriesName',
+        source: tvshows,
+        limit: 5,
+        templates: {
+            suggestion(item) { return `<div data-id=${item.id}> ${item.seriesName} </div>`; },
+        },
+    });
+    // return 3 args (obj, datum, name)
+    $('#tvshow-name').bind('typeahead:select', (obj, datum, name) => {
+        console.log(obj);
+        console.log(datum.id);
+        console.log(name);
+        window.location.replace(`/tvshows/${datum.id}`);
     });
 });
