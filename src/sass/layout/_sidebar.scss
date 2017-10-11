@@ -1,0 +1,48 @@
+nav {
+    background-color: #272727;
+    .logo {
+        color: #aaa;
+    }
+    form {
+        input {
+            background: transparent;
+            border: none;
+            color: #fff;
+        }
+        span.input-group-addon {
+            background: none;
+            background-color: #222;
+            border: 1px solid #353535;
+            border-right: 0;
+        }
+    }
+    ul {
+        // border-top: 1px solid #333;
+        li {
+            &.active {
+                a {
+                    background-color: transparent !important;
+                    color: #fff;
+                }
+                i {
+                    color: #f5d248;
+                }
+            }
+            a {
+                color: #aaa;
+            }
+            &:not(.active) {
+                & a:hover {
+                    color: #aaa;
+                }
+                & span:hover {
+                    color: #fff;
+                }
+            }
+            i {
+                width: 21px;
+                text-align: center;
+            }
+        }
+    }
+}

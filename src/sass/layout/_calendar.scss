@@ -11,7 +11,7 @@
             }
         }
     }
-    &--weekday {
+    &__weekday {
         background-color: $weekday;
         color: $white;
         padding: 7px 12px;
@@ -19,6 +19,11 @@
     &__date {
         background-color: $grey;
         padding: 5px;
+    }
+    &__day {
+        &-othermonth {
+            opacity: 0.5;
+        }
     }
     &__cell {
         padding: 5px;
