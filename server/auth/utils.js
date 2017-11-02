@@ -12,7 +12,7 @@ module.exports = {
         // if they aren't redirect them to the home page
         return res.redirect('/');
     },
-    createUser: (req, res) => {
+    createUser: (req) => {
         const salt = bcrypt.genSaltSync();
         const hash = bcrypt.hashSync(req.body.password, salt);
         return knex('users')
