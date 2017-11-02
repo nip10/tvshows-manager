@@ -1,0 +1,67 @@
+extends layout/base
+
+block content
+    include partials/sidebar.pug
+    #page-content-wrapper
+        .main-container
+            .row
+                .col-md-12.pt-3
+                    .row.banner.mb-5
+                        img(src=banner, alt=name).img-fluid.mx-auto
+                        .overlay
+                            span= name
+                            button#addTvShow.btn.btn-primary.text-uppercase.d-block Add to my shows
+                    .row.mb-5
+                        .col-md-6.mx-auto
+                            .row.border.bg-text
+                                //- p.description!= description
+                                p.description= description
+                        .col-md-5.mx-auto
+                            .row.bg-text.border.h-100
+                                .col-md-6.d-flex.align-items-center
+                                    ul.list-unstyled.mx-auto
+                                        li.py-2
+                                            span.d-block.text-center 
+                                                strong Status
+                                            span.d-block.text-center.green= status
+                                        li.py-2
+                                            span.d-block.text-center 
+                                                strong Premiered
+                                            span.d-block.text-center= premiered
+                                .col-md-6.d-flex.align-items-center
+                                    ul.list-unstyled.mx-auto
+                                        li.py-2
+                                            span.d-block.text-center 
+                                                strong Network
+                                            span.d-block.text-center= network
+                                        li.py-2
+                                            span.d-block.text-center
+                                                strong Airdate
+                                            span.d-block.text-center= airdate
+                    .row.mb-3
+                        .col-md-12
+                            h2.d-inline-block
+                                i(aria-hidden="true").fa.fa-list.mr-1
+                                | Episodes
+                            select#season-select.custom-select.pull-right
+                                - for (i = 1; i <= season; i++) {
+                                    - if (i === season) {
+                                        option(selected, value = i)= 'Season ' + i
+                                    - } else {
+                                        option(value = i)= 'Season ' + i
+                                    - }
+                                - }
+                    .row.mb-5
+                        .col-md-3
+                            img#poster(src=poster, alt=name).img-fluid
+                        .col-md-9
+                            table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped
+                                tbody
+                                    each episode in episodes
+                                        tr
+                                            td= episode.num
+                                            td.name= episode.name
+                                            //- td.summary= episode.summary
+                                            td.airdate= episode.airdate
+                                            td
+                                                i(aria-hidden="true").fa.fa-eye
