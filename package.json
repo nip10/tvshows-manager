@@ -10,7 +10,9 @@
     "start:remote": "set NODE_ENV=production&&node server/server.js --exec babel-node",
     "watch:assets": "gulp serve",
     "watch:server": "nodemon server/server.js --exec babel-node",
-    "watch:debug": "nodemon server/server.js --exec babel-node --inspect"
+    "watch:debug": "nodemon server/server.js --exec babel-node --inspect",
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run"
   },
   "repository": {
     "type": "git",
@@ -32,6 +34,7 @@
     "express-session": "^1.15.5",
     "knex": "^0.13.0",
     "lodash": "^4.17.4",
+    "moment": "^2.19.1",
     "morgan": "^1.8.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
