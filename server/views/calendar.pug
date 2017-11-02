@@ -2,39 +2,49 @@ extends layout/base
 include mixins/index
 
 block content
-    .container-fluid
-        .row
-            include partials/sidebar.pug
-            .col-sm-9.col-md-10.pt-3
-                table(cellspacing=0, cellpadding=0).calendar__table
-                    tbody  
-                        tr
-                            th.calendar__weekday.center Mon
-                            th.calendar__weekday.center Tue
-                            th.calendar__weekday.center Wed
-                            th.calendar__weekday.center Thu
-                            th.calendar__weekday.center Fri
-                            th.calendar__weekday.center Sat
-                            th.calendar__weekday.center Sun
-                        - const numRows = calendar.calendarData.length / 7;
-                        - for(let i = 0; i < numRows; i++) {
+    include partials/sidebar.pug
+    #page-content-wrapper
+        .main-container
+            .row
+                .col-md-12.py-3.text-center
+                    span
+                        h3.d-inline-block.px-2.text-right.month-nav
+                            a « Previous
+                        h2.d-inline-block.px-2 Current
+                        h3.d-inline-block.px-2.text-left.month-nav
+                            a Next »
+            .row
+                .col-md-12.py-3
+                    table(cellspacing=0, cellpadding=0).calendar__table
+                        thead
                             tr
-                                - for(let j = 0; j < 7; j++) {
-                                    - let k = i * 7;
-                                        +styleDaysFromOtherMonths(k, j)
-                                            .calendar__date
-                                                strong= calendar.calendarData[k + j]
-                                            .calendar__cell
-                                                ul
-                                                    li
-                                                        .calendar__cell--checkbox
-                                                            input(type='checkbox', id='temporary')
-                                                            label(for='temporary')
-                                                        a Tv Show Name
-                                                        span
-                                                            br
-                                                            | Episode Name
-                                - }
-                        - }
-                include partials/footer.pug
-        
+                                th.calendar__weekday.center Mon
+                                th.calendar__weekday.center Tue
+                                th.calendar__weekday.center Wed
+                                th.calendar__weekday.center Thu
+                                th.calendar__weekday.center Fri
+                                th.calendar__weekday.center Sat
+                                th.calendar__weekday.center Sun
+                        tbody  
+                            - const numRows = calendar.calendarData.length / 7;
+                            - for(let i = 0; i < numRows; i++) {
+                                tr
+                                    - for(let j = 0; j < 7; j++) {
+                                        - let k = i * 7;
+                                            +styleDaysFromOtherMonths(k, j)
+                                                .calendar__date
+                                                    strong= calendar.calendarData[k + j].day
+                                                .calendar__cell
+                                                    - if (calendar.calendarData[k + j].episodes)
+                                                        ul
+                                                            each episode in calendar.calendarData[k + j].episodes
+                                                                li
+                                                                    .calendar__cell--checkbox
+                                                                        input(type='checkbox', id='temporary')
+                                                                        label(for='temporary')
+                                                                    a(href='/tvshows/' + episode.thetvdb)= episode.name
+                                                                    span
+                                                                        br
+                                                                        = episode.title + ' (S' + episode.season + 'E' + episode.epnum + ')'
+                                    - }
+                            - }        
