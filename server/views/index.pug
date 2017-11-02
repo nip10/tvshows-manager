@@ -1,10 +1,10 @@
 extends layout/base
 
 block content
-    .container-fluid
+    include partials/sidebar.pug
+    .main-container
         .row
-            include partials/sidebar.pug
-            main.col-sm-9.col-md-10.pt-3
+            .col-md-11.pt-3.mx-auto
                 .row.py-7
                     .col-md-8.center-vh
                         h1.title.text-center NEVER MISS AN EPISODE
@@ -13,13 +13,12 @@ block content
                         button(type="button", data-toggle="modal" data-target="#register-modal").btn.btn-primary.btn-lg.btn-block.mb-1 Register
                         #register-modal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="register-modal-label", aria-hidden="true")
                             .modal-dialog(role="document")
-                                .modal-content
+                                form#register-form.modal-content
                                     .modal-header
                                         h5#register-modal-label.modal-title Register
                                         button(type="button", data-dismiss="modal", aria-label="Close").close
                                             span(aria-hidden="true") &times;
                                     .modal-body
-                                        form#register-form
                                             .form-group
                                                 label(for="register-email").form-control-label Email address:
                                                 input(type="email", aria-describedby="emailHelp", placeholder="Email address")#register-email.form-control
@@ -33,17 +32,16 @@ block content
                                                 input(type="password", placeholder="Confirm Password")#register-password-d.form-control
                                     .modal-footer
                                         button(type="button", data-dismiss="modal").btn.btn-secondary Close
-                                        button#register-submit(type="button").btn.btn-primary Submit
+                                        button(type="submit")#register-submit.btn.btn-primary Submit
                         button(type="button", data-toggle="modal" data-target="#login-modal").btn.btn-secondary.btn-block Login
                         #login-modal.modal.fade(tabindex="-1", role="dialog", aria-labelledby="login-modal-label", aria-hidden="true")
                             .modal-dialog(role="document")
-                                .modal-content
+                                form#login-form.modal-content
                                     .modal-header
                                         h5#login-modal-label.modal-title Login
                                         button(type="button", data-dismiss="modal", aria-label="Close").close
                                             span(aria-hidden="true") &times;
                                     .modal-body
-                                        form#login-form
                                             .form-group
                                                 label(for="login-email").form-control-label Email address:
                                                 input(type="email", placeholder="Email address")#login-email.form-control
@@ -52,7 +50,7 @@ block content
                                                 input(type="password", placeholder="Password")#login-password.form-control
                                     .modal-footer
                                         button(type="button", data-dismiss="modal").btn.btn-secondary Close
-                                        button#login-submit(type="button").btn.btn-primary Submit
+                                        button(type="submit")#login-submit.btn.btn-primary Submit
                 .row
                     .col-md-3
                         .card
