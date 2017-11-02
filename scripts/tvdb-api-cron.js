@@ -10,8 +10,8 @@ console.log('[CHILD] [0] Child process started!');
 // let oldToken = null;
 
 const job = new CronJob(
-    // Runs every day at midnight
-    '0 0 */23 * * *', // sec min hour dayofmonth month dayofweek
+    // Runs every 12h (12 is the max for cronjob, more than that is not recognized)
+    '0 0 */12 * * *', // sec min hour dayofmonth month dayofweek
     (() => {
         // Job to run
         console.log('[CHILD] [1] Cronjob triggered. Requesting the oldToken from the parent process.');
