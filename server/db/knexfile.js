@@ -2,6 +2,7 @@ module.exports = {
 
     development: {
         client: 'postgresql',
+        debug: false,
         connection: {
             host: '127.0.0.1',
             user: 'postgres',
@@ -22,6 +23,7 @@ module.exports = {
 
     production: {
         client: 'postgresql',
+        debug: false,
         connection: {
             host: '164.132.107.157',
             port: '5432',
