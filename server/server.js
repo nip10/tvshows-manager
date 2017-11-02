@@ -24,11 +24,11 @@ function onError(error) {
     const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
     switch (error.code) {
     case 'EACCES':
-        console.error(`${bind} requires elevated privileges`);
+        console.log(`${bind} requires elevated privileges`);
         process.exit(1);
         break;
     case 'EADDRINUSE':
-        console.error(`${bind} is already in use`);
+        console.log(`${bind} is already in use`);
         process.exit(1);
         break;
     default:
@@ -41,6 +41,10 @@ function onListening() {
     const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
     console.log(`Listening on ${bind}`);
 }
+
+process.on('unhandledRejection', (reason, p) => {
+    console.log('Possibly Unhandled Rejection at: Promise ', p, ' reason: ', reason);
+});
 
 server.listen(port);
 server.on('error', onError);
