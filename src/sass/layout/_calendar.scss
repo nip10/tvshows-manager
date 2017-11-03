@@ -9,6 +9,7 @@
             &:not(:last-child) {
                 border-right: 1px solid $black;
             }
+            font-size: 14px;
         }
     }
     &__weekday {
@@ -40,4 +41,8 @@
             display: inline-block;
         }
     }
+}
+
+.month-nav {
+    width: 44%;
 }

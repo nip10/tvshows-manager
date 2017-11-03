@@ -2,3 +2,13 @@
 @import 'sizes';
 @import 'index';
 @import 'sidebar';
+@import 'tvshows';
+
+.main-container {
+  @extend .container-fluid;
+  padding-left: 200px;
+  padding-right: 0;
+  .row {
+    margin: 0;
+  }
+}
