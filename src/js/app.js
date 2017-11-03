@@ -5,7 +5,7 @@ $(() => {
         $('#login-email').focus();
     });
     // login form
-    $('#login-submit').click((e) => {
+    $('#login-form').submit((e) => {
         // remove previous alert message
         $('.alert').remove();
         // prevent form submition
@@ -34,7 +34,7 @@ $(() => {
         $('#register-email').focus();
     });
     // register form
-    $('#register-submit').click((e) => {
+    $('#register-form').submit((e) => {
         // remove previous alert message
         $('.alert').remove();
         // prevent form submition
@@ -80,11 +80,43 @@ $(() => {
             suggestion(item) { return `<div data-id=${item.id}> ${item.seriesName} </div>`; },
         },
     });
-    // return 3 args (obj, datum, name)
-    $('#tvshow-name').bind('typeahead:select', (obj, datum, name) => {
-        console.log(obj);
-        console.log(datum.id);
-        console.log(name);
+    // redirect when a tvshow is selected
+    // this event returns 3 args (obj, datum, name)
+    $('#tvshow-name').bind('typeahead:select', (obj, datum) => {
         window.location.replace(`/tvshows/${datum.id}`);
+    });
+    // update episodes table when season select changes
+    // make sure this is being cached (select the same 2 seasons multiple times and check network)
+    $('#season-select').change(() => {
+        const showid = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+        const season = $('#season-select :selected').val();
+        $.get(`/tvshows/${showid}/episodes`, { season })
+            .done((data) => {
+                console.log(data.episodes);
+                renderEpisodesTable(data.episodes);
+            })
+            .fail((xhr) => {
+                console.log(xhr);
+            });
+    });
+    function renderEpisodesTable(episodes) {
+        const table = $('#episodes-table > tbody');
+        table.empty();
+        episodes.forEach((episode) => {
+            table.append(`<tr> <td>${episode.num}</td> <td class="name">${episode.name}</td> <td class="airdate">${episode.airdate}</td> <td><i class="fa fa-eye" aria-hidden="true"></i></td> </tr>`);
+        }, this);
+    }
+    $('#addTvShow').click(() => {
+        const tvshowId = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+        $.get(`/tvshows/${tvshowId}/add`)
+            .done((data) => {
+                console.log(data);
+            })
+            .fail((xhr) => {
+                console.log(xhr);
+                // check if the user is authenticated (client-side and server-side)
+                // check if the status is 500
+                // else show generic error
+            });
     });
 });
