@@ -1,9 +1,13 @@
 nav {
+    width: 200px;
+    position: fixed;
     background-color: #272727;
     .logo {
         color: #aaa;
     }
     form {
+        width: 90%;
+        @extend .mx-auto;
         input {
             background: transparent;
             border: none;
