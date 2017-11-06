@@ -19,9 +19,9 @@ const TvShows = {
         // get "initial" token from the thetvdb api
         console.log('Requesting token from TheTvDb API');
         return this.getToken().then((newToken) => {
-            // if (!newToken || newToken.length === 0) {
-            //     throw Error('Token received is invalid.');
-            // }
+            if (!newToken || newToken.length === 0) {
+                throw Error('Token received is invalid.');
+            }
             this.apiToken = newToken;
             console.log(`Token received: ${this.apiToken}`);
         }).then(() => {
@@ -206,16 +206,10 @@ const TvShows = {
         try {
             // 1.2 Insert show information in the database
             const insertShow = await knex('tvshows').insert(tvshowInfo);
-            if (insertShow.rowCount === 1) {
-                console.log(`Successfully added tvshow id ${tvshowInfo.thetvdb} to the db.`);
-            } else {
-                throw new Error(`Error inserting tvshow id ${tvshowInfo.thetvdb} to the db.`);
-            }
+            console.log(`Successfully added tvshow id ${tvshowInfo.thetvdb} to the db.`);
         } catch (e) {
             console.log(`Error inserting tvshow id ${tvshowInfo.thetvdb} to the db. Error details: ${e}`);
             return;
-            // TODO: Check if this stops the function from running
-            // Force adding a show that already exists in the database
         }
         // 2. Episodes information
         // 2.1 Fetch all episodes
@@ -263,13 +257,11 @@ const TvShows = {
                 console.log('Finished.');
                 return true;
             } catch (e) {
-                console.log(e);
                 return false;
             }
         }
         try {
             const requestEpisodes = await requestPaginated(this.apiToken);
-            // console.log(`Requested Episodes: ${requestEpisodes}`);
             if (requestEpisodes) {
                 // 2.2 Insert episodes in the database
                 const insertEpisodes = await knex('episodes').insert(episodes);
@@ -299,10 +291,14 @@ const TvShows = {
         }
     },
     async getEpisodesFromDb(tvshowId, season) {
-        // this handles fetching the episodes when rendering tvshow/id and the select menu
         try {
-            const getEpisodesFromDb = await knex('episodes').select().where('tvshow_id', tvshowId).andWhere('season', season);
-            return getEpisodesFromDb;
+            const getEpisodesFromDb = await knex('episodes').select().where('tvshow_id', tvshowId).andWhere('season', season).orderBy('epnum', 'asc');
+            return getEpisodesFromDb.map(episode => ({
+                num: episode.epnum,
+                name: episode.title,
+                airdate: episode.airdate,
+                summary: episode.description,
+            }));
         } catch (e) {
             console.log(e);
         }
