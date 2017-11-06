@@ -8,7 +8,7 @@ router.get('/search/:name', async (req, res) => {
     const tvshowName = req.params.name;
     try {
         const searchResults = await TvShows.search(tvshowName);
-        res.send(searchResults);
+        res.json(searchResults);
     } catch (e) {
         console.log(e);
     }
@@ -16,37 +16,46 @@ router.get('/search/:name', async (req, res) => {
 
 router.get('/:showid', async (req, res) => {
     const { showid } = req.params;
-    // Check if the show is already on the database
-    const isShowOnDb = await TvShows.isShowOnDb(showid);
-    const latestSeason = await TvShows.getNumSeasons(showid);
+    let isShowOnDb;
+    try {
+        isShowOnDb = await TvShows.isShowOnDb(showid);
+    } catch (e) {
+        // assume db is offline/unreachable
+        isShowOnDb = false;
+    }
+    let latestSeason;
+    try {
+        latestSeason = await TvShows.getNumSeasons(showid);
+    } catch (e) {
+        // assume season #1
+        latestSeason = 1;
+    }
     let tvshowInfo;
     let episodes;
     if (isShowOnDb) {
         // Get show information and episodes from the database
-        console.log(`tvshow id ${showid} is on the db`);
+        console.log(`Requested tvshow id ${showid}. Data is on the db.`);
         try {
-            tvshowInfo = await TvShows.getTvshowInfoFromDb(showid);
-            console.log('tvshowinfo from db');
-            console.log(JSON.stringify(tvshowInfo, null, 4));
-            episodes = await TvShows.getEpisodesFromDb(showid, latestSeason);
-            // console.log(JSON.stringify(episodes[0], null, 4));
+            const tvShowData = await Promise.all([
+                TvShows.getTvshowInfoFromDb(showid),
+                TvShows.getEpisodesFromDb(showid, latestSeason),
+            ]);
+            [tvshowInfo, episodes] = tvShowData;
         } catch (e) {
             console.log(e);
         }
     } else {
         // Get show information and episodes from the thetvdb api
         try {
-            console.log(`tvshow id ${showid} is not on the db`);
-            const tvshowData = await Promise.all([TvShows.getInfo(showid), TvShows.getImage(showid, 'poster'), TvShows.getEpisodesFromSeason(showid, latestSeason)]);
-            // console.log('tvshowData[0]');
-            // console.log(JSON.stringify(tvshowData[0], null, 4));
-            // console.log('tvshowData[1]');
-            // console.log(JSON.stringify(tvshowData[1], null, 4));
+            console.log(`Requested tvshow id ${showid}. Data is not on the db.`);
+            const tvshowData = await Promise.all([
+                TvShows.getInfo(showid),
+                TvShows.getImage(showid, 'poster'),
+                TvShows.getEpisodesFromSeason(showid, latestSeason),
+            ]);
             tvshowInfo = Object.assign(tvshowData[0], { images: [tvshowData[0].images[0], tvshowData[1]] });
-            console.log('tvshowinfo from api');
-            console.log(JSON.stringify(tvshowInfo, null, 4));
-            episodes = tvshowData[2];
             // TODO: spawn child to take care of this ?
+            console.log(`Adding info/episodes of tvshow id ${showid} to the db.`);
             TvShows.addShowToDb(tvshowInfo);
         } catch (e) {
             console.log(e);
@@ -71,10 +80,7 @@ router.get('/:showid/episodes', async (req, res) => {
     const { showid } = req.params;
     const { season } = req.query;
     try {
-        // TODO: this handles the season select menu
-        // at this point, the show should/is in the database
-        // so theres no need to use the thetvdb api.. just fetch the episodes from the db
-        const episodes = await TvShows.getEpisodesFromSeason(showid, season);
+        const episodes = await TvShows.getEpisodesFromDb(showid, season);
         res.json({ episodes });
     } catch (e) {
         console.log(e);
