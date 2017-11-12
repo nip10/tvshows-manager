@@ -3,9 +3,11 @@ import pick from 'lodash/pick';
 import Calendar from '../models/calendar';
 import TvShows from '../controllers/tvshows';
 
+import { isLoggedInWithRedirect } from '../auth/utils';
+
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/', isLoggedInWithRedirect, async (req, res) => {
     const userId = req.user;
     const date = new Date();
     const month = date.getMonth() + 1;
@@ -25,7 +27,6 @@ router.get('/', async (req, res) => {
         });
     } catch (e) {
         console.log(e);
-        res.send('error');
     }
 });
 
