@@ -1,6 +1,22 @@
 'use strict';
 
 $(() => {
+    // set-up toastr options (notifications)
+    toastr.options = {
+        closeButton: true,
+        newestOnTop: true,
+        positionClass: 'toast-bottom-right',
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: '300',
+        hideDuration: '1000',
+        timeOut: '5000',
+        extendedTimeOut: '1000',
+        showEasing: 'swing',
+        hideEasing: 'linear',
+        showMethod: 'fadeIn',
+        hideMethod: 'fadeOut',
+    };
     $('#login-modal').on('shown.bs.modal', () => {
         $('#login-email').focus();
     });
@@ -82,11 +98,10 @@ $(() => {
     });
     // redirect when a tvshow is selected
     // this event returns 3 args (obj, datum, name)
-    $('#tvshow-name').bind('typeahead:select', (obj, datum) => {
+    $('#tvshow-search').bind('typeahead:select', (obj, datum) => {
         window.location.replace(`/tvshows/${datum.id}`);
     });
     // update episodes table when season select changes
-    // make sure this is being cached (select the same 2 seasons multiple times and check network)
     $('#season-select').change(() => {
         const showid = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
         const season = $('#season-select :selected').val();
@@ -106,17 +121,42 @@ $(() => {
             table.append(`<tr> <td>${episode.num}</td> <td class="name">${episode.name}</td> <td class="airdate">${episode.airdate}</td> <td><i class="fa fa-eye" aria-hidden="true"></i></td> </tr>`);
         }, this);
     }
-    $('#addTvShow').click(() => {
+    $('#userTvShowState').click(() => {
         const tvshowId = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
-        $.get(`/tvshows/${tvshowId}/add`)
-            .done((data) => {
-                console.log(data);
-            })
-            .fail((xhr) => {
-                console.log(xhr);
-                // check if the user is authenticated (client-side and server-side)
-                // check if the status is 500
-                // else show generic error
-            });
+        if ($('#userTvShowState').hasClass('btn-primary')) {
+            // User is not following this show and wants to add it
+            $.get(`/tvshows/${tvshowId}/add`)
+                .done((data) => {
+                    if (data) {
+                        const tvShowName = $('#tvshow-name')[0].innerText;
+                        toastr.success(`${tvShowName} added successfully!`);
+                        $('#userTvShowState').removeClass('btn-primary').addClass('btn-secondary').html('Remove from my shows');
+                    }
+                })
+                .fail((xhr) => {
+                    if (xhr.status === 401 || xhr.status === 403) {
+                        toastr.error(xhr.responseJSON.error);
+                    } else {
+                        toastr.error('Server error. Please try again later.');
+                    }
+                });
+        } else {
+            // User is following this show and wants to remove it
+            $.get(`/tvshows/${tvshowId}/remove`)
+                .done((data) => {
+                    if (data) {
+                        const tvShowName = $('#tvshow-name')[0].innerText;
+                        toastr.success(`${tvShowName} removed successfully!`);
+                        $('#userTvShowState').removeClass('btn-secondary').addClass('btn-primary').html('Add to my shows');
+                    }
+                })
+                .fail((xhr) => {
+                    if (xhr.status === 401 || xhr.status === 403) {
+                        toastr.error(xhr.responseJSON.error);
+                    } else {
+                        toastr.error('Server error. Please try again later.');
+                    }
+                });
+        }
     });
 });
