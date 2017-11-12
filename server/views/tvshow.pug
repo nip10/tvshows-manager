@@ -9,9 +9,16 @@ block content
                     .row.banner.mb-5
                         img(src=banner, alt=name).img-fluid.mx-auto
                         .overlay
-                            span= name
-                            button#addTvShow.btn.btn-primary.text-uppercase.d-block Add to my shows
+                            span#tvshow-name= name
+                            if isAuthenticated
+                                if !isUserFollowingTvshow
+                                    button#userTvShowState.btn.btn-primary.text-uppercase.d-block Add to my shows
+                                else
+                                    button#userTvShowState.btn.btn-secondary.text-uppercase.d-block Remove from my shows
                     .row.mb-5
+                        if !isAuthenticated
+                            .alert.alert-warning.text-center.w-100(role='alert')
+                                span You need to be logged in to follow a tvshow and mark episodes as watched.
                         .col-md-6.mx-auto
                             .row.border.bg-text
                                 //- p.description!= description
@@ -41,7 +48,7 @@ block content
                     .row.mb-3
                         .col-md-12
                             h2.d-inline-block
-                                i(aria-hidden="true").fa.fa-list.mr-1
+                                i(aria-hidden='true').fa.fa-list.mr-1
                                 | Episodes
                             select#season-select.custom-select.pull-right
                                 - for (i = 1; i <= season; i++) {
@@ -57,11 +64,11 @@ block content
                         .col-md-9
                             table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped
                                 tbody
-                                    each episode in episodes
-                                        tr
-                                            td= episode.num
-                                            td.name= episode.name
-                                            //- td.summary= episode.summary
-                                            td.airdate= episode.airdate
-                                            td
-                                                i(aria-hidden="true").fa.fa-eye
+                                    if episodes
+                                        each episode in episodes
+                                            tr
+                                                td= episode.num
+                                                td.name= episode.name
+                                                td.airdate= episode.airdate
+                                                td
+                                                    i(aria-hidden='true').fa.fa-eye
