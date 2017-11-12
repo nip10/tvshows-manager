@@ -6,7 +6,7 @@ exports.seed = function (knex, Promise) {
          season: 4,
          epnum: 10,
          title: 'Bla Bla',
-         description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
+         overview: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-02',
        }))
        .then(() => knex('episodes').insert({
@@ -14,7 +14,7 @@ exports.seed = function (knex, Promise) {
          season: 4,
          epnum: 11,
          title: 'Bla Bla',
-         description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
+         overview: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-04',
        }))
        .then(() => knex('episodes').insert({
@@ -22,7 +22,7 @@ exports.seed = function (knex, Promise) {
          season: 7,
          epnum: 5,
          title: 'Bla Bla',
-         description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
+         overview: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-01',
        }))
        .then(() => knex('episodes').insert({
@@ -30,7 +30,7 @@ exports.seed = function (knex, Promise) {
          season: 4,
          epnum: 6,
          title: 'Bla Bla',
-         description: 'Ble Ble Ble Ble Ble Ble Ble Ble',
+         overview: 'Ble Ble Ble Ble Ble Ble Ble Ble',
          airdate: '2017-02-04',
        }));
 };

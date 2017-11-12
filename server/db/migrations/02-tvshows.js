@@ -1,7 +1,7 @@
 exports.up = (knex, Promise) => knex.schema.createTableIfNotExists('tvshows', (table) => {
   table.increments('id');
   table.string('name').unique().notNullable();
-  table.text('description').notNullable();
+  table.text('overview').notNullable();
   table.enu('status', ['Running', 'Ended', 'Canceled']);
   table.string('imdb').unique().notNullable();
   table.integer('thetvdb').unique().notNullable();
