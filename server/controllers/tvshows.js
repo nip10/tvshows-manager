@@ -1,4 +1,5 @@
 /* eslint-disable quote-props */
+/* eslint-disable func-names */
 
 import path from 'path';
 import rp from 'request-promise';
@@ -68,7 +69,7 @@ const TvShows = {
             return null;
         }
     },
-    async search(tvshow) {
+    async search(tvshowName) {
         const requestOptions = {
             method: 'GET',
             uri: THETVDB_API_SEARCH,
@@ -77,15 +78,15 @@ const TvShows = {
                 'Authorization': `Bearer ${this.apiToken}`,
             },
             qs: {
-                name: tvshow,
+                name: tvshowName,
             },
             json: true,
         };
         try {
             const { data } = await rp(requestOptions);
-            return data.map(tvshows => ({
-                id: tvshows.id,
-                seriesName: tvshows.seriesName,
+            return data.map(tvshow => ({
+                id: tvshow.id,
+                seriesName: tvshow.seriesName,
             }));
         } catch (e) {
             console.log(e);
@@ -105,7 +106,7 @@ const TvShows = {
             const { data } = await rp(requestOptions);
             return {
                 name: data.seriesName,
-                description: data.overview,
+                overview: data.overview,
                 status: (data.status === 'Continuing') ? 'Running' : data.status,
                 imdb: data.imdbId,
                 thetvdb: data.id,
@@ -176,7 +177,7 @@ const TvShows = {
                 num: episode.airedEpisodeNumber,
                 name: episode.episodeName,
                 airdate: episode.firstAired,
-                summary: episode.overview,
+                overview: episode.overview,
             }));
         } catch (e) {
             console.log(e);
@@ -244,7 +245,7 @@ const TvShows = {
                     season: episode.airedSeason,
                     epnum: episode.airedEpisodeNumber,
                     title: episode.episodeName,
-                    description: episode.overview,
+                    overview: episode.overview,
                     airdate: episode.firstAired || null,
                 }));
                 console.log(`Page ${page} received.`);
@@ -284,7 +285,22 @@ const TvShows = {
     async addShowToUser(userId, tvshowId) {
         try {
             const addShowToUser = await knex('usertv').insert({ user_id: userId, tvshow_id: tvshowId });
-            return { tvshowId };
+            if (addShowToUser.rowCount === 1) {
+                return { tvshowId };
+            }
+            throw new Error('Unable to add tvshow');
+        } catch (e) {
+            console.log(e);
+            return { error: e };
+        }
+    },
+    async removeShowFromUser(userId, tvshowId) {
+        try {
+            const removeShowFromUser = await knex('usertv').where({ user_id: userId, tvshow_id: tvshowId }).del();
+            if (removeShowFromUser.rowCount === 1) {
+                return { tvshowId };
+            }
+            throw new Error('Unable to remove tvshow');
         } catch (e) {
             console.log(e);
             return { error: e };
@@ -292,12 +308,15 @@ const TvShows = {
     },
     async getEpisodesFromDb(tvshowId, season) {
         try {
-            const getEpisodesFromDb = await knex('episodes').select().where('tvshow_id', tvshowId).andWhere('season', season).orderBy('epnum', 'asc');
+            const getEpisodesFromDb = await knex('episodes')
+                .select('epnum', 'title')
+                .select(knex.raw('to_char(airdate, \'YYYY-MM-DD\') as "airdate"'))
+                .where({ tvshow_id: tvshowId, season })
+                .orderBy('epnum', 'asc');
             return getEpisodesFromDb.map(episode => ({
                 num: episode.epnum,
                 name: episode.title,
                 airdate: episode.airdate,
-                summary: episode.description,
             }));
         } catch (e) {
             console.log(e);
@@ -309,7 +328,7 @@ const TvShows = {
             return {
                 thetvdb: Number.parseInt(tvshowId, 10),
                 name: getTvshowInfoFromDb[0].name,
-                description: getTvshowInfoFromDb[0].description,
+                overview: getTvshowInfoFromDb[0].overview,
                 premiered: getTvshowInfoFromDb[0].premiered,
                 network: getTvshowInfoFromDb[0].network,
                 status: getTvshowInfoFromDb[0].status,
@@ -319,6 +338,15 @@ const TvShows = {
                 genre: [...getTvshowInfoFromDb[0].genre],
                 tvrating: getTvshowInfoFromDb[0].tvrating,
             };
+        } catch (e) {
+            console.log(e);
+        }
+    },
+    async isUserFollowingTvshow(userId, tvshowId) {
+        const inner = knex.select(1).from('usertv').where({ user_id: userId, tvshow_id: tvshowId }).limit(1);
+        try {
+            const isUserFollowingTvshow = await knex.raw(inner).wrap('select exists (', ')');
+            return isUserFollowingTvshow.rows[0].exists;
         } catch (e) {
             console.log(e);
         }
