@@ -1,6 +1,7 @@
 import express from 'express';
 
 import TvShows from './../controllers/tvshows';
+import { isLoggedIn } from './../auth/utils';
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.get('/search/:name', async (req, res) => {
 
 router.get('/:showid', async (req, res) => {
     const { showid } = req.params;
+    const userId = req.user;
     let isShowOnDb;
     try {
         isShowOnDb = await TvShows.isShowOnDb(showid);
@@ -29,6 +31,14 @@ router.get('/:showid', async (req, res) => {
     } catch (e) {
         // assume season #1
         latestSeason = 1;
+    }
+    let isUserFollowingTvshow = false;
+    if (userId) {
+        try {
+            isUserFollowingTvshow = await TvShows.isUserFollowingTvshow(userId, showid);
+        } catch (e) {
+            console.log(e);
+        }
     }
     let tvshowInfo;
     let episodes;
@@ -54,6 +64,7 @@ router.get('/:showid', async (req, res) => {
                 TvShows.getEpisodesFromSeason(showid, latestSeason),
             ]);
             tvshowInfo = Object.assign(tvshowData[0], { images: [tvshowData[0].images[0], tvshowData[1]] });
+            episodes = tvshowData[2];
             // TODO: spawn child to take care of this ?
             console.log(`Adding info/episodes of tvshow id ${showid} to the db.`);
             TvShows.addShowToDb(tvshowInfo);
@@ -66,13 +77,15 @@ router.get('/:showid', async (req, res) => {
         name: tvshowInfo.name,
         banner: `https://www.thetvdb.com/banners/${tvshowInfo.images[0]}`,
         poster: `https://www.thetvdb.com/banners/${tvshowInfo.images[1]}`,
-        description: tvshowInfo.description,
+        overview: tvshowInfo.overview,
         premiered: tvshowInfo.premiered,
         network: tvshowInfo.network,
         status: tvshowInfo.status,
         airdate: tvshowInfo.airdate,
         season: latestSeason,
         episodes,
+        isUserFollowingTvshow,
+        isAuthenticated: !!userId,
     });
 });
 
@@ -87,14 +100,51 @@ router.get('/:showid/episodes', async (req, res) => {
     }
 });
 
-router.get('/:showid/add', async (req, res) => {
+router.get('/:showid/add', isLoggedIn, async (req, res) => {
+    // adding a show that a user is already following results in the same behavious as if he wasnt
     const { showid } = req.params;
     const userId = req.user;
+    let isUserFollowingTvshow = false;
     try {
-        const addShowToUser = await TvShows.addShowToUser(userId, showid);
-        res.json({ addShowToUser });
+        isUserFollowingTvshow = await TvShows.isUserFollowingTvshow(userId, showid);
     } catch (e) {
         console.log(e);
+    }
+    if (!isUserFollowingTvshow) {
+        try {
+            const addShowToUser = await TvShows.addShowToUser(userId, showid);
+            res.json(addShowToUser);
+        } catch (e) {
+            console.log(e);
+            res.status(500).json({ error: 'Server error. Please try again later.' });
+        }
+    } else {
+        // User is already following this tvshow
+        // TODO: fix status code (should be smth like "invalid action"). fix error message.
+        res.status(403).json({ error: 'You are already following this show.' });
+    }
+});
+
+router.get('/:showid/remove', isLoggedIn, async (req, res) => {
+    const { showid } = req.params;
+    const userId = req.user;
+    let isUserFollowingTvshow = false;
+    try {
+        isUserFollowingTvshow = await TvShows.isUserFollowingTvshow(userId, showid);
+    } catch (e) {
+        console.log(e);
+    }
+    if (isUserFollowingTvshow) {
+        try {
+            const removeShowFromUser = await TvShows.removeShowFromUser(userId, showid);
+            res.json(removeShowFromUser);
+        } catch (e) {
+            console.log(e);
+        }
+    } else {
+        // User is not following this tvshow
+        // TODO: fix status code (should be smth like "invalid action"). fix error message.
+        res.status(403).json({ error: 'You are not following this show.' });
     }
 });
 
