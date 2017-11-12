@@ -3,7 +3,7 @@ exports.seed = function (knex, Promise) {
     .then(() =>
       knex('tvshows').insert({
          name: 'Silicon Valley',
-         description: 'In the high-tech gold rush of modern Silicon Valley, the people most qualified to succeed are the least capable of handling success. A comedy partially inspired by Mike Judge s own experiences as a Silicon Valley engineer in the late 1980s.',
+         overview: 'In the high-tech gold rush of modern Silicon Valley, the people most qualified to succeed are the least capable of handling success. A comedy partially inspired by Mike Judge s own experiences as a Silicon Valley engineer in the late 1980s.',
          status: 'Running',
          imdb: 'tt2575988',
          thetvdb: 277165,
@@ -16,7 +16,7 @@ exports.seed = function (knex, Promise) {
        }))
        .then(() => knex('tvshows').insert({
          name: 'Better Call Saul',
-         description: 'We meet him when the man who will become Saul Goodman is known as Jimmy McGill, a small-time lawyer searching for his destiny and, more immediately, hustling to make ends meet. Working alongside, and, often, against Jimmy, is "fixer" Mike Erhmantraut. The series tracks Jimmys transformation into the man who puts "criminal" in "criminal lawyer".',
+         overview: 'We meet him when the man who will become Saul Goodman is known as Jimmy McGill, a small-time lawyer searching for his destiny and, more immediately, hustling to make ends meet. Working alongside, and, often, against Jimmy, is "fixer" Mike Erhmantraut. The series tracks Jimmys transformation into the man who puts "criminal" in "criminal lawyer".',
          status: 'Running',
          imdb: 'tt3032476',
          thetvdb: 273181,

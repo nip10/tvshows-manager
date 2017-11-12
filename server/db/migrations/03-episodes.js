@@ -4,7 +4,7 @@ exports.up = (knex, Promise) => knex.schema.createTableIfNotExists('episodes', (
   table.integer('season').notNullable();
   table.integer('epnum').notNullable();
   table.string('title').notNullable();
-  table.text('description');
+  table.text('overview');
   table.date('airdate');
   table.timestamp('createdAt').defaultTo(knex.raw('now()'));
 });
