@@ -14,8 +14,7 @@
       "jquery": true
     },
     "globals": {
-      "Chart": true,
-      "moment": true,
+      "toastr": true,
       "Bloodhound": true
     }
   }]
