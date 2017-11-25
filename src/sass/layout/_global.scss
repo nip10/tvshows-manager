@@ -5,10 +5,19 @@
 @import 'tvshows';
 
 .main-container {
-  @extend .container-fluid;
-  padding-left: 200px;
-  padding-right: 0;
-  .row {
-    margin: 0;
-  }
+    @extend .container-fluid;
+    padding-left: 200px;
+    padding-right: 0;
+    .row {
+        margin: 0;
+    }
+}
+
+#wrapper {
+    padding-left: 0;
+}
+
+#page-content-wrapper {
+    width: 100%;
+    position: absolute;
 }
