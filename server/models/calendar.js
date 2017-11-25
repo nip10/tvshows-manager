@@ -90,7 +90,7 @@ export default class Calendar {
     /**
      * Add user episodes to the calendar
      *
-     * @param {Object[]} eps - Array of episode objects
+     * @param {{}[]} eps - Array of episode objects
      * @memberof Calendar
      */
     addEpisodesToCalendar(eps) {
