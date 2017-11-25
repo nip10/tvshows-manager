@@ -12,18 +12,19 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background-color: rgba($pureblack, 0.5);
         flex-direction: column;
         @extend .d-flex, .align-items-center, .justify-content-center;
         span {
             font-size: 3rem;
-            color: #fff;
-            text-shadow: 0 2px 1px rgba(0,0,0,.3);
+            color: $white;
+            text-shadow: 0 2px 1px rgba($pureblack, 0.3);
             font-weight: 600;
         }
     }
 }
-p.description {
+
+p.overview {
     @extend .text-muted;
     font-size: 14px;
     text-align: justify;
@@ -31,11 +32,15 @@ p.description {
 }
 
 .bg-text {
-    background-color: #f9f9f9;
+    background-color: $whitetext;
 }
 
 .green {
-    color: #990;
+    color: $green;
+}
+
+.red {
+    color: $red;
 }
 
 #poster {
@@ -43,7 +48,7 @@ p.description {
     border-radius: 10px;
 }
 
-table#episodes-table {
+#episodes-table {
     td {
         padding: 0.4rem !important;
         font-size: 14px;
@@ -51,12 +56,13 @@ table#episodes-table {
         &.summary {
             font-size: 12px;
         }
-        &.airdate, &.name {
+        &.airdate, 
+        &.name {
             white-space: nowrap;
         }
     }
 }
 
 .custom-select {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba($pureblack, 0.05);
 }

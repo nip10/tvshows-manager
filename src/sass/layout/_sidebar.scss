@@ -1,9 +1,20 @@
+#sidebar-wrapper {
+    z-index: 1000;
+    position: fixed;
+    left: 200px;
+    width: 0;
+    height: 100%;
+    margin-left: -200px;
+    overflow-y: auto;
+    background: $black;
+}
+
 nav {
     width: 200px;
     position: fixed;
-    background-color: #272727;
+    background-color: $black;
     .logo {
-        color: #aaa;
+        color: $grey;
     }
     form {
         width: 90%;
@@ -11,36 +22,35 @@ nav {
         input {
             background: transparent;
             border: none;
-            color: #fff;
+            color: $white;
         }
         span.input-group-addon {
             background: none;
-            background-color: #222;
-            border: 1px solid #353535;
+            background-color: $black;
+            border: 1px solid $black;
             border-right: 0;
         }
     }
     ul {
-        // border-top: 1px solid #333;
         li {
             &.active {
                 a {
                     background-color: transparent !important;
-                    color: #fff;
+                    color: $white;
                 }
                 i {
-                    color: #f5d248;
+                    color: $yellow;
                 }
             }
             a {
-                color: #aaa;
+                color: $grey;
             }
             &:not(.active) {
                 & a:hover {
-                    color: #aaa;
+                    color: $grey;
                 }
                 & span:hover {
-                    color: #fff;
+                    color: $white;
                 }
             }
             i {
