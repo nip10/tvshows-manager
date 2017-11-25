@@ -50,9 +50,10 @@ app.use((req, res, next) => {
 app.use((err, req, res) => {
     console.log(err);
     res.status(err.status || 500);
+    const dev = (process.env.NODE_ENV === 'development');
     res.render('error', {
-        message: err.message,
-        error: (app.get('env') === 'development') ? err : {},
+        message: dev ? err.message : null,
+        error: dev ? err : null,
     });
 });
 
