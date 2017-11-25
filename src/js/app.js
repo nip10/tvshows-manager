@@ -1,5 +1,13 @@
 'use strict';
 
+function renderEpisodesTable(episodes) {
+    const table = $('#episodes-table > tbody');
+    table.empty();
+    episodes.forEach((episode) => {
+        table.append(`<tr> <td>${episode.num}</td> <td class="name">${episode.name}</td> <td class="airdate">${episode.airdate}</td> <td><i class="fa fa-eye" aria-hidden="true"></i></td> </tr>`);
+    }, this);
+}
+
 $(() => {
     // set-up toastr options (notifications)
     toastr.options = {
@@ -114,13 +122,6 @@ $(() => {
                 console.log(xhr);
             });
     });
-    function renderEpisodesTable(episodes) {
-        const table = $('#episodes-table > tbody');
-        table.empty();
-        episodes.forEach((episode) => {
-            table.append(`<tr> <td>${episode.num}</td> <td class="name">${episode.name}</td> <td class="airdate">${episode.airdate}</td> <td><i class="fa fa-eye" aria-hidden="true"></i></td> </tr>`);
-        }, this);
-    }
     $('#userTvShowState').click(() => {
         const tvshowId = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
         if ($('#userTvShowState').hasClass('btn-primary')) {
