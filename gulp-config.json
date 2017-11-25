@@ -13,7 +13,8 @@
         },
         "sasslint": {
             "source": ["sass/**/*.scss"],
-            "ignore": ["sass/vendor/**/*.scss"]
+            "ignore": ["sass/vendor/**/*.scss"],
+            "configFile": ".sass-lint.yml"
         },
         "scripts": {
             "source": ["js/app.js"],

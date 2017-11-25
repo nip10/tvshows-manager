@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 const config = require('./gulp-config.json');
 const runSequence = require('run-sequence');
 const gulp = require('gulp');
@@ -10,9 +12,6 @@ const fs = require('fs');
 const cleanFolderList = ['sass', 'scripts', 'images'];
 const taskList = ['sasslint', 'sass', 'scripts', 'images'];
 const watchTaskList = ['sasslint', 'sass', 'images'];
-
-// const taskList = ['sasslint', 'sass', 'eslint', 'scripts', 'images'];
-// const watchTaskList = ['sasslint', 'sass', 'eslint', 'images'];
 
 util.env.boilerplate = {
     config,
