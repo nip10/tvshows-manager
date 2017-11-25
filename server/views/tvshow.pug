@@ -21,8 +21,7 @@ block content
                                 span You need to be logged in to follow a tvshow and mark episodes as watched.
                         .col-md-6.mx-auto
                             .row.border.bg-text
-                                //- p.description!= description
-                                p.description= description
+                                p.overview= overview
                         .col-md-5.mx-auto
                             .row.bg-text.border.h-100
                                 .col-md-6.d-flex.align-items-center
@@ -30,7 +29,7 @@ block content
                                         li.py-2
                                             span.d-block.text-center 
                                                 strong Status
-                                            span.d-block.text-center.green= status
+                                            span.d-block.text-center(class= (status === 'Running') ? 'green' : 'red')= status
                                         li.py-2
                                             span.d-block.text-center 
                                                 strong Premiered
