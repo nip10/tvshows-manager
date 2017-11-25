@@ -9,10 +9,11 @@ block content
                 .col-md-12.py-3.text-center
                     span
                         h3.d-inline-block.px-2.text-right.month-nav
-                            a « Previous
+                            a(href='/calendar/' + monthNavigation.previousYear + '/' + monthNavigation.previousMonth) « Previous
                         h2.d-inline-block.px-2 Current
                         h3.d-inline-block.px-2.text-left.month-nav
-                            a Next »
+                            a(href='/calendar/' + monthNavigation.nextYear + '/' + monthNavigation.nextMonth) Next »
+                    span= monthNavigation.month + ', ' + monthNavigation.year
             .row
                 .col-md-12.py-3
                     table(cellspacing=0, cellpadding=0).calendar__table
