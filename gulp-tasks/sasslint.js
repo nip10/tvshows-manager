@@ -12,6 +12,9 @@ module.exports = function () {
     if (sasslintConfig.ignore) {
         options.files = { ignore: sasslintConfig.ignore };
     }
+    if (sasslintConfig.configFile) {
+        options.configFile = sasslintConfig.configFile;
+    }
 
     return gulp.src([`./src/${sasslintConfig.source}`, '!./src/sass/vendor/**/*.scss'])
         .pipe(plumber({
