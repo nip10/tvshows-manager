@@ -8,3 +8,12 @@
     align-content: center;
     flex-direction: column;
 }
+
+.g-recaptcha > div {
+    margin: auto !important;
+    margin-top: 2rem !important;
+    margin-bottom: 1rem !important;
+    text-align: center;
+    width: auto !important;
+    height: auto !important;
+}
