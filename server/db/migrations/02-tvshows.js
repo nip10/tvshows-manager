@@ -1,18 +1,18 @@
 exports.up = (knex, Promise) => knex.schema.createTableIfNotExists('tvshows', (table) => {
   table.increments('id');
   table.string('name').unique().notNullable();
-  table.text('overview').notNullable();
+  table.text('overview');
   table.enu('status', ['Running', 'Ended', 'Canceled']);
-  table.string('imdb').unique().notNullable();
-  table.integer('thetvdb').unique().notNullable();
-  table.specificType('genre', 'text[]').notNullable();
-  table.string('premiered').notNullable();
-  table.string('network').notNullable();
-  table.string('airdate').notNullable();
-  table.string('tvrating').notNullable();
-  table.specificType('images', 'text[]').notNullable();
-  table.timestamp('createdAt').defaultTo(knex.raw('now()'));
-  table.timestamp('updatedAt').defaultTo(knex.raw('now()'));
+  table.string('imdb').unique();
+  table.integer('thetvdb').unique();
+  table.specificType('genre', 'text[]');
+  table.string('premiered');
+  table.string('network');
+  table.string('airdate');
+  table.string('tvrating');
+  table.specificType('images', 'text[]');
+  table.timestamp('createdAt').defaultTo(knex.fn.now());
+  table.timestamp('updatedAt').defaultTo(knex.fn.now());
 });
 
 exports.down = (knex, Promise) => knex.schema.dropTable('tvshows');
