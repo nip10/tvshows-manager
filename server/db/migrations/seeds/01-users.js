@@ -7,17 +7,19 @@ const hashPassword = (password) => {
 
 exports.seed = function (knex, Promise) {
   return knex('users').del()
-    .then(() =>
-       knex('users').insert({
+    .then(() => knex('users').insert({
+         username: 'warrior',
          email: 'warrior@mail.com',
-         password: hashPassword('warrior'),
+         password: hashPassword('warrior123'),
        }))
        .then(() => knex('users').insert({
-         email: 'king@mail.com',
-         password: hashPassword('king123'),
+         username: 'foobar',
+         email: 'foobar@mail.com',
+         password: hashPassword('foobar123'),
        }))
        .then(() => knex('users').insert({
+         username: 'theone',
          email: 'theone@mail.com',
-         password: hashPassword('theone'),
+         password: hashPassword('theone123'),
        }));
 };
