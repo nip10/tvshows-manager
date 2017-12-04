@@ -12,9 +12,13 @@
 nav {
     width: 200px;
     position: fixed;
-    background-color: $black;
+    background-color: $gray-900;
     .logo {
-        color: $grey;
+        color: $gray;
+        &:hover {
+            text-decoration: none;
+            color: $gray-400;
+        }
     }
     form {
         width: 90%;
@@ -25,9 +29,8 @@ nav {
             color: $white;
         }
         span.input-group-addon {
-            background: none;
-            background-color: $black;
-            border: 1px solid $black;
+            background: transparent;
+            border: 1px solid $gray-700;
             border-right: 0;
         }
     }
@@ -43,11 +46,11 @@ nav {
                 }
             }
             a {
-                color: $grey;
+                color: $gray;
             }
-            &:not(.active) {
+            &:not(.active):not(:first-child) {
                 & a:hover {
-                    color: $grey;
+                    color: $gray;
                 }
                 & span:hover {
                     color: $white;
@@ -59,4 +62,12 @@ nav {
             }
         }
     }
+}
+
+.input-loading {    
+    background-color: $white;
+    background-image: url("http://loadinggif.com/images/image-selection/3.gif");
+    background-size: 15px 15px;
+    background-position: right 10px center;
+    background-repeat: no-repeat;
 }
