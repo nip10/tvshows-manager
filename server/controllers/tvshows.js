@@ -4,6 +4,7 @@
 import path from 'path';
 import rp from 'request-promise';
 import cp from 'child_process';
+import moment from 'moment';
 import knex from '../db/connection';
 
 const { THETVDB_API_KEY, NODE_ENV } = process.env;
@@ -141,7 +142,7 @@ const TvShows = {
                 imdb: data.imdbId,
                 thetvdb: data.id,
                 genre: data.genre,
-                premiered: data.firstAired,
+                premiered: moment(data.firstAired).format('DD-MM-YYYY'),
                 network: data.network,
                 airdate: `${data.airsDayOfWeek} at ${data.airsTime}`,
                 tvrating: data.rating,
@@ -249,7 +250,7 @@ const TvShows = {
         const getEpisodes = knex.select('tvshows.name', 'tvshows.thetvdb', 'episodes.title')
             .select(knex.raw('to_char(episodes.season, \'fm00\') as "season"'))
             .select(knex.raw('to_char(episodes.epnum, \'fm00\') as "epnum"'))
-            .select(knex.raw('to_char(episodes.airdate, \'YYYY-MM-DD\') as "airdate"'))
+            .select(knex.raw('to_char(episodes.airdate, \'DD-MM-YYYY\') as "airdate"'))
             .from('episodes')
             .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
             .join('tvshows', 'tvshows.thetvdb', 'episodes.tvshow_id')
@@ -405,7 +406,7 @@ const TvShows = {
         try {
             const getEpisodesFromDb = await knex('episodes')
                 .select('epnum', 'title')
-                .select(knex.raw('to_char(airdate, \'YYYY-MM-DD\') as "airdate"'))
+                .select(knex.raw('to_char(airdate, \'DD-MM-YYYY\') as "airdate"'))
                 .where({ tvshow_id: tvshowId, season })
                 .orderBy('epnum', 'asc');
             return getEpisodesFromDb.map(episode => ({
