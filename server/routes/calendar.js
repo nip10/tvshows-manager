@@ -4,11 +4,11 @@ import moment from 'moment';
 import Calendar from '../models/calendar';
 import TvShows from '../controllers/tvshows';
 
-import { isLoggedInWithRedirect } from '../auth/utils';
+import { isLoggedInWithRedirect, isLoggedInWithMessage } from '../auth/utils';
 
 const router = express.Router();
 
-router.get('/', isLoggedInWithRedirect, async (req, res) => {
+router.get('/', isLoggedInWithMessage, async (req, res) => {
     const userId = req.user;
     const date = new Date();
     const month = parseInt(date.getMonth() + 1, 10);
