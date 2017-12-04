@@ -15,7 +15,10 @@
     },
     "globals": {
       "toastr": true,
-      "Bloodhound": true
+      "Bloodhound": true,
+      "Cookies": true,
+      "validator": true,
+      "grecaptcha": true
     }
   }]
 }
