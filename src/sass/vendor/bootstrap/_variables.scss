@@ -48,17 +48,17 @@
 // Color system
 //
 
-$white:  #fff !default;
-$gray-100: #f8f9fa !default;
-$gray-200: #e9ecef !default;
-$gray-300: #dee2e6 !default;
-$gray-400: #ced4da !default;
-$gray-500: #adb5bd !default;
-$gray-600: #868e96 !default;
-$gray-700: #495057 !default;
-$gray-800: #343a40 !default;
-$gray-900: #212529 !default;
-$black:  #000 !default;
+$white:  #ffffff !default;
+$gray-100: #F5F5F5 !default;
+$gray-200: #EEEEEE !default;
+$gray-300: #E0E0E0 !default;
+$gray-400: #bdbdbd !default;
+$gray-500: #9e9e9e !default;
+$gray-600: #757575 !default;
+$gray-700: #616161 !default;
+$gray-800: #424242 !default;
+$gray-900: #212121 !default;
+$black:  #000000 !default;
 
 $grays: (
   100: $gray-100,
@@ -72,16 +72,42 @@ $grays: (
   900: $gray-900
 ) !default;
 
-$blue:    #007bff !default;
-$indigo:  #6610f2 !default;
-$purple:  #6f42c1 !default;
-$pink:    #e83e8c !default;
-$red:     #dc3545 !default;
-$orange:  #fd7e14 !default;
-$yellow:  #ffc107 !default;
-$green:   #28a745 !default;
-$teal:    #20c997 !default;
-$cyan:    #17a2b8 !default;
+// $blue:    #007bff !default;
+// $indigo:  #6610f2 !default;
+// $purple:  #6f42c1 !default;
+// $pink:    #e83e8c !default;
+// $red:     #dc3545 !default;
+// $orange:  #fd7e14 !default;
+// $yellow:  #ffc107 !default;
+// $green:   #28a745 !default;
+// $teal:    #20c997 !default;
+// $cyan:    #17a2b8 !default;
+
+$red: #f44336 !default;
+$red-900: #b71c1c !default;
+$pink: #e91e63 !default;
+$purple: #9c27b0 !default;
+$deeppurple: #673ab7 !default;
+$indigo: #3f51b5 !default;
+$indigo-900: #1a237e !default;
+$blue: #2196f3 !default;
+$blue-700: #1976d2 !default;
+$blue-900: #0d47a1 !default;
+$lightblue: #03a9f4 !default;
+$cyan: #00bcd4 !default;
+$teal: #009688 !default;
+$green: #4caf50 !default;
+$lightgreen: #8bc34a !default;
+$lime: #cddc39 !default;
+$yellow: #ffeb3b !default;
+$amber: #ffc107 !default;
+$orange: #ff9800 !default;
+$deeporange: #ff5722 !default;
+$brown: #795548 !default;
+$gray: $gray-500;
+$bluegray: #607d8b !default;
+$bluegray-800: #37474f !default;
+$bluegray-900: #263238 !default;
 
 $colors: (
   blue: $blue,
@@ -95,13 +121,13 @@ $colors: (
   teal: $teal,
   cyan: $cyan,
   white: $white,
-  gray: $gray-600,
+  gray: $gray,
   gray-dark: $gray-800
 ) !default;
 
 $theme-colors: (
   primary: $blue,
-  secondary: $gray-600,
+  secondary: $gray-400,
   success: $green,
   info: $cyan,
   warning: $yellow,
