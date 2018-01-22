@@ -44,7 +44,7 @@ const Tvshow = {
      */
     startChildProcess() {
         // create child process using fork
-        const child = cp.fork(path.join(__dirname, '../../scripts/tvdb-api-cron'));
+        const child = cp.fork(path.join(__dirname, '../scripts/tvdb-api-cron'));
 
         // listen to messages from the child process
         child.on('message', (msg) => {

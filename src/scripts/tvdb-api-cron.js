@@ -2,8 +2,8 @@
 /* eslint-disable quote-props */
 /* eslint-disable no-console */
 
-const { CronJob } = require('cron');
-const rp = require('request-promise');
+import { CronJob } from 'cron';
+import rp from 'request-promise';
 
 console.log('[CHILD] [0] Child process started!');
 

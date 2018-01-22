@@ -1,6 +1,6 @@
 {
     "vhost": "http://localhost:3001",
-    "sourceRoot": "./src/",
+    "sourceRoot": "./src/public/",
     "destinationRoot": "./dist/",
     "tasks": {
         "sass": {
