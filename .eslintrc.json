@@ -6,7 +6,7 @@
     },
     "plugins": ["jest"],
     "overrides": [{
-        "files": ["src/js/app.js"],
+        "files": ["src/public/js/app.js"],
         "parserOptions": {
             "sourceType": "script"
         },
