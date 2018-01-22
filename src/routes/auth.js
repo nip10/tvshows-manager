@@ -1,26 +1,21 @@
 import express from 'express';
-import passport from '../auth/local';
-import { createUser } from '../controllers/user';
 import {
-    validateLogin,
-    validateRegister,
     validateRecaptcha,
-    validateEmail,
-    validateEmailInUrl,
-    validatePassword,
     resetPasswordRequest,
     resetPasswordWithToken,
     resetPassword,
+    login,
+    signup,
     logout,
 } from '../controllers/auth';
 
 const router = express.Router();
 
-router.post('/login', validateLogin, passport.authenticate('local'), (req, res) => res.json({ message: '/calendar' }));
-router.post('/register', validateRecaptcha, validateRegister, createUser, passport.authenticate('local').bind(this), (req, res) => res.json({ message: '/calendar' }));
+router.post('/login', login);
+router.post('/signup', validateRecaptcha, signup);
 router.get('/logout', logout);
-router.post('/reset', validateRecaptcha, validateEmail, resetPasswordRequest);
-router.get('/reset/:email/:token', validateEmailInUrl, resetPasswordWithToken);
-router.post('/reset/:email/:token', validateEmailInUrl, validatePassword, resetPassword);
+router.post('/reset', validateRecaptcha, resetPasswordRequest);
+router.get('/reset/:email/:token', resetPasswordWithToken);
+router.post('/reset/:email/:token', resetPassword);
 
 module.exports = router;

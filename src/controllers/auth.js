@@ -2,6 +2,8 @@ import uuidv4 from 'uuid/v4';
 import moment from 'moment';
 import validator from 'validator';
 import rp from 'request-promise';
+import _ from 'lodash';
+import passport from '../auth/local';
 import User from '../models/user';
 
 const { RECAPTCHA_SECRET } = process.env;
@@ -9,7 +11,7 @@ const RECAPTCHA_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
 const RESET_PASSWORD_TOKEN_EXPIRATION = 15; // in minutes
 
 /**
- * Authentication controller - All functions related to authentication (login/register/reset)
+ * Authentication controller - All functions related to authentication (login/signup/reset)
  * @module controllers/auth
  */
 
@@ -46,42 +48,6 @@ const authController = {
         return res.redirect('/');
     },
     /**
-     * Validate login inputs
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    validateLogin(req, res, next) {
-        const { email, password } = req.body;
-        if (!email || !validator.isEmail(email)) {
-            return res.status(422).json({ error: 'Invalid email address.' });
-        } else if (!password || password.length < 8 || password.length > 30) {
-            return res.status(422).json({ error: 'Password must be 8-30 chars.' });
-        }
-        return next();
-    },
-    /**
-     * Validate register inputs
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    validateRegister(req, res, next) {
-        const { email, password, passwordDuplicate } = req.body;
-        if (!email || !validator.isEmail(email)) {
-            return res.status(422).json({ error: 'Invalid email address.' });
-        } else if (!password || password.length < 8 || password.length > 30) {
-            return res.status(422).json({ error: 'Password must be 8-30 chars.' });
-        } else if (!password || password !== passwordDuplicate) {
-            return res.status(422).json({ error: 'Passwords don\'t match.' });
-        }
-        return next();
-    },
-    /**
      * Validate recaptcha
      *
      * @param {Object} req - Express request object
@@ -116,60 +82,6 @@ const authController = {
         }
     },
     /**
-     * Validate email input
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    validateEmail(req, res, next) {
-        const { email, emailDuplicate } = req.body;
-        if (!email
-            || !validator.isEmail(email)
-            || !emailDuplicate
-            || !validator.isEmail(emailDuplicate)) {
-            return res.status(422).json({ error: 'Invalid email address.' });
-        } else if (email !== emailDuplicate) {
-            return res.status(422).json({ error: 'Email addresses don\'t match.' });
-        }
-        return next();
-    },
-    /**
-     * Validate email input in url
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    validateEmailInUrl(req, res, next) {
-        const { email } = req.params;
-        if (!email || !validator.isEmail(email)) {
-            return res.status(400).render('error', {
-                message: 'Invalid email address',
-            });
-        }
-        return next();
-    },
-    /**
-     * Validate password input
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    validatePassword(req, res, next) {
-        const { password, passwordDuplicate } = req.body;
-        if (!password || password.length < 8 || password.length > 30) {
-            return res.status(422).json({ error: 'Password must be 8-30 chars.' });
-        } else if (!password || password !== passwordDuplicate) {
-            return res.status(422).json({ error: 'Passwords don\'t match.' });
-        }
-        return next();
-    },
-    /**
      * Logout
      *
      * @param {Object} req - Express request object
@@ -195,8 +107,12 @@ const authController = {
      */
     async resetPasswordRequest(req, res) {
         const { email } = req.body;
+        const normalizedEmail = validator.normalizeEmail(email);
+        if (!normalizedEmail || validator.isEmail(normalizedEmail)) {
+            return res.status(422).json({ error: 'Invalid email address.' });
+        }
         try {
-            const userExists = await User.checkIfUserExistsByEmail(email);
+            const userExists = await User.checkIfUserExistsByEmail(normalizedEmail);
             if (!userExists) {
                 return res.status(400).json({ error: 'Invalid email address.' });
             }
@@ -204,11 +120,11 @@ const authController = {
                 token: uuidv4(),
                 expiration: moment().add(RESET_PASSWORD_TOKEN_EXPIRATION, 'minutes').toISOString(),
             };
-            const addToken = await User.addTokenToUser(email, reset);
+            const addToken = await User.addTokenToUser(normalizedEmail, reset);
             if (!addToken) {
                 throw new Error();
             }
-            console.log(`New token generated for ${email}: ${reset.token}. Expires at: ${reset.expiration}`);
+            console.log(`New token generated for ${normalizedEmail}: ${reset.token}. Expires at: ${reset.expiration}`);
         } catch (e) {
             return res.status(500).json({ error: 'Oooops. Something went wrong.' });
         }
@@ -224,8 +140,19 @@ const authController = {
      */
     async resetPasswordWithToken(req, res) {
         const { email, token } = req.params;
+        const normalizedEmail = validator.normalizeEmail(email);
+        if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
+            return res.status(400).render('error', {
+                message: 'Invalid email address.',
+            });
+        }
+        if (!token) {
+            return res.status(400).render('error', {
+                message: 'Invalid token.',
+            });
+        }
         try {
-            const isTokenValid = await User.checkIfTokenIsValid(email, token);
+            const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
             if (!isTokenValid) {
                 return res.status(400).render('error', {
                     message: 'Token is not valid or has already expired.',
@@ -252,17 +179,70 @@ const authController = {
     async resetPassword(req, res) {
         const { password } = req.body;
         const { email, token } = req.params;
+        const normalizedEmail = validator.normalizeEmail(email);
+        if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
+            return res.status(422).json({ error: 'Invalid email address.' });
+        }
+        if (!token) {
+            return res.status(422).json({ error: 'Invalid token.' });
+        }
+        if (!password || password.length < 8 || password.length > 30) {
+            return res.status(422).json({ error: 'Password must be 8-30 chars.' });
+        }
         try {
-            const isTokenValid = await User.checkIfTokenIsValid(email, token);
+            const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
             if (!isTokenValid) {
                 return res.status(422).json({ error: 'Invalid token. Please request a new token.' });
             }
-            const changedPassword = await User.changePassword(email, password);
+            const changedPassword = await User.changePassword(normalizedEmail, password);
             if (!changedPassword) {
                 throw new Error();
             }
             return res.json({ message: 'Password changed successfully.' });
         } catch (e) {
+            return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+        }
+    },
+    login(req, res, next) {
+        if (req.isAuthenticated()) {
+            return res.status(400).json({ error: 'You are already logged in.' });
+        }
+        const { email, password } = req.body;
+        const validateLogin = User.validateLogin(email, password);
+        if (!_.isNil(validateLogin.error)) {
+            return res.status(422).json({ error: validateLogin.error });
+        }
+        return passport.authenticate('local', (err, user, info) => {
+            if (err) return next(err);
+            if (!user) {
+                return res.status(422).json({ error: info.message });
+            }
+            return req.logIn(user, (err2) => {
+                if (err) return next(err2);
+                return res.redirect(req.session.returnTo || '/calendar');
+            });
+        })(req, res, next);
+    },
+    async signup(req, res, next) {
+        if (req.isAuthenticated()) {
+            return res.status(400).json({ error: 'You are already logged in.' });
+        }
+        const { email, password, passwordDuplicate } = req.body;
+        const validateSignup = User.validateSignup(email, password, passwordDuplicate);
+        if (!_.isNil(validateSignup.error)) {
+            return res.status(422).json({ error: validateSignup.error });
+        }
+        try {
+            const user = await User.createUser(validateSignup.normalizedEmail, password);
+            if (user) {
+                return req.logIn(user, (err) => {
+                    if (err) return next(err);
+                    return req.session.save(() => res.redirect('/calendar'));
+                });
+            }
+            return res.status(422).json({ error: 'Email already registred.' });
+        } catch (e) {
+            console.log(e);
             return res.status(500).json({ error: 'Oooops. Something went wrong.' });
         }
     },
