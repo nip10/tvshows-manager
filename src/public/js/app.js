@@ -166,51 +166,51 @@ $(() => {
             });
         return false;
     });
-    // handle register modal
-    $('#register-modal').on('shown.bs.modal', () => {
-        $('#register-email').focus();
+    // handle signup modal
+    $('#signup-modal').on('shown.bs.modal', () => {
+        $('#signup-email').focus();
     });
-    // register form
-    $('#register-form').submit((e) => {
+    // signup form
+    $('#signup-form').submit((e) => {
         // remove previous alert message
         $('.alert').remove();
         // prevent form submition
         e.preventDefault();
         // get email and password
-        const email = $('#register-email').val();
-        const password = $('#register-password').val();
-        const passwordDuplicate = $('#register-password-d').val();
+        const email = $('#signup-email').val();
+        const password = $('#signup-password').val();
+        const passwordDuplicate = $('#signup-password-d').val();
         const recaptcha = $('#g-recaptcha-response').val();
         // validate recaptcha
         if (!recaptcha) {
-            return $('#register-form').before('<div class="alert alert-danger" role="alert"> Error: You need to complete the captcha ! </div>');
+            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: You need to complete the captcha ! </div>');
         }
         // validate email
         if (!validator.isEmail(email)) {
-            return $('#register-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>');
+            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>');
         }
         // validate password length (8-30 chars)
         if (password.length < 8 || password.length > 30) {
-            return $('#register-form').before('<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>');
+            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>');
         }
         // validate passwords
         if (password !== passwordDuplicate) {
-            return $('#register-form').before('<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>');            
+            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>');            
         }
-        $.post('/auth/register', { email, password, passwordDuplicate, recaptcha })
+        $.post('/auth/signup', { email, password, passwordDuplicate, recaptcha })
             .done((data) => {
                 if (data && data.message) window.location.replace(data.message);
             })
             .fail((xhr) => {
                 const resStatusCode = xhr.status;
                 if (resStatusCode === 401) {
-                    $('#register-email').addClass('is-invalid');
-                    $('#register-password').addClass('is-invalid');
-                    $('#register-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
+                    $('#signup-email').addClass('is-invalid');
+                    $('#signup-password').addClass('is-invalid');
+                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
                 } else if (resStatusCode === 422) {
-                    $('#register-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
+                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
                 } else {
-                    $('#register-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
+                    $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
                 }
                 grecaptcha.reset();
             });

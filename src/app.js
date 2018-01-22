@@ -1,6 +1,4 @@
-/* eslint-disable import/first */
-require('dotenv').config();
-
+import dotenv from 'dotenv';
 import path from 'path';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
@@ -16,13 +14,16 @@ import calendar from './routes/calendar';
 import auth from './routes/auth';
 import tvshows from './routes/tvshow';
 
+// Load environment variables
+dotenv.config({ path: '../.env' });
+
+// Create Express server
 const app = express();
 
+// Express configuration
 app.use(helmet());
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
 app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -30,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(session({
     secret: process.env.SECRET_KEY_SESSION,
     saveUninitialized: true,
-    resave: false,
+    resave: true,
     cookie: { httpOnly: false, maxAge: 2419200000 },
 }));
 app.use(passport.initialize());
@@ -38,6 +39,7 @@ app.use(passport.session());
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use(favicon(path.join(__dirname, '../dist/img/favicon.ico')));
 
+// Routes
 app.use('/', index);
 app.use('/auth', auth);
 app.use('/tvshows', tvshows);
