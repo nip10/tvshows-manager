@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import validator from 'validator';
 import knex from '../db/connection';
 
 const User = {
@@ -13,8 +14,8 @@ const User = {
         const hashedPassword = this.genHashPassword(password);
         const username = email.split('@')[0];
         try {
-            const createUser = await knex('users').insert({ username, email, password: hashedPassword }).returning('*');
-            return createUser;
+            const createUser = await knex('users').insert({ username, email, password: hashedPassword }).returning('id');
+            return { id: createUser[0] };
         } catch (e) {
             console.log(e);
             return false;
@@ -192,6 +193,45 @@ const User = {
             console.log(e);
             return false;
         }
+    },
+    /**
+     * Validate signup inputs
+     *
+     * @param {string} email - user email
+     * @param {string} password - user password
+     * @param {string} passwordDuplicate - user duplicate password
+     * @returns {{ normalizedEmail: string, password: string }} - normalized email and password
+     */
+    validateSignup(email, password, passwordDuplicate) {
+        if (!email || !validator.isEmail(email)) {
+            return ({ error: 'Invalid email address.' });
+        } else if (!password || password.length < 8 || password.length > 30) {
+            return ({ error: 'Password must be 8-30 chars.' });
+        } else if (!password || password !== passwordDuplicate) {
+            return ({ error: 'Passwords don\'t match.' });
+        }
+        return ({
+            normalizedEmail: validator.normalizeEmail(email),
+            password,
+        });
+    },
+    /**
+     * Validate login inputs
+     *
+     * @param {string} email - user email
+     * @param {string} password - user password
+     * @returns {{ normalizedEmail: string, password: string }} - normalized email and password
+     */
+    validateLogin(email, password) {
+        if (!email || !validator.isEmail(email)) {
+            return ({ error: 'Invalid email address.' });
+        } else if (!password || password.length < 8 || password.length > 30) {
+            return ({ error: 'Password must be 8-30 chars.' });
+        }
+        return ({
+            normalizedEmail: validator.normalizeEmail(email),
+            password,
+        });
     },
 };
 
