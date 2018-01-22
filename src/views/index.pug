@@ -13,31 +13,31 @@ block content
                             p.text-center Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, porro eos esse officia praesentium quaerat.
                         .col-md-4.center-vh
                             include partials/bug.pug
-                            button(type='button', data-toggle='modal', data-target='#register-modal').btn.btn-primary.btn-lg.btn-block.mb-1 Register
-                            #register-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='register-modal-label', aria-hidden='true')
+                            button(type='button', data-toggle='modal', data-target='#signup-modal').btn.btn-primary.btn-lg.btn-block.mb-1 signup
+                            #signup-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='signup-modal-label', aria-hidden='true')
                                 .modal-dialog(role='document')
-                                    form#register-form.modal-content
+                                    form#signup-form.modal-content
                                         .modal-header
-                                            h3#register-modal-label.modal-title Register
+                                            h3#signup-modal-label.modal-title signup
                                             button(type='button', data-dismiss='modal', aria-label='Close').close
                                                 span(aria-hidden='true') &times;
                                         .modal-body
                                                 .form-group
-                                                    label(for='register-email').form-control-label Email address:
-                                                    input(type='email', aria-describedby='emailHelp', placeholder='Email address')#register-email.form-control
+                                                    label(for='signup-email').form-control-label Email address:
+                                                    input(type='email', aria-describedby='emailHelp', placeholder='Email address')#signup-email.form-control
                                                     small#emailHelp.form-text.text-muted Only used as your login, and optional email notifications.
                                                 .form-group
-                                                    label(for='register-password').form-control-label Password:
-                                                    input(type='password', aria-describedby='passwordHelp', placeholder='Password')#register-password.form-control
+                                                    label(for='signup-password').form-control-label Password:
+                                                    input(type='password', aria-describedby='passwordHelp', placeholder='Password')#signup-password.form-control
                                                     small#passwordHelp.form-text.text-muted Length must be between 8-30 characters.
                                                 .form-group
-                                                    label(for='register-password-d').form-control-label Confirm Password:
-                                                    input(type='password', placeholder='Confirm Password')#register-password-d.form-control
+                                                    label(for='signup-password-d').form-control-label Confirm Password:
+                                                    input(type='password', placeholder='Confirm Password')#signup-password-d.form-control
                                                 .form-group
                                                     .g-recaptcha#id1
                                         .modal-footer
                                             button(type='button', data-dismiss='modal').btn.btn-secondary Close
-                                            button(type='submit')#register-submit.btn.btn-primary Submit
+                                            button(type='submit')#signup-submit.btn.btn-primary Submit
                             button(type='button', data-toggle='modal' data-target='#login-modal').btn.btn-secondary.btn-block Login
                             #login-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='login-modal-label', aria-hidden='true')
                                 .modal-dialog(role='document')
