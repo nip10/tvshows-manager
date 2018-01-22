@@ -8,6 +8,8 @@ function renderEpisodesTable(episodes) {
     }, this);
 }
 
+const sanitize = new RegExp(/^[\w\-\s.,;:]+$/);
+
 $(() => {
     // set-up toastr options (notifications)
     toastr.options = {
@@ -85,7 +87,6 @@ $(() => {
         const emailDuplicate = $('#forgotpw-email-d').val();
         // get recaptcha
         const recaptcha = $('#g-recaptcha-response-1').val();
-        console.log('recaptcha: ' + recaptcha);
         // get token
         const token = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
         // validate recaptcha
@@ -268,8 +269,8 @@ $(() => {
             $.get(`/tvshows/${tvshowId}/add`)
                 .done((data) => {
                     if (data) {
-                        const tvShowName = $('#tvshow-name')[0].innerText;
-                        toastr.success(`${tvShowName} added successfully!`);
+                        const tvshowName = $('#tvshow-name')[0].innerText;
+                        toastr.success(`${tvshowName} added successfully!`);
                         $('#userTvShowState').removeClass('btn-primary').addClass('btn-secondary').html('Remove from my shows');
                     }
                 })
@@ -286,8 +287,8 @@ $(() => {
         $.get(`/tvshows/${tvshowId}/remove`)
             .done((data) => {
                 if (data) {
-                    const tvShowName = $('#tvshow-name')[0].innerText;
-                    toastr.success(`${tvShowName} removed successfully!`);
+                    const tvshowName = $('#tvshow-name')[0].innerText;
+                    toastr.success(`${tvshowName} removed successfully!`);
                     $('#userTvShowState').removeClass('btn-secondary').addClass('btn-primary').html('Add to my shows');
                 }
             })
@@ -297,6 +298,31 @@ $(() => {
                 } else {
                     toastr.error('Server error. Please try again later.');
                 }
+            });
+        return false;
+    });
+    // handle submit bug modal
+    $('#bug-modal').on('shown.bs.modal', () => {
+        $('#bug-email').focus();
+    });
+    // bug form
+    $('#bug-form').submit((e) => {
+        // remove previous alert message
+        $('.alert').remove();
+        // prevent form submition
+        e.preventDefault();
+        // get user id if logged in
+        const bugDescription = $('#bug-description').val();
+        // validate text
+        if (!bugDescription || !sanitize.test(bugDescription)) {
+            return $('#bug-form').before('<div class="alert alert-danger" role="alert"> Error: Please fill in the bug description. Only alphanumerical characters! </div>');
+        }
+        $.post('/bug', { description: bugDescription })
+            .done(() => {
+                $('#bug-form').before('<div class="alert alert-success" role="alert"> Bug submited successfully. Thanks! </div>');
+            })
+            .fail(() => {
+                $('#bug-form').before('<div class="alert alert-danger" role="alert"> Error: Something went wrong. Please try again. </div>');
             });
         return false;
     });

@@ -1,0 +1,16 @@
+//- error
+extends layout/base
+
+block content
+    include partials/sidebar.pug
+    #page-content-wrapper
+        .main-container
+            .row
+                .col-md-12.py-3.text-center
+                    include partials/bug.pug
+                    if (error && message)
+                        h1= error
+                        p= message
+                    else
+                        h1 Ooops. Something went wrong.
+                        h2= (message ? message : '')

@@ -1,25 +1,22 @@
 # TvShows-Manager
 
-Webapp to manage your favourite tv shows ! Dont miss an episode and keep track of all the tvshow you love !
+Webapp to manage your favourite tv shows.
 
 # Tech
 
-NodeJS
-Express for the API
-Pug for the Frontend
-PostgreSQL database
+- NodeJS
+- Web framework: Express
+- Render engine: Pug
+- Database: Postgres (w/ knex)
+- Authentication: Passport
 
 # Usage
 
 1. Clone the repo
-2. Edit and rename .env.sample
-3. Edit and rename /server/db/knexfile.sample.js
-4. Run Knex Migrations (located at /server/db/migrations/)
-4.1 (Optional) Add seed data (located at /server/db/seeds/)
+2. Edit .env.sample and rename to .env
+3. Edit /app/db/knexfile.sample.js and rename to knexfile.js
+4. Run Knex Migrations (located at /app/db/migrations/)
+4.1 (Optional) Add seed data (located at /app/db/seeds/)
 5. Run "npm start"
-
-# Note
-
-This is a work-in-progress. Please don't use this in production. Feel free to submit PRs and fork the project.
 
 MIT Licence

@@ -1,0 +1,53 @@
+extends layout/base
+include mixins/index
+include partials/sidebar
+
+block content
+    +sidebar(1)
+    #page-content-wrapper
+        .main-container
+            .row
+                .col-md-11.py-3.my-2.mx-auto.text-center.cardbox
+                    span
+                        - const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                        h6.d-inline-block.px-2.text-right.month-nav
+                            a(href='/calendar/' + monthNavigation.previousYear + '/' + monthNavigation.previousMonth)= '« ' + monthsOfYear[monthNavigation.previousMonth - 1]
+                        h4.d-inline-block.px-2= monthNavigation.month
+                        h6.d-inline-block.px-2.text-left.month-nav
+                            a(href='/calendar/' + monthNavigation.nextYear + '/' + monthNavigation.nextMonth)= monthsOfYear[monthNavigation.nextMonth - 1] + ' »'
+            .row
+                .col-md-11.py-3.my-2.mx-auto.cardbox
+                    include partials/bug.pug
+                    table(cellspacing=0, cellpadding=0).calendar__table
+                        thead
+                            tr
+                                th.calendar__weekday.center Mon
+                                th.calendar__weekday.center Tue
+                                th.calendar__weekday.center Wed
+                                th.calendar__weekday.center Thu
+                                th.calendar__weekday.center Fri
+                                th.calendar__weekday.center Sat
+                                th.calendar__weekday.center Sun
+                        tbody  
+                            - const numRows = calendar.calendarData.length / 7;
+                            - for(let i = 0; i < numRows; i++) {
+                                tr
+                                    - for(let j = 0; j < 7; j++) {
+                                        - let k = i * 7;
+                                            +styleDaysFromOtherMonths(k, j)
+                                                .calendar__date
+                                                    strong= calendar.calendarData[k + j].day
+                                                .calendar__cell
+                                                    - if (calendar.calendarData[k + j].episodes)
+                                                        ul
+                                                            each episode in calendar.calendarData[k + j].episodes
+                                                                li
+                                                                    .calendar__cell--checkbox
+                                                                        input(type='checkbox', id='temporary')
+                                                                        label(for='temporary')
+                                                                    a(href='/tvshows/' + episode.thetvdb).calendar__cell--tvshow= episode.name
+                                                                    span.calendar__cell--episode
+                                                                        br
+                                                                        = episode.title + ' (S' + episode.season + 'E' + episode.epnum + ')'
+                                    - }
+                            - }        
