@@ -1,0 +1,24 @@
+mixin sidebar(activeIndex)
+    #sidebar-wrapper
+        nav.d-xs-none.mmh-100
+            a.logo(href='/')
+                i(aria-hidden='true').fa.fa-television.fa-5x.d-flex.justify-content-center.my-3
+            ul.nav.nav-pills.flex-column
+                li.nav-item.my-2(class={'active': (activeIndex===0)})
+                    form
+                        .form-group
+                            .input-group
+                                span.input-group-addon
+                                    i(aria-hidden='true').fa.fa-search
+                                input(type='text', placeholder='Search')#tvshow-search.form-control.typeahead
+                li.nav-item(class={'active': (activeIndex===1)})
+                    a.nav-link(href='/calendar')
+                        i(aria-hidden='true').fa.fa-calendar.fa-lg.mr-2
+                        span Calendar
+                li.nav-item(class={'active': (activeIndex===2)})
+                    a.nav-link(href='/watchlist')
+                        i(aria-hidden='true').fa.fa-list.fa-lg.mr-2
+                        span Watchlist
+            .beta
+                span BETA
+                button(type='button', data-toggle='modal', data-target='#bug-modal').btn.btn-secondary.btn-block Report a bug

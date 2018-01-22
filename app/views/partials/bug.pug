@@ -1,0 +1,14 @@
+#bug-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='bug-modal-label', aria-hidden='true')
+    .modal-dialog(role='document')
+        form#bug-form.modal-content
+            .modal-header
+                h3#bug-modal-label.modal-title Submit a bug
+                button(type='button', data-dismiss='modal', aria-label='Close').close
+                    span(aria-hidden='true') &times;
+            .modal-body
+                .form-group
+                    label(for='bug-description').form-control-label Description
+                    textarea(rows='7', placeholder='Enter the bug description here...')#bug-description.form-control
+            .modal-footer
+                button(type='button', data-dismiss='modal').btn.btn-secondary Close
+                button(type='submit')#bug-submit.btn.btn-primary Submit

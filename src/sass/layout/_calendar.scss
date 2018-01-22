@@ -15,7 +15,7 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
         }
     }
     &__weekday {
-        background-color: $gray;
+        background-color: $deeppurple;
         color: $white;
         padding: 7px 12px;
     }
@@ -42,9 +42,15 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
         &--checkbox {
             display: inline-block;
         }
+        &--tvshow {
+            padding-left: 0.3em;
+        }
+        &--episode {
+            font-size: 0.8em;
+        }
     }
 }
 
 .month-nav {
-    width: 44%;
+    width: 40%;
 }

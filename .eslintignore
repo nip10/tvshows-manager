@@ -1,2 +1,3 @@
-server/db/migrations/*
-dist/js/*
+app/db/migrations
+dist
+.vscode

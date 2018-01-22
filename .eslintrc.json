@@ -1,24 +1,31 @@
 {
-  "extends": "airbnb-base",
-  "rules": {
-    "linebreak-style": ["error", "windows"],
-    "indent": ["error", 4]
-  },
-  "overrides": [{
-    "files": ["src/js/app.js"],
-    "parserOptions": {
-      "sourceType": "script"
+    "extends": ["airbnb-base", "plugin:jest/recommended"],
+    "rules": {
+        "linebreak-style": ["error", "windows"],
+        "indent": ["error", 4]
     },
-    "env": {
-      "browser": true,
-      "jquery": true
-    },
-    "globals": {
-      "toastr": true,
-      "Bloodhound": true,
-      "Cookies": true,
-      "validator": true,
-      "grecaptcha": true
-    }
+    "plugins": ["jest"],
+    "overrides": [{
+        "files": ["src/js/app.js"],
+        "parserOptions": {
+            "sourceType": "script"
+        },
+        "env": {
+            "browser": true,
+            "jquery": true
+        },
+        "globals": {
+            "toastr": true,
+            "Bloodhound": true,
+            "Cookies": true,
+            "validator": true,
+            "grecaptcha": true
+        }
+    }, 
+    {
+        "files": ["*.test.js"],
+        "env": {
+            "jest/globals": true
+        }
   }]
 }
