@@ -94,7 +94,7 @@ const authController = {
         // the redirect is done in the callback to make sure
         // the session is destroyed before the redirect
         req.session.destroy((err) => {
-            console.log(err);
+            if (!_.isNil(err)) console.log(err);
             return res.redirect('/');
         });
     },
@@ -106,11 +106,13 @@ const authController = {
      * @returns {undefined}
      */
     async resetPasswordRequest(req, res) {
-        const { email } = req.body;
-        const normalizedEmail = validator.normalizeEmail(email);
-        if (!normalizedEmail || validator.isEmail(normalizedEmail)) {
+        const { email, emailDuplicate } = req.body;
+        if (!email || validator.isEmail(email)) {
             return res.status(422).json({ error: 'Invalid email address.' });
+        } else if (email !== emailDuplicate) {
+            return res.status(422).json({ error: 'Email addresses don\t match.' });
         }
+        const normalizedEmail = validator.normalizeEmail(email);
         try {
             const userExists = await User.checkIfUserExistsByEmail(normalizedEmail);
             if (!userExists) {
@@ -159,7 +161,6 @@ const authController = {
                 });
             }
             return res.render('index', {
-                title: 'Tv-shows Manager',
                 resetPassword: true,
             });
         } catch (e) {
@@ -177,7 +178,7 @@ const authController = {
      * @returns {undefined}
      */
     async resetPassword(req, res) {
-        const { password } = req.body;
+        const { password, passwordDuplicate } = req.body;
         const { email, token } = req.params;
         const normalizedEmail = validator.normalizeEmail(email);
         if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
@@ -188,6 +189,9 @@ const authController = {
         }
         if (!password || password.length < 8 || password.length > 30) {
             return res.status(422).json({ error: 'Password must be 8-30 chars.' });
+        }
+        if (password !== passwordDuplicate) {
+            return res.status(422).json({ error: 'Passwords don\t match.' });
         }
         try {
             const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
@@ -203,6 +207,14 @@ const authController = {
             return res.status(500).json({ error: 'Oooops. Something went wrong.' });
         }
     },
+    /**
+     * Login
+     *
+     * @param {Object} req - Express request object
+     * @param {Object} res - Express response object
+     * @param {Function} next - Express next middleware function
+     * @returns {undefined}
+     */
     login(req, res, next) {
         if (req.isAuthenticated()) {
             return res.status(400).json({ error: 'You are already logged in.' });
@@ -219,10 +231,18 @@ const authController = {
             }
             return req.logIn(user, (err2) => {
                 if (err) return next(err2);
-                return res.redirect(req.session.returnTo || '/calendar');
+                return res.sendStatus(200);
             });
         })(req, res, next);
     },
+    /**
+     * Signup
+     *
+     * @param {Object} req - Express request object
+     * @param {Object} res - Express response object
+     * @param {Function} next - Express next middleware function
+     * @returns {undefined}
+     */
     async signup(req, res, next) {
         if (req.isAuthenticated()) {
             return res.status(400).json({ error: 'You are already logged in.' });
@@ -237,7 +257,7 @@ const authController = {
             if (user) {
                 return req.logIn(user, (err) => {
                     if (err) return next(err);
-                    return req.session.save(() => res.redirect('/calendar'));
+                    return req.session.save(() => res.sendStatus(200));
                 });
             }
             return res.status(422).json({ error: 'Email already registred.' });
