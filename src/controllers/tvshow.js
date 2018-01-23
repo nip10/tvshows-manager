@@ -35,108 +35,13 @@ const tvshowsController = {
         }
     },
     /**
-     * Get tvshow information from the thetvdb api
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    async getTvshowDataFromApi(req, res, next) {
-        if (res.locals.isTvshowOnDb && res.locals.tvshowData) {
-            return next();
-        }
-        const { tvshowId } = req.params;
-        try {
-            const latestSeason = await Tvshow.getNumSeasonsFromApi(tvshowId);
-            const tvshowData = await Promise.all([
-                Tvshow.getInfoFromApi(tvshowId),
-                Tvshow.getArtworkFromApi(tvshowId, 'poster'),
-                Tvshow.getEpisodesFromSeasonFromApi(tvshowId, latestSeason),
-            ]);
-            const tvshowInfo = Object.assign(
-                {},
-                tvshowData[0],
-                { images: [tvshowData[0].images[0], tvshowData[1]] },
-            );
-            const [,, episodes] = tvshowData;
-            const tvshowDataNew = Object.assign(
-                {},
-                tvshowInfo,
-                { episodes },
-                { latestSeason },
-            );
-            // Add tvshow to the db in the background
-            Tvshow.addTvshowToDb(tvshowInfo).catch(e => console.log(e));
-            res.locals.tvshowData = tvshowDataNew;
-            return next();
-        } catch (e) {
-            console.log(e);
-            return next();
-            // TODO: this should break here because there's no info on the show
-        }
-    },
-    /**
-     * Get tvshow information from the db
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    async getTvshowDataFromDb(req, res, next) {
-        if (!res.locals.isTvshowOnDb) {
-            return next();
-        }
-        const { tvshowId } = req.params;
-        const latestSeason = await Tvshow.getLatestSeasonFromDb(tvshowId);
-        const tvshowData = await Promise.all([
-            Tvshow.getInfoFromDb(tvshowId),
-            Tvshow.getEpisodesFromSeasonFromDb(tvshowId, latestSeason),
-        ]);
-        const tvshowDataObj = Object.assign(
-            {},
-            tvshowData[0],
-            { episodes: tvshowData[1] },
-            { latestSeason },
-        );
-        res.locals.tvshowData = tvshowDataObj;
-        return next();
-    },
-    /**
-     * Render tvshow view
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @returns {undefined}
-     */
-    async renderTvshowView(req, res) {
-        const { tvshowData } = res.locals;
-        const userId = req.user;
-        res.render('tvshow', {
-            title: 'Tv-shows Manager',
-            name: tvshowData.name,
-            banner: `https://www.thetvdb.com/banners/${tvshowData.images[0]}`,
-            poster: `https://www.thetvdb.com/banners/${tvshowData.images[1]}`,
-            overview: tvshowData.overview,
-            premiered: tvshowData.premiered,
-            network: tvshowData.network,
-            status: tvshowData.status,
-            airdate: tvshowData.airdate,
-            season: tvshowData.latestSeason,
-            episodes: tvshowData.episodes,
-            isUserFollowingTvshow: res.locals.isUserFollowingTvshow,
-            isAuthenticated: !!userId,
-        });
-    },
-    /**
      * Get episodes from the db
      *
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
      * @returns {undefined}
      */
-    async getEpisodesFromSeasonFromDb(req, res) {
+    async getEpisodes(req, res) {
         const { tvshowId } = req.params;
         const { season } = req.query;
         try {
@@ -148,49 +53,115 @@ const tvshowsController = {
         }
     },
     /**
-     * Check if a tvshow is on the db
+     * Get tvshow data (and render)
+     *
+     * 1. Get tvshow data from the db
+     * If tvshow data is NOT on the db,
+     * 2. Get tvshow data from the api
+     * 3. Check if user is following the tvshow (if logged in)
+     * 4. Render tvshow view
+     *
+     * tvshowdata is the tvshow info + episodes
      *
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
      * @param {Function} next - Express next middleware function
      * @returns {undefined}
      */
-    async isTvshowOnDb(req, res, next) {
+    async getData(req, res, next) {
         const { tvshowId } = req.params;
+        // Check if the tvshow is on the db
+        let isTvshowOnDb;
         try {
-            const isTvshowOnDb = await Tvshow.isOnDb(tvshowId);
-            res.locals.isTvshowOnDb = isTvshowOnDb;
-            return next();
+            isTvshowOnDb = await Tvshow.isOnDb(tvshowId);
         } catch (e) {
             console.log(e);
-            // if the db is unreachable, continue to the next middleware to fetch
-            // the data from the api
-            return next();
+            isTvshowOnDb = false;
         }
-    },
-    /**
-     * Check if a user is following a tvshow
-     *
-     * @param {Object} req - Express request object
-     * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
-     * @returns {undefined}
-     */
-    async isUserFollowingTvshow(req, res, next) {
+        let tvshowData;
+        if (isTvshowOnDb) {
+            // Get tvshow data from the db
+            try {
+                const latestSeason = await Tvshow.getLatestSeasonFromDb(tvshowId);
+                const getTvshowData = await Promise.all([
+                    Tvshow.getInfoFromDb(tvshowId),
+                    Tvshow.getEpisodesFromSeasonFromDb(tvshowId, latestSeason),
+                ]);
+                tvshowData = Object.assign(
+                    {},
+                    getTvshowData[0],
+                    { episodes: getTvshowData[1] },
+                    { latestSeason },
+                );
+            } catch (e) {
+                console.log(e);
+            }
+        } else {
+            // Get tvshow data from the api
+            try {
+                // Get latest season (in order to display the last season episodes)
+                const latestSeason = await Tvshow.getLatestSeasonFromApi(tvshowId);
+                // Get tvshow info, artwork and episodes
+                const getTvshowData = await Promise.all([
+                    Tvshow.getInfoFromApi(tvshowId),
+                    Tvshow.getArtworkFromApi(tvshowId, 'poster'),
+                    Tvshow.getEpisodesFromSeasonFromApi(tvshowId, latestSeason),
+                ]);
+                // Get tvshow imdb rating
+                const imdbRating = await Tvshow.getImdbRating(getTvshowData[0].imdb);
+                // Merge tvshow info and artwork
+                const tvshowInfo = Object.assign(
+                    {},
+                    getTvshowData[0],
+                    { images: [getTvshowData[0].images[0], getTvshowData[1]] },
+                    { imdbRating },
+                );
+                // Merge episodes
+                const [,, episodes] = getTvshowData;
+                tvshowData = Object.assign(
+                    {},
+                    tvshowInfo,
+                    { episodes },
+                    { latestSeason },
+                );
+                // Add tvshow info to the db (in the background)
+                Tvshow.addTvshowToDb(tvshowInfo).catch(e => console.log(e));
+            } catch (e) {
+                console.log(e);
+                // TODO: this should break here because there's no info on the show
+                // next(err) should probably work
+            }
+        }
         const userId = _.get(req, 'user', false);
+        // Check if user is following the tvshow
+        let isUserFollowingTvshow;
         if (!userId) {
-            res.locals.isUserFollowingTvshow = false;
-            return next();
+            isUserFollowingTvshow = false;
+        } else {
+            try {
+                isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
+            } catch (e) {
+                console.log(e);
+                isUserFollowingTvshow = false;
+            }
         }
-        const { tvshowId } = req.params;
-        try {
-            const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
-            res.locals.isUserFollowingTvshow = isUserFollowingTvshow;
-            return next();
-        } catch (e) {
-            res.locals.isUserFollowingTvshow = false;
-            return next();
-        }
+        // Render tvshow view
+        return res.render('tvshow', {
+            name: tvshowData.name,
+            banner: `https://www.thetvdb.com/banners/${tvshowData.images[0]}`,
+            poster: `https://www.thetvdb.com/banners/${tvshowData.images[1]}`,
+            overview: tvshowData.overview,
+            premiered: tvshowData.premiered,
+            network: tvshowData.network,
+            status: tvshowData.status,
+            airdate: tvshowData.airdate,
+            genre: tvshowData.genre,
+            imdbRating: tvshowData.imdbRating,
+            season: tvshowData.latestSeason,
+            episodes: tvshowData.episodes,
+            isUserFollowingTvshow,
+            isAuthenticated: !!userId,
+        });
     },
 };
 
