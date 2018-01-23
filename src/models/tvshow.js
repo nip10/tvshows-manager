@@ -6,13 +6,14 @@ import path from 'path';
 import cp from 'child_process';
 import knex from '../db/connection';
 
-const { THETVDB_API_KEY, NODE_ENV } = process.env;
+const { THETVDB_API_KEY, OMDB_API_KEY, NODE_ENV } = process.env;
 const THETVDB_API_AUTH_LOGIN = 'https://api.thetvdb.com/login';
 const THETVDB_API_SEARCH = 'https://api.thetvdb.com/search/series';
-const THETVDB_API_INFO = tvshowId => `https://api.thetvdb.com/series/${tvshowId}`;
+const THETVDB_API_INFO = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/filter`;
 const THETVDB_API_IMAGES = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/images/query`;
 const THETVDB_API_EPISODES_QUERY = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/episodes/query`;
 const THETVDB_API_SEASON = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/episodes/summary`;
+const OMDB_API_IMDB_RATING = imdbId => `http://www.omdbapi.com/?i=${imdbId}&apikey=${OMDB_API_KEY}`;
 
 const Tvshow = {
     /**
@@ -118,7 +119,7 @@ const Tvshow = {
      * Get information about a tvshow from the external api
      *
      * @param {number} tvshowId - tvshow id
-     * @returns {{name: string, overview: string, status: string, imdb: string, thetvdb: number, genre: string[], premiered: string, network: string, airdate: string, tvrating: string, images: string[]}} Information about the show
+     * @returns {{name: string, overview: string, status: string, imdb: string, thetvdb: number, genre: string[], premiered: string, imdbRating: number, network: string, airdate: string, tvrating: string, images: string[]}} Information about the show
      */
     async getInfoFromApi(tvshowId) {
         const requestOptions = {
@@ -127,6 +128,9 @@ const Tvshow = {
             headers: {
                 'Accept-Language': 'en',
                 'Authorization': `Bearer ${this.apiToken}`,
+            },
+            qs: {
+                keys: 'seriesName,overview,status,imdbId,id,genre,firstAired,network,airsDayOfWeek,airsTime,rating,banner',
             },
             json: true,
         };
@@ -137,6 +141,7 @@ const Tvshow = {
                 overview: data.overview,
                 status: (data.status === 'Continuing') ? 'Running' : data.status,
                 imdb: data.imdbId,
+                imdbRating: data.imdbRating,
                 thetvdb: data.id,
                 genre: data.genre,
                 premiered: moment(data.firstAired).format('DD-MM-YYYY'),
@@ -154,23 +159,24 @@ const Tvshow = {
      * Get tvshow information from the database
      *
      * @param {number} tvshowId - tvshow id
-     * @returns {{thetvdb: number, name: string, overview: string, premiered: string, network: string, status: string, airdate: string, images: string[], imdb: string, genre: string[], tvrating: string}} Tvshow information
+     * @returns {{thetvdb: number, name: string, overview: string, premiered: string, network: string, imdbRating: number, status: string, airdate: string, images: string[], imdb: string, genre: string[], tvrating: string}} Tvshow information
      */
     async getInfoFromDb(tvshowId) {
         try {
-            const getTvshowInfoFromDb = await knex('tvshows').select().where('thetvdb', tvshowId);
+            const getTvshowInfoFromDb = await knex('tvshows').select().where('thetvdb', tvshowId).first();
             return {
                 thetvdb: Number.parseInt(tvshowId, 10),
-                name: getTvshowInfoFromDb[0].name,
-                overview: getTvshowInfoFromDb[0].overview,
-                premiered: getTvshowInfoFromDb[0].premiered,
-                network: getTvshowInfoFromDb[0].network,
-                status: getTvshowInfoFromDb[0].status,
-                airdate: getTvshowInfoFromDb[0].airdate,
-                images: [...getTvshowInfoFromDb[0].images],
-                imdb: getTvshowInfoFromDb[0].imdb,
-                genre: [...getTvshowInfoFromDb[0].genre],
-                tvrating: getTvshowInfoFromDb[0].tvrating,
+                name: getTvshowInfoFromDb.name,
+                overview: getTvshowInfoFromDb.overview,
+                premiered: getTvshowInfoFromDb.premiered,
+                network: getTvshowInfoFromDb.network,
+                status: getTvshowInfoFromDb.status,
+                airdate: getTvshowInfoFromDb.airdate,
+                images: [...getTvshowInfoFromDb.images],
+                imdb: getTvshowInfoFromDb.imdb,
+                imdbRating: getTvshowInfoFromDb.imdbRating,
+                genre: [...getTvshowInfoFromDb.genre],
+                tvrating: getTvshowInfoFromDb.tvrating,
             };
         } catch (e) {
             console.log(e);
@@ -215,7 +221,7 @@ const Tvshow = {
      * @param {number} tvshowId - tvshow id
      * @returns {number} - number of seasons
      */
-    async getNumSeasonsFromApi(tvshowId) {
+    async getLatestSeasonFromApi(tvshowId) {
         const requestOptions = {
             method: 'GET',
             uri: THETVDB_API_SEASON(tvshowId),
@@ -316,10 +322,10 @@ const Tvshow = {
      * @returns {boolean} - tvshow is on the database
      */
     async isOnDb(tvshowId) {
-        const innerQuery = knex.select(1).from('tvshows').where('thetvdb', tvshowId).limit(1);
+        const innerQuery = knex.select(1).from('tvshows').where('thetvdb', tvshowId).limit(1).first();
         try {
             const isShowOnDb = await knex.raw(innerQuery).wrap('select exists (', ')');
-            return isShowOnDb.rows[0].exists;
+            return isShowOnDb.rows.exists;
         } catch (e) {
             console.log(e);
             return false;
@@ -393,6 +399,20 @@ const Tvshow = {
             }
         } catch (e) {
             console.log(`Error fetching episodes. Error details: ${e}`);
+        }
+    },
+    async getImdbRating(imdbId) {
+        const requestOptions = {
+            method: 'GET',
+            uri: OMDB_API_IMDB_RATING(imdbId),
+            json: true,
+        };
+        try {
+            const { imdbRating } = await rp(requestOptions);
+            return imdbRating;
+        } catch (e) {
+            console.log(e);
+            return null;
         }
     },
 };
