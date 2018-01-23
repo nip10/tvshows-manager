@@ -45,18 +45,19 @@ app.use('/auth', auth);
 app.use('/tvshows', tvshows);
 app.use('/calendar', calendar);
 
+// Handle 404
 app.use((req, res, next) => {
     const err = new Error('Not Found');
     err.status = 404;
-    next(err);
+    res.render('404');
 });
 
-app.use((err, req, res) => {
+// Handle server errors
+app.use((err, req, res, next) => {
+    if (res.headersSent) return next(err);
     console.log(err);
-    res.status(err.status || 500);
     const dev = (process.env.NODE_ENV === 'development');
-    res.render('error', {
-        message: dev ? err.message : null,
+    return res.render('error', {
         error: dev ? err : null,
     });
 });
