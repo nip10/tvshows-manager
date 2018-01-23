@@ -1,7 +1,7 @@
 extends layout/base
 
-block content
-    include partials/sidebar.pug
+block content    
+    include partials/sidebar
     #page-content-wrapper
         .main-container
             .row
@@ -19,13 +19,16 @@ block content
                         include partials/bug.pug
                         if !isAuthenticated
                             .alert.alert-warning.text-center.w-100(role='alert')
-                                span You need to be logged in to follow a tvshow and mark episodes as watched.
+                                span 
+                                    | You need to 
+                                    a(href='#login-modal', data-toggle='modal') login 
+                                    | in order to follow a tvshow and mark episodes as watched.
                         .col-md-6.mx-auto
                             .row.border.bg-text
                                 p.overview= overview
                         .col-md-5.mx-auto
                             .row.bg-text.border.h-100
-                                .col-md-6.d-flex.align-items-center
+                                .col-md-4.d-flex.align-items-center
                                     ul.list-unstyled.mx-auto
                                         li.py-2
                                             span.d-block.text-center 
@@ -35,7 +38,7 @@ block content
                                             span.d-block.text-center 
                                                 strong Premiered
                                             span.d-block.text-center= premiered
-                                .col-md-6.d-flex.align-items-center
+                                .col-md-4.d-flex.align-items-center
                                     ul.list-unstyled.mx-auto
                                         li.py-2
                                             span.d-block.text-center 
@@ -45,6 +48,18 @@ block content
                                             span.d-block.text-center
                                                 strong Airdate
                                             span.d-block.text-center= airdate
+                                .col-md-4.d-flex.align-items-center
+                                    ul.list-unstyled.mx-auto
+                                        li.py-2
+                                            span.d-block.text-center 
+                                                strong Imdb
+                                            span.d-block.text-center
+                                                a(href='')= imdbRating
+                                        li.py-2
+                                            span.d-block.text-center
+                                                strong Genre
+                                            span.d-block.text-center= genre
+
                     .row.mb-3
                         .col-md-12
                             h3.d-inline-block
@@ -72,3 +87,21 @@ block content
                                                 td.airdate= episode.airdate
                                                 td
                                                     i(aria-hidden='true').fa.fa-eye
+                    #login-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='login-modal-label', aria-hidden='true')
+                        .modal-dialog(role='document')
+                            form#login-form.modal-content
+                                .modal-header
+                                    h3#login-modal-label.modal-title Login
+                                    button(type='button', data-dismiss='modal', aria-label='Close').close
+                                        span(aria-hidden='true') &times;
+                                .modal-body
+                                        .form-group
+                                            label(for='login-email').form-control-label Email address:
+                                            input(type='email', placeholder='Email address')#login-email.form-control
+                                        .form-group
+                                            label(for='login-password').form-control-label Password:
+                                            input(type='password', placeholder='Password')#login-password.form-control
+                                            small#login-password-forgot.form-text.text-muted Forgot password ?
+                                .modal-footer
+                                    button(type='button', data-dismiss='modal').btn.btn-secondary Close
+                                    button(type='submit')#login-submit.btn.btn-primary Submit

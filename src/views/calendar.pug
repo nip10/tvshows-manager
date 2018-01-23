@@ -1,9 +1,8 @@
 extends layout/base
 include mixins/index
-include partials/sidebar
 
 block content
-    +sidebar(1)
+    include partials/sidebar
     #page-content-wrapper
         .main-container
             .row

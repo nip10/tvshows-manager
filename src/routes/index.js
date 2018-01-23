@@ -5,9 +5,7 @@ import knex from '../db/connection';
 const router = express.Router();
 
 router.get('/', (req, res) => {
-    res.render('index', {
-        title: 'Tv-shows Manager',
-    });
+    res.render('index');
 });
 
 router.post('/bug', async (req, res) => {
@@ -15,7 +13,7 @@ router.post('/bug', async (req, res) => {
     const { description } = req.body;
     const sanitize = new RegExp(/^[\w\-\s.,;:]+$/);
     if (!description || !sanitize.test(description)) {
-        return res.status(400).json({ error: 'Please fill in the bug description. Only alphanumerical characters!' });
+        return res.status(400).json({ error: 'Please fill in the bug description. Only alphanumerical characters are allowed.' });
     }
     try {
         await knex('bugs').insert({

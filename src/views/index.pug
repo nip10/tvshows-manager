@@ -1,8 +1,7 @@
 extends layout/base
-include partials/sidebar
 
 block content
-    +sidebar(0)
+    include partials/sidebar
     #page-content-wrapper
         .main-container
             .row
@@ -13,12 +12,12 @@ block content
                             p.text-center Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, porro eos esse officia praesentium quaerat.
                         .col-md-4.center-vh
                             include partials/bug.pug
-                            button(type='button', data-toggle='modal', data-target='#signup-modal').btn.btn-primary.btn-lg.btn-block.mb-1 signup
+                            button(type='button', data-toggle='modal', data-target='#signup-modal').btn.btn-primary.btn-lg.btn-block.mb-1 Signup
                             #signup-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='signup-modal-label', aria-hidden='true')
                                 .modal-dialog(role='document')
                                     form#signup-form.modal-content
                                         .modal-header
-                                            h3#signup-modal-label.modal-title signup
+                                            h3#signup-modal-label.modal-title Signup
                                             button(type='button', data-dismiss='modal', aria-label='Close').close
                                                 span(aria-hidden='true') &times;
                                         .modal-body
@@ -38,7 +37,7 @@ block content
                                         .modal-footer
                                             button(type='button', data-dismiss='modal').btn.btn-secondary Close
                                             button(type='submit')#signup-submit.btn.btn-primary Submit
-                            button(type='button', data-toggle='modal' data-target='#login-modal').btn.btn-secondary.btn-block Login
+                            button(type='button', data-toggle='modal', data-target='#login-modal').btn.btn-secondary.btn-block Login
                             #login-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='login-modal-label', aria-hidden='true')
                                 .modal-dialog(role='document')
                                     form#login-form.modal-content
