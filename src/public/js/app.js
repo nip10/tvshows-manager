@@ -41,25 +41,30 @@ $(() => {
         const email = $('#login-email').val();
         const password = $('#login-password').val();
         // validate email
-        if (!validator.isEmail(email)) {
+        if (!email || !validator.isEmail(email)) {
             return $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email ! </div>');
         }
         // validate password length (8-30 chars)
-        if (password.length < 8 || password.length > 30) {
+        if (!password || password.length < 8 || password.length > 30) {
             return $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>');
         }
-        $.post('/auth/login', { email, password })
-            .done((data) => {
-                if (data && data.message) window.location.replace(data.message);
+        const normalizedEmail = validator.normalizeEmail(email);
+        $.post('/auth/login', { email: normalizedEmail, password })
+            .done((data, textStatus, jqXHR) => {
+                if (jqXHR.status === 200) {
+                    window.location.replace('/calendar');
+                } else {
+                    $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
+                }
             })
-            .fail((xhr) => {
-                const resStatusCode = xhr.status;
+            .fail((jqXHR) => {
+                const resStatusCode = jqXHR.status;
                 if (resStatusCode === 401) {
                     $('#login-email').addClass('is-invalid');
                     $('#login-password').addClass('is-invalid');
                     $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid credentials ! </div>');
                 } else if (resStatusCode === 422) {
-                    $('#login-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
+                    $('#login-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
                 } else {
                     $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
                 }
@@ -99,22 +104,26 @@ $(() => {
         } else if (email !== emailDuplicate) {
             return $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Email adresses don\'t match ! </div>');
         }
-        $.post(`/auth/reset/${token}`, { email, emailDuplicate, recaptcha })
-            .done((data) => {
-                if (data && data.message) {
-                    return $('#forgotpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
+        const normalizedEmail = validator.normalizeEmail(email);
+        const normalizedEmailDuplicate = validator.normalizeEmail(emailDuplicate);
+        $.post(`/auth/reset/${token}`, { email: normalizedEmail, emailDuplicate: normalizedEmailDuplicate, recaptcha })
+            .done((data, textStatus, jqXHR) => {
+                if (jqXHR.status === 200) {
+                    $('#forgotpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
+                } else {
+                    $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
                 }
-                return $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
             })
-            .fail((xhr) => {
-                const resStatusCode = xhr.status;
+            .fail((jqXHR) => {
+                const resStatusCode = jqXHR.status;
+                grecaptcha.reset();
                 if (resStatusCode === 400) {
                     $('#forgotpw-email').addClass('is-invalid');
                     $('#forgotpw-email-d').addClass('is-invalid');
-                    return $('#forgotpw-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
+                    $('#forgotpw-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
+                } else {
+                    $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
                 }
-                grecaptcha.reset();
-                return $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
             });
         return false;
     });
@@ -148,21 +157,23 @@ $(() => {
         if (!email || !validator.isEmail(email)) {
             return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>');
         }
-        $.post(`/auth/reset/${email}/${token}`, { password, passwordDuplicate })
-            .done((data) => {
-                if (data && data.message) {
-                    return $('#resetpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
+        const normalizedEmail = validator.normalizedEmail(email);
+        $.post(`/auth/reset/${normalizedEmail}/${token}`, { password, passwordDuplicate })
+            .done((data, textStatus, jqXHR) => {
+                if (jqXHR.status === 200) {
+                    $('#resetpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
+                } else {
+                    $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
                 }
-                return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
             })
-            .fail((xhr) => {
-                const resStatusCode = xhr.status;
+            .fail((jqXHR) => {
+                const resStatusCode = jqXHR.status;
                 if (resStatusCode === 400) {
                     $('#resetpw-password').addClass('is-invalid');
                     $('#resetpw-password-d').addClass('is-invalid');
-                    return $('#resetpw-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
+                    $('#resetpw-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
                 }
-                return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
+                $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
             });
         return false;
     });
@@ -181,38 +192,44 @@ $(() => {
         const password = $('#signup-password').val();
         const passwordDuplicate = $('#signup-password-d').val();
         const recaptcha = $('#g-recaptcha-response').val();
+        console.log('recaptcha response: ', recaptcha);
         // validate recaptcha
         if (!recaptcha) {
             return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: You need to complete the captcha ! </div>');
         }
         // validate email
-        if (!validator.isEmail(email)) {
+        if (!email || !validator.isEmail(email)) {
             return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>');
         }
         // validate password length (8-30 chars)
-        if (password.length < 8 || password.length > 30) {
+        if (!password || !passwordDuplicate || password.length < 8 || password.length > 30) {
             return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>');
         }
         // validate passwords
         if (password !== passwordDuplicate) {
             return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>');            
         }
-        $.post('/auth/signup', { email, password, passwordDuplicate, recaptcha })
-            .done((data) => {
-                if (data && data.message) window.location.replace(data.message);
-            })
-            .fail((xhr) => {
-                const resStatusCode = xhr.status;
-                if (resStatusCode === 401) {
-                    $('#signup-email').addClass('is-invalid');
-                    $('#signup-password').addClass('is-invalid');
-                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
-                } else if (resStatusCode === 422) {
-                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${xhr.responseJSON.error} </div>`);
+        const normalizedEmail = validator.normalizeEmail(email);
+        $.post('/auth/signup', { email: normalizedEmail, password, passwordDuplicate, recaptcha })
+            .done((data, textStatus, jqXHR) => {
+                if (jqXHR.status === 200) {
+                    window.location.replace('/calendar');
                 } else {
                     $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
                 }
+            })
+            .fail((jqXHR) => {
+                const resStatusCode = jqXHR.status;
                 grecaptcha.reset();
+                if (resStatusCode === 401) {
+                    $('#signup-email').addClass('is-invalid');
+                    $('#signup-password').addClass('is-invalid');
+                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
+                } else if (resStatusCode === 422) {
+                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
+                } else {
+                    $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
+                }
             });
         return false;
     });
@@ -256,7 +273,7 @@ $(() => {
             .done((data) => {
                 renderEpisodesTable(data.episodes);
             })
-            .fail((xhr) => {
+            .fail(() => {
                 $('#episodes-table').append(`<p> Error requesting season ${season} episodes. Please try again later. </p>`);
             });
         return false;
@@ -274,9 +291,9 @@ $(() => {
                         $('#userTvShowState').removeClass('btn-primary').addClass('btn-secondary').html('Remove from my shows');
                     }
                 })
-                .fail((xhr) => {
-                    if (xhr.status === 401 || xhr.status === 403) {
-                        toastr.error(xhr.responseJSON.error);
+                .fail((jqXHR) => {
+                    if (jqXHR.status === 401 || jqXHR.status === 403) {
+                        toastr.error(jqXHR.responseJSON.error);
                     } else {
                         toastr.error('Server error. Please try again later.');
                     }
@@ -292,9 +309,9 @@ $(() => {
                     $('#userTvShowState').removeClass('btn-secondary').addClass('btn-primary').html('Add to my shows');
                 }
             })
-            .fail((xhr) => {
-                if (xhr.status === 401 || xhr.status === 403) {
-                    toastr.error(xhr.responseJSON.error);
+            .fail((jqXHR) => {
+                if (jqXHR.status === 401 || jqXHR.status === 403) {
+                    toastr.error(jqXHR.responseJSON.error);
                 } else {
                     toastr.error('Server error. Please try again later.');
                 }
