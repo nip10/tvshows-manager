@@ -49,10 +49,10 @@ const User = {
      * @returns {boolean} - if the email already exists
      */
     async checkIfUserExistsByEmail(email) {
-        const inner = knex.select(1).from('users').where('email', email).limit(1);
+        const inner = knex.select(1).from('users').where('email', email).limit(1).first();
         try {
             const emailExistsOnDb = await knex.raw(inner).wrap('select exists (', ')');
-            return emailExistsOnDb.rows[0].exists;
+            return emailExistsOnDb.rows.exists;
         } catch (e) {
             console.log(e);
             return false;
@@ -89,10 +89,11 @@ const User = {
             .from('users')
             .where({ email, resetpwtoken: token })
             .whereRaw("resetpwexp > current_timestamp - interval '15 minutes'")
-            .limit(1);
+            .limit(1)
+            .first();
         try {
             const isTokenValid = await knex.raw(inner).wrap('select exists (', ')');
-            return isTokenValid.rows[0].exists;
+            return isTokenValid.rows.exists;
         } catch (e) {
             console.log(e);
             return false;
@@ -165,10 +166,10 @@ const User = {
      * @returns {boolean} - the user is following the tvshow
      */
     async isFollowingTvshow(userId, tvshowId) {
-        const innerQuery = knex.select(1).from('usertv').where({ user_id: userId, tvshow_id: tvshowId }).limit(1);
+        const innerQuery = knex.select(1).from('usertv').where({ user_id: userId, tvshow_id: tvshowId }).limit(1).first();
         try {
             const isFollowingTvshow = await knex.raw(innerQuery).wrap('select exists (', ')');
-            return isFollowingTvshow.rows[0].exists;
+            return isFollowingTvshow.rows.exists;
         } catch (e) {
             console.log(e);
             return false;

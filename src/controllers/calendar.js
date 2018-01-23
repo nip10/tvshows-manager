@@ -38,7 +38,6 @@ const calendarController = {
                 calendar.addEpisodesToCalendar(episodes);
             }
             return res.render('calendar', {
-                title: 'Tv-shows Manager',
                 calendar: pick(calendar, ['daysFromPreviousMonth', 'daysFromNextMonth', 'calendarData']),
                 monthNavigation: {
                     previousYear: (month === 1) ? year - 1 : year,
@@ -48,6 +47,7 @@ const calendarController = {
                     month: moment.months(month - 1),
                     year,
                 },
+                sidebarIndex: 'calendar',
             });
         } catch (e) {
             console.log(e);
