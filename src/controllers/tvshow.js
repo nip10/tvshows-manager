@@ -1,6 +1,3 @@
-/* eslint-disable quote-props */
-/* eslint-disable func-names */
-
 import _ from 'lodash';
 import Tvshow from '../models/tvshow';
 import User from '../models/user';
@@ -25,9 +22,7 @@ const tvshowsController = {
         }
         try {
             const data = await Tvshow.search(tvshowName);
-            if (_.isNull(data)) {
-                return res.json({ error: 'Tvshow not found.' });
-            }
+            if (_.isNil(data)) return res.json({ error: 'Tvshow not found.' });
             return res.json(data);
         } catch (e) {
             console.log(e);
@@ -65,10 +60,9 @@ const tvshowsController = {
      *
      * @param {Object} req - Express request object
      * @param {Object} res - Express response object
-     * @param {Function} next - Express next middleware function
      * @returns {undefined}
      */
-    async getData(req, res, next) {
+    async getData(req, res) {
         const { tvshowId } = req.params;
         // Check if the tvshow is on the db
         let isTvshowOnDb;
@@ -124,12 +118,13 @@ const tvshowsController = {
                     { episodes },
                     { latestSeason },
                 );
+                // TODO: Merge the 2 object assign's
                 // Add tvshow info to the db (in the background)
                 Tvshow.addTvshowToDb(tvshowInfo).catch(e => console.log(e));
             } catch (e) {
                 console.log(e);
                 // TODO: this should break here because there's no info on the show
-                // next(err) should probably work
+                // TODO: try using next(err) to render the error page
             }
         }
         const userId = _.get(req, 'user', false);
@@ -145,9 +140,26 @@ const tvshowsController = {
                 isUserFollowingTvshow = false;
             }
         }
+        // If the user is following the tvshow, check if he has watched episodes
+        if (isUserFollowingTvshow) {
+            const episodeIds = _.map(tvshowData.episodes, ep => ep.id);
+            try {
+                const watchedEpisodesIds = await User.getWatchedEpisodesById(episodeIds, userId);
+                tvshowData.episodes = _.map(tvshowData.episodes, episode => ({
+                    id: episode.id,
+                    num: episode.num,
+                    name: episode.name,
+                    airdate: episode.airdate,
+                    watched: _.includes(watchedEpisodesIds, episode.id),
+                }));
+            } catch (e) {
+                console.log(e);
+            }
+        }
         // Render tvshow view
         return res.render('tvshow', {
             name: tvshowData.name,
+            id: tvshowId,
             banner: `https://www.thetvdb.com/banners/${tvshowData.images[0]}`,
             poster: `https://www.thetvdb.com/banners/${tvshowData.images[1]}`,
             overview: tvshowData.overview,
@@ -156,6 +168,7 @@ const tvshowsController = {
             status: tvshowData.status,
             airdate: tvshowData.airdate,
             genre: tvshowData.genre,
+            imdb: `https://imdb.com/title/${tvshowData.imdb}`,
             imdbRating: tvshowData.imdbRating,
             season: tvshowData.latestSeason,
             episodes: tvshowData.episodes,

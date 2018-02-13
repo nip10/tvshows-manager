@@ -4,7 +4,7 @@ exports.up = (knex, Promise) => knex.schema.createTableIfNotExists('tvshows', (t
     table.text('overview');
     table.enu('status', ['Running', 'Ended', 'Canceled']);
     table.string('imdb').unique();
-    table.real('imdbrating').defaultTo(null);
+    table.decimal('imdbRating').defaultTo(null);
     table.integer('thetvdb').unique();
     table.specificType('genre', 'text[]');
     table.string('premiered');

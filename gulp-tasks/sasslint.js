@@ -4,7 +4,6 @@ module.exports = function () {
     const notify = require('gulp-notify');
     const sassLint = require('gulp-sass-lint');
     const util = require('gulp-util');
-
     const { config } = util.env.boilerplate;
     const sasslintConfig = config.tasks.sasslint;
 
@@ -12,11 +11,8 @@ module.exports = function () {
     if (sasslintConfig.ignore) {
         options.files = { ignore: sasslintConfig.ignore };
     }
-    if (sasslintConfig.configFile) {
-        options.configFile = sasslintConfig.configFile;
-    }
 
-    return gulp.src([`./src/${sasslintConfig.source}`, '!./src/sass/vendor/**/*.scss'])
+    return gulp.src(sasslintConfig.source, { cwd: config.sourceRoot })
         .pipe(plumber({
             errorHandler: notify.onError({
                 message: '<%= error.message %>',

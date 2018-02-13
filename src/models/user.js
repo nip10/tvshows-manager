@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
+import _ from 'lodash';
 import knex from '../db/connection';
 
 const User = {
@@ -8,13 +9,19 @@ const User = {
      *
      * @param {string} email - user email
      * @param {string} password - user password
+     * @param {string} token - account activation token
      * @returns {boolean} - if the user was created
      */
-    async createUser(email, password) {
+    async createUser(email, password, token) {
         const hashedPassword = this.genHashPassword(password);
         const username = email.split('@')[0];
         try {
-            const createUser = await knex('users').insert({ username, email, password: hashedPassword }).returning('id');
+            const createUser = await knex('users').insert({
+                username,
+                email,
+                password: hashedPassword,
+                activationtoken: token,
+            }).returning('id');
             return { id: createUser[0] };
         } catch (e) {
             console.log(e);
@@ -49,10 +56,14 @@ const User = {
      * @returns {boolean} - if the email already exists
      */
     async checkIfUserExistsByEmail(email) {
-        const inner = knex.select(1).from('users').where('email', email).limit(1).first();
+        const inner = knex.select(1)
+            .from('users')
+            .where('email', email)
+            .limit(1)
+            .first();
         try {
             const emailExistsOnDb = await knex.raw(inner).wrap('select exists (', ')');
-            return emailExistsOnDb.rows.exists;
+            return emailExistsOnDb.rows[0].exists || false;
         } catch (e) {
             console.log(e);
             return false;
@@ -67,10 +78,7 @@ const User = {
      */
     async addTokenToUser(email, reset) {
         try {
-            const addToken = await knex('users').where({ email }).update({ resetpwtoken: reset.token, resetpwexp: reset.expiration });
-            if (addToken !== 1) {
-                throw new Error(`Adding token for user ${email} to the database failed.`);
-            }
+            await knex('users').where({ email }).update({ resetpwtoken: reset.token, resetpwexp: reset.expiration });
             return true;
         } catch (e) {
             console.log(e);
@@ -93,12 +101,13 @@ const User = {
             .first();
         try {
             const isTokenValid = await knex.raw(inner).wrap('select exists (', ')');
-            return isTokenValid.rows.exists;
+            return isTokenValid.rows[0].exists || false;
         } catch (e) {
             console.log(e);
             return false;
         }
     },
+    /* eslint-disable func-names */
     /**
      * Get episodes from all tvshows that a user is following, in a given date interval
      *
@@ -109,11 +118,11 @@ const User = {
      */
     async getEpisodes(userId, startInterval, endInterval) {
         try {
-            const episodes = await knex.select('tvshows.name', 'tvshows.thetvdb', 'episodes.title')
+            const episodes = await knex('episodes').select('tvshows.name', 'tvshows.thetvdb', 'episodes.title', 'episodes.id')
                 .select(knex.raw('to_char(episodes.season, \'fm00\') as "season"'))
                 .select(knex.raw('to_char(episodes.epnum, \'fm00\') as "epnum"'))
                 .select(knex.raw('to_char(episodes.airdate, \'DD-MM-YYYY\') as "airdate"'))
-                .from('episodes')
+                .select(knex.raw('exists(select 1 from usereps where episodes.id = usereps.ep_id) as "watched"'))
                 .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
                 .join('tvshows', 'tvshows.thetvdb', 'episodes.tvshow_id')
                 .where('usertv.user_id', userId)
@@ -126,6 +135,7 @@ const User = {
             return null;
         }
     },
+    /* eslint-enable func-names */
     /**
      * Add tvshow to user
      *
@@ -166,30 +176,14 @@ const User = {
      * @returns {boolean} - the user is following the tvshow
      */
     async isFollowingTvshow(userId, tvshowId) {
-        const innerQuery = knex.select(1).from('usertv').where({ user_id: userId, tvshow_id: tvshowId }).limit(1).first();
+        const innerQuery = knex.select(1)
+            .from('usertv')
+            .where({ user_id: userId, tvshow_id: tvshowId })
+            .limit(1)
+            .first();
         try {
             const isFollowingTvshow = await knex.raw(innerQuery).wrap('select exists (', ')');
-            return isFollowingTvshow.rows.exists;
-        } catch (e) {
-            console.log(e);
-            return false;
-        }
-    },
-    /**
-     * Change user password
-     *
-     * @param {string} email - user email
-     * @param {string} password - user password
-     * @returns {boolean} - password changed
-     */
-    async changePassword(email, newPassword) {
-        const newHashedPassword = this.genHashPassword(newPassword);
-        try {
-            const changedPassword = await knex('users').where({ email }).update({ password: newHashedPassword });
-            if (changedPassword !== 1) {
-                throw new Error(`Changing password for user ${email} failed`);
-            }
-            return true;
+            return isFollowingTvshow.rows[0].exists || false;
         } catch (e) {
             console.log(e);
             return false;
@@ -211,17 +205,17 @@ const User = {
         } else if (!password || password !== passwordDuplicate) {
             return ({ error: 'Passwords don\'t match.' });
         }
-        return ({
+        return {
             normalizedEmail: validator.normalizeEmail(email),
             password,
-        });
+        };
     },
     /**
      * Validate login inputs
      *
-     * @param {string} email - user email
-     * @param {string} password - user password
-     * @returns {{ normalizedEmail: string, password: string }} - normalized email and password
+     * @param {String} email - user email
+     * @param {String} password - user password
+     * @returns {{ normalizedEmail: String, password: String }} - normalized email and password
      */
     validateLogin(email, password) {
         if (!email || !validator.isEmail(email)) {
@@ -229,10 +223,83 @@ const User = {
         } else if (!password || password.length < 8 || password.length > 30) {
             return ({ error: 'Password must be 8-30 chars.' });
         }
-        return ({
+        return {
             normalizedEmail: validator.normalizeEmail(email),
             password,
-        });
+        };
+    },
+    /**
+     * Change user password
+     *
+     * @param {Number} userId - user id
+     * @param {String} currentPassword - current password
+     * @param {String} newPassword - new password
+     * @returns {Boolean} - changed password
+     */
+    async changePassword(userId, currentPassword, newPassword) {
+        try {
+            const passwordFromDb = await knex('users').select('password').where('id', userId).first();
+            const isCurrentPasswordCorrect = this.comparePassword(currentPassword, passwordFromDb);
+            if (!isCurrentPasswordCorrect) return false;
+            const newPasswordHashed = this.genHashPassword(newPassword);
+            /* eslint-disable no-unused-vars */
+            const changedPassword = await knex('users').where('id', userId).update({ password: newPasswordHashed });
+            /* eslint-enable no-unused-vars */
+            return true; // TODO: Return the response from knex after checking its content
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    },
+    /**
+     * Check if user account active
+     *
+     * @param {String} email - user email
+     * @returns {Boolean} - account is active
+     */
+    async isActive(email) {
+        try {
+            const isAccountActive = await knex('users').select('active').where('email', email).first();
+            return isAccountActive;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    },
+    /**
+     * Activate user account
+     *
+     * @param {string} token - activation token
+     * @returns {boolean} - account activated
+     */
+    async activateAccount(token) {
+        try {
+            /* eslint-disable no-unused-vars */
+            const activatedAccount = await knex('users').update('active', true).where('token', token);
+            /* eslint-enable no-unused-vars */
+            return true; // TODO: Return the response from knex after checking its content
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    },
+    /**
+     * Get watched episodes from an episode id list
+     *
+     * @param {Number[]} episodeIds - list of episode ids
+     * @returns {Number[]} - list of watched episode ids
+     */
+    async getWatchedEpisodesById(episodeIds, userId) {
+        try {
+            const watchedEpisodes = await knex('usereps')
+                .select('ep_id')
+                .where('user_id', userId)
+                .whereRaw('ep_id = ANY(?)', [episodeIds]);
+            return _.map(watchedEpisodes, episode => episode.ep_id);
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
     },
 };
 

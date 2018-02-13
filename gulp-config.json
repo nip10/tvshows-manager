@@ -1,40 +1,53 @@
 {
     "vhost": "http://localhost:3001",
-    "sourceRoot": "./src/public/",
+    "sourceRoot": "./src/",
     "destinationRoot": "./dist/",
     "tasks": {
         "sass": {
-            "source": ["sass/**/*.scss"],
-            "destination": "css",
+            "source": ["public/sass/**/*.scss"],
+            "destination": "public/css",
             "browsers": ["last 2 versions"],
             "config": {
                 "includePaths": []
             }
         },
         "sasslint": {
-            "source": ["sass/**/*.scss"],
-            "ignore": ["sass/vendor/**/*.scss"],
-            "configFile": ".sass-lint.yml"
+            "source": ["public/sass/**/*.scss", "!public/sass/vendor/**/*.scss"],
+            "ignore": ["sass/vendor/**/*.scss"]
+        },
+        "postcss": {
+            "source": ["public/pcss/**/*.pcss"],
+            "destination": "public/css",
+            "destinationFile": "app.css",
+            "config": {
+                "bem": {
+                    "style": "bem"
+                },
+                "next": {
+                    "browsers": "last 5 versions, ie >= 9"
+                }
+            }
         },
         "scripts": {
-            "source": ["js/app.js"],
-            "destination": "js",
+            "source": ["public/js/app.js"],
+            "destination": "public/js",
             "destinationFile": "app.js",
             "babelPresets": "airbnb"
         },
         "eslint": {
-            "source": ["js/*.js"],
+            "source": ["public/js/**/*.js"],
             "config": {
                 "configFile": ".eslintrc.json"
             }
         },
         "images": {
-            "source": ["img/**/*"],
-            "destination": "img",
+            "source": ["public/img/**/*"],
+            "destination": "public/img",
             "minify": true
         },
         "views": {
-            "source": ["server/views/**/*.pug"]
+            "source": ["views/**/*"],
+            "destination": "views"
         }
     }
 }

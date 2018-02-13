@@ -1,6 +1,6 @@
 import express from 'express';
 import { search, getEpisodes, getData } from '../controllers/tvshow';
-import { addTvshowToUser, removeTvshowFromUser } from '../controllers/user';
+import { setFollowingTvshow, setEpisodeWatchedStatus, setSeasonWatched } from '../controllers/user';
 import { isLoggedIn } from '../controllers/auth';
 
 const router = express.Router();
@@ -8,7 +8,8 @@ const router = express.Router();
 router.get('/search/:tvshowName', search);
 router.get('/:tvshowId', getData);
 router.get('/:tvshowId/episodes', getEpisodes);
-router.get('/:tvshowId/add', isLoggedIn, addTvshowToUser);
-router.get('/:tvshowId/remove', isLoggedIn, removeTvshowFromUser);
+router.post('/:tvshowId', isLoggedIn, setFollowingTvshow);
+router.post('/:tvshowId/ep', isLoggedIn, setEpisodeWatchedStatus);
+router.post('/:tvshowId/s', isLoggedIn, setSeasonWatched);
 
 module.exports = router;

@@ -6,17 +6,16 @@ block content
     #page-content-wrapper
         .main-container
             .row
-                .col-md-11.py-3.my-2.mx-auto.text-center.cardbox
-                    span
+                .col-md-11.py-2.my-2.mx-auto.text-center.cardbox
+                    span.month-nav-header
                         - const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                        h6.d-inline-block.px-2.text-right.month-nav
+                        h6.d-inline-block.px-2.my-0.text-right.month-nav
                             a(href='/calendar/' + monthNavigation.previousYear + '/' + monthNavigation.previousMonth)= '« ' + monthsOfYear[monthNavigation.previousMonth - 1]
-                        h4.d-inline-block.px-2= monthNavigation.month
-                        h6.d-inline-block.px-2.text-left.month-nav
+                        h4.d-inline-block.px-2.my-0= monthNavigation.month
+                        h6.d-inline-block.px-2.my-0.text-left.month-nav
                             a(href='/calendar/' + monthNavigation.nextYear + '/' + monthNavigation.nextMonth)= monthsOfYear[monthNavigation.nextMonth - 1] + ' »'
             .row
-                .col-md-11.py-3.my-2.mx-auto.cardbox
-                    include partials/bug.pug
+                .col-md-11.py-3.my-2.mx-auto
                     table(cellspacing=0, cellpadding=0).calendar__table
                         thead
                             tr
@@ -32,7 +31,7 @@ block content
                             - for(let i = 0; i < numRows; i++) {
                                 tr
                                     - for(let j = 0; j < 7; j++) {
-                                        - let k = i * 7;
+                                        - const k = i * 7;
                                             +styleDaysFromOtherMonths(k, j)
                                                 .calendar__date
                                                     strong= calendar.calendarData[k + j].day
@@ -40,13 +39,14 @@ block content
                                                     - if (calendar.calendarData[k + j].episodes)
                                                         ul
                                                             each episode in calendar.calendarData[k + j].episodes
-                                                                li
+                                                                li(class={'watched' : episode.watched})
                                                                     .calendar__cell--checkbox
-                                                                        input(type='checkbox', id='temporary')
-                                                                        label(for='temporary')
+                                                                        input(type='checkbox', id=`episode-${episode.id}`, data-tvshowid=episode.thetvdb, data-episodeid=episode.id)
+                                                                        label(for=`episode-${episode.id}`)
                                                                     a(href='/tvshows/' + episode.thetvdb).calendar__cell--tvshow= episode.name
                                                                     span.calendar__cell--episode
                                                                         br
-                                                                        = episode.title + ' (S' + episode.season + 'E' + episode.epnum + ')'
+                                                                    = `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
                                     - }
-                            - }        
+                            - }       
+            include modals/bug.pug

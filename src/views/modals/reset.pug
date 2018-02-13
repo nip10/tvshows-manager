@@ -1,0 +1,17 @@
+#resetpw-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='resetpw-modal-label', aria-hidden='true')
+    .modal-dialog(role='document')
+        form#resetpw-form.modal-content
+            .modal-header
+                h3#resetpw-modal-label.modal-title Reset password
+                button(type='button', data-dismiss='modal', aria-label='Close').close
+                    span(aria-hidden='true') &times;
+            .modal-body
+                    .form-group
+                        label(for='resetpw-password').form-control-label New password:
+                        input(type='password', placeholder='New password')#resetpw-password.form-control
+                    .form-group
+                        label(for='resetpw-password-d').form-control-label Confirm new password:
+                        input(type='password', placeholder='Confirm new password')#resetpw-password-d.form-control
+            .modal-footer
+                button(type='button', data-dismiss='modal').btn.btn-secondary Close
+                button(type='submit')#resetpw-submit.btn.btn-primary Submit

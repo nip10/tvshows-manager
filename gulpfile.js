@@ -1,4 +1,6 @@
-/* eslint-disable */
+/* eslint-disable func-names */
+/* eslint-disable global-require */
+/* eslint-disable import/no-dynamic-require */
 
 const config = require('./gulp-config.json');
 const runSequence = require('run-sequence');
@@ -9,30 +11,39 @@ const watch = require('gulp-watch');
 const util = require('gulp-util');
 const fs = require('fs');
 
-const cleanFolderList = ['sass', 'scripts', 'images'];
-const taskList = ['sasslint', 'sass', 'scripts', 'images'];
-const watchTaskList = ['sasslint', 'sass', 'images'];
+const cleanFolderList = [];
+const taskList = [];
+const watchTaskList = [];
 
 util.env.boilerplate = {
     config,
 };
 
-Object.keys(config.tasks).forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(config.tasks, key)) {
-        if (fs.existsSync(`./gulp-tasks/${key}.js`)) {
-            gulp.task(key, require(`./gulp-tasks/${key}`));
+Object.keys(config.tasks).forEach((taskName) => {
+    if (Object.prototype.hasOwnProperty.call(config.tasks, taskName)) {
+        if (fs.existsSync(`./gulp-tasks/${taskName}.js`)) {
+            gulp.task(taskName, require(`./gulp-tasks/${taskName}`));
+        }
+        const task = config.tasks[taskName];
+        taskList.push(taskName);
+        if (Object.prototype.hasOwnProperty.call(task, 'destination') && (!Object.prototype.hasOwnProperty.call(task, 'clean') || task.clean)) {
+            cleanFolderList.push(config.tasks[taskName].destination);
+        }
+        if (Object.prototype.hasOwnProperty.call(task, 'watch')) {
+            watchTaskList.push({ task: taskName, fileList: task.watch });
+        } else if (Object.prototype.hasOwnProperty.call(task, 'source')) {
+            // 'scripts' task is bundled with babel, watch is managed in 'scripts' task
+            if (taskName !== 'scripts') {
+                watchTaskList.push({ task: taskName, fileList: task.source });
+            }
         }
     }
 });
 
-/**
- * Clean build directory
- */
+// Clean build directory
 gulp.task('clean', () => del(cleanFolderList, { cwd: config.destinationRoot }));
 
-/**
- * Build app from sources
- */
+// Build app from sources
 gulp.task('build', ['clean'], () => runSequence(taskList));
 
 // BrowserSync
@@ -42,23 +53,17 @@ gulp.task('browser-sync', () => {
     });
 });
 
-/**
- * Watch task for development
- */
-/* eslint-disable func-names */
+// Watch task for development
 gulp.task('watch', ['build'], () => {
-    watchTaskList.forEach((task) => {
-        const watchTask = task;
-        watch(config.tasks[watchTask].source, { cwd: config.sourceRoot }, (function (t) {
+    Object.keys(watchTaskList).forEach((index) => {
+        const watchTask = watchTaskList[index];
+        watch(watchTask.fileList, { cwd: config.sourceRoot }, (function (task) {
             return function () {
-                return runSequence([t]);
+                return runSequence([task]);
             };
-        }(watchTask)));
+        }(watchTask.task)));
     });
 });
-/* eslint-enable func-names */
-
-gulp.watch(config.tasks.views.source).on('change', browserSync.reload);
 
 gulp.task('serve', ['build', 'watch', 'browser-sync']);
-gulp.task('default', ['build'], () => { });
+gulp.task('default', ['build']);

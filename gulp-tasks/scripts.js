@@ -32,8 +32,7 @@ module.exports = function () {
         debug: !util.env.production,
         cache: {},
         packageCache: {},
-    })
-        .transform('babelify', { presets: [scriptConfig.babelPresets] });
+    }).transform('babelify', { presets: [scriptConfig.babelPresets] });
 
     if (isWatching) {
         bundler = watchify(bundler);
@@ -48,8 +47,10 @@ module.exports = function () {
                 util.log(util.colors.bgRed('UglifyJS error:'), util.colors.red(err));
             })))
             .pipe(gulp.dest(config.destinationRoot + scriptConfig.destination))
-            .pipe(gulpif(isWatching, browserSync.stream({ once: true })));
+            .pipe(gulpif(isWatching, browserSync.stream({ once: true })))
+            .pipe(notify({ message: 'Successfully compiled JS', onLast: true }));
     };
+
     if (isWatching) {
         bundler.on('update', bundle);
     }

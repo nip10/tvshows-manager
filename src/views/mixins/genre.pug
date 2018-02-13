@@ -1,0 +1,12 @@
+mixin genre()
+    - var str = '';
+    - var len = genre.length;
+    if (len === 1)
+        span.d-block.text-center= genre
+    else
+        each el, i in genre
+            if i !== len - 1
+                - str += el + ', '
+            else
+                - str += el
+        span.d-block.text-center= str

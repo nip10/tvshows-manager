@@ -1,3 +1,0 @@
-{
-    "ignore": ["node_modules/", "gulp-tasks/","gulpfile.js", "dist/js/*.js", "src/db/migrations/", "*.test.js"]
-}

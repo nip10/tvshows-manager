@@ -215,8 +215,7 @@ const Tvshow = {
      * Get number of seasons of a tvshow
      *
      * The api has an array of "airedSeasons" that contains all the seasons for a tvshow.
-     * This array contains a season 0, which is where the special episodes are placed.
-     * This is why we need to subtract 1 from the length.
+     * This array MAY contain a season 0, which is where the special episodes are placed.
      *
      * @param {number} tvshowId - tvshow id
      * @returns {number} - number of seasons
@@ -233,7 +232,10 @@ const Tvshow = {
         };
         try {
             const { data } = await rp(requestOptions);
-            return data.airedSeasons.length - 1;
+            if (data.airedSeasons.includes('0')) {
+                return data.airedSeasons.length - 1;
+            }
+            return data.airedSeasons.length;
         } catch (e) {
             console.log(e);
             return 1;
@@ -244,7 +246,7 @@ const Tvshow = {
      *
      * @param {number} tvshowId - tvshow id
      * @param {number} season - season
-     * @returns {{num: number, name: string, airdate: string, overview: string}[]} Tvshow episodes from a particular season
+     * @returns {{num: number, name: string, airdate: date, overview: string}[]} - tvshow episodes from a particular season
      */
     async getEpisodesFromSeasonFromApi(tvshowId, season) {
         const requestOptions = {
@@ -282,11 +284,12 @@ const Tvshow = {
     async getEpisodesFromSeasonFromDb(tvshowId, season) {
         try {
             const getEpisodesFromDb = await knex('episodes')
-                .select('epnum', 'title')
+                .select('epnum', 'title', 'id')
                 .select(knex.raw('to_char(airdate, \'DD-MM-YYYY\') as "airdate"'))
                 .where({ tvshow_id: tvshowId, season })
                 .orderBy('epnum', 'asc');
             const episodes = _.map(getEpisodesFromDb, episode => ({
+                id: episode.id,
                 num: episode.epnum,
                 name: episode.title,
                 airdate: episode.airdate,
@@ -322,10 +325,14 @@ const Tvshow = {
      * @returns {boolean} - tvshow is on the database
      */
     async isOnDb(tvshowId) {
-        const innerQuery = knex.select(1).from('tvshows').where('thetvdb', tvshowId).limit(1).first();
+        const innerQuery = knex.select(1)
+            .from('tvshows')
+            .where('thetvdb', tvshowId)
+            .limit(1)
+            .first();
         try {
             const isShowOnDb = await knex.raw(innerQuery).wrap('select exists (', ')');
-            return isShowOnDb.rows.exists;
+            return isShowOnDb.rows[0].exists || false;
         } catch (e) {
             console.log(e);
             return false;
@@ -342,9 +349,7 @@ const Tvshow = {
         try {
             // 1.2 Insert show information in the database
             await knex('tvshows').insert(tvshowInfo);
-            console.log(`Successfully added tvshow id ${tvshowInfo.thetvdb} to the db.`);
         } catch (e) {
-            console.log(`Error inserting tvshow id ${tvshowInfo.thetvdb} to the db. Error details: ${e}`);
             return;
         }
         // 2. Episodes information
@@ -373,7 +378,7 @@ const Tvshow = {
             };
             try {
                 const res = await rp(requestOptions);
-                const filteredEpisodes = res.data.map(episode => ({
+                const filteredEpisodes = _.map(res.data, episode => ({
                     tvshow_id: tvshowId,
                     season: episode.airedSeason,
                     epnum: episode.airedEpisodeNumber,
@@ -395,12 +400,18 @@ const Tvshow = {
                 // 2.2 Insert episodes in the database
                 await knex('episodes').insert(episodes);
             } else {
-                throw Error('Error fetching episodes.');
+                throw Error('Error inserting episodes in the database.');
             }
         } catch (e) {
             console.log(`Error fetching episodes. Error details: ${e}`);
         }
     },
+    /**
+     * Get imdb rating
+     *
+     * @param {Number} imdbId - tvshow imdb id
+     * @returns {String} - imdb rating
+     */
     async getImdbRating(imdbId) {
         const requestOptions = {
             method: 'GET',
@@ -413,6 +424,73 @@ const Tvshow = {
         } catch (e) {
             console.log(e);
             return null;
+        }
+    },
+    /**
+     * Set episode as watched
+     *
+     * @param {Number} userId - user id
+     * @param {Number} tvshowId - tvshow id
+     * @param {Number} episodeId - episode id
+     * @returns {Boolean} - episode was set as watched
+     */
+    async setEpisodeWatched(userId, tvshowId, episodeId) {
+        try {
+            await knex('usereps').insert({
+                user_id: userId,
+                tvshow_id: tvshowId,
+                ep_id: episodeId,
+            });
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    },
+    /**
+     * Set episode as unwatched
+     *
+     * @param {Number} userId - user id
+     * @param {Number} tvshowId - tvshow id
+     * @param {Number} episodeId - episode id
+     * @returns {Boolean} - episode was set as unwatched
+     */
+    async setEpisodeUnwatched(userId, tvshowId, episodeId) {
+        try {
+            await knex('usereps').del().where({
+                user_id: userId,
+                tvshow_id: tvshowId,
+                ep_id: episodeId,
+            });
+            return true;
+        } catch (e) {
+            console.log(e);
+            return false;
+        }
+    },
+    /**
+     * Set season as watched
+     *
+     * @param {Number} userId - user id
+     * @param {Number} tvshowId - tvshow id
+     * @param {Number[]} episodesId - all episodes' id's from a season
+     * @returns  {Boolean} - season was set as watched
+     */
+    async setSeasonWatched(userId, tvshowId, episodesId) {
+        const queryData = _.map(episodesId, episodeId => ({
+            user_id: userId,
+            tvshow_id: tvshowId,
+            ep_id: episodeId,
+        }));
+        try {
+            const seasonWatched = await knex('usereps').insert(queryData);
+            if (seasonWatched.rowCount === queryData.length) {
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.log(e);
+            return false;
         }
     },
 };
