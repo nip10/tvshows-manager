@@ -98,11 +98,13 @@ export default class Calendar {
             for (let j = 0; j < eps.length; j += 1) {
                 if (eps[j].airdate === this.calendarData[i].day) {
                     this.calendarData[i].episodes.push({
+                        id: eps[j].id,
                         title: eps[j].title,
                         name: eps[j].name,
                         season: eps[j].season,
                         epnum: eps[j].epnum,
                         thetvdb: eps[j].thetvdb,
+                        watched: eps[j].watched,
                     });
                 }
             }

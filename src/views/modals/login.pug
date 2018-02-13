@@ -1,0 +1,18 @@
+#login-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='login-modal-label', aria-hidden='true')
+    .modal-dialog(role='document')
+        form#login-form.modal-content
+            .modal-header
+                h3#login-modal-label.modal-title Login
+                button(type='button', data-dismiss='modal', aria-label='Close').close
+                    span(aria-hidden='true') &times;
+            .modal-body
+                    .form-group
+                        label(for='login-email').form-control-label Email address:
+                        input(type='email', placeholder='Email address')#login-email.form-control
+                    .form-group
+                        label(for='login-password').form-control-label Password:
+                        input(type='password', placeholder='Password')#login-password.form-control
+                        small#login-password-forgot.form-text.text-muted Forgot password ?
+            .modal-footer
+                button(type='button', data-dismiss='modal').btn.btn-secondary Close
+                button(type='submit')#login-submit.btn.btn-primary Submit

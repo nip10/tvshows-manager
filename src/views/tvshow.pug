@@ -1,107 +1,94 @@
 extends layout/base
+include mixins/genre
 
 block content    
     include partials/sidebar
     #page-content-wrapper
         .main-container
             .row
-                .col-md-12.pt-3
-                    .row.banner.mb-3
+                .col-md-11.mx-auto.my-3
+                    .banner
                         img(src=banner, alt=name).img-fluid.mx-auto
                         .overlay
                             span#tvshow-name= name
                             if isAuthenticated
                                 if !isUserFollowingTvshow
-                                    button#userTvShowState.btn.btn-primary.text-uppercase.d-block Add to my shows
+                                    button#userTvShowState.btn.btn-primary.text-uppercase.d-block(data-tvshowid=id) Add to my shows
                                 else
-                                    button#userTvShowState.btn.btn-secondary.text-uppercase.d-block Remove from my shows
-                    .row.mb-5
-                        include partials/bug.pug
-                        if !isAuthenticated
-                            .alert.alert-warning.text-center.w-100(role='alert')
-                                span 
-                                    | You need to 
-                                    a(href='#login-modal', data-toggle='modal') login 
-                                    | in order to follow a tvshow and mark episodes as watched.
-                        .col-md-6.mx-auto
-                            .row.border.bg-text
-                                p.overview= overview
-                        .col-md-5.mx-auto
-                            .row.bg-text.border.h-100
-                                .col-md-4.d-flex.align-items-center
-                                    ul.list-unstyled.mx-auto
-                                        li.py-2
-                                            span.d-block.text-center 
-                                                strong Status
-                                            span.d-block.text-center(class= (status === 'Running') ? 'green' : 'red')= status
-                                        li.py-2
-                                            span.d-block.text-center 
-                                                strong Premiered
-                                            span.d-block.text-center= premiered
-                                .col-md-4.d-flex.align-items-center
-                                    ul.list-unstyled.mx-auto
-                                        li.py-2
-                                            span.d-block.text-center 
-                                                strong Network
-                                            span.d-block.text-center= network
-                                        li.py-2
-                                            span.d-block.text-center
-                                                strong Airdate
-                                            span.d-block.text-center= airdate
-                                .col-md-4.d-flex.align-items-center
-                                    ul.list-unstyled.mx-auto
-                                        li.py-2
-                                            span.d-block.text-center 
-                                                strong Imdb
-                                            span.d-block.text-center
-                                                a(href='')= imdbRating
-                                        li.py-2
-                                            span.d-block.text-center
-                                                strong Genre
-                                            span.d-block.text-center= genre
-
-                    .row.mb-3
-                        .col-md-12
-                            h3.d-inline-block
-                                i(aria-hidden='true').fa.fa-list.mr-1
-                                | Episodes
-                            select#season-select.custom-select.pull-right
-                                - for (i = 1; i <= season; i++) {
-                                    - if (i === season) {
-                                        option(selected, value = i)= 'Season ' + i
-                                    - } else {
-                                        option(value = i)= 'Season ' + i
-                                    - }
-                                - }
-                    .row.mb-5
-                        .col-md-3
-                            img#poster(src=poster, alt=name).img-fluid
-                        .col-md-9
-                            table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped
-                                tbody
-                                    if episodes
-                                        each episode in episodes
-                                            tr
-                                                td= episode.num
-                                                td.name= episode.name
-                                                td.airdate= episode.airdate
-                                                td
-                                                    i(aria-hidden='true').fa.fa-eye
-                    #login-modal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='login-modal-label', aria-hidden='true')
-                        .modal-dialog(role='document')
-                            form#login-form.modal-content
-                                .modal-header
-                                    h3#login-modal-label.modal-title Login
-                                    button(type='button', data-dismiss='modal', aria-label='Close').close
-                                        span(aria-hidden='true') &times;
-                                .modal-body
-                                        .form-group
-                                            label(for='login-email').form-control-label Email address:
-                                            input(type='email', placeholder='Email address')#login-email.form-control
-                                        .form-group
-                                            label(for='login-password').form-control-label Password:
-                                            input(type='password', placeholder='Password')#login-password.form-control
-                                            small#login-password-forgot.form-text.text-muted Forgot password ?
-                                .modal-footer
-                                    button(type='button', data-dismiss='modal').btn.btn-secondary Close
-                                    button(type='submit')#login-submit.btn.btn-primary Submit
+                                    button#userTvShowState.btn.btn-secondary.text-uppercase.d-block(data-tvshowid=id) Remove from my shows
+            .row
+                .col-md-11.mx-auto
+                    if !isAuthenticated
+                        .alert.alert-warning.text-center.w-100(role='alert')
+                            span 
+                                | You need to 
+                                a(href='#login-modal', data-toggle='modal') login 
+                                | in order to follow a tvshow and mark episodes as watched.
+            .row.mb-5.justify-content-center
+                .col-md-6
+                    .border.bg-text.h-100
+                        p.overview= overview
+                .col-md-5
+                    .row.bg-text.border.h-100
+                        .col-md-4.d-flex.align-items-center
+                            ul.list-unstyled.mx-auto
+                                li.py-2
+                                    span.d-block.text-center 
+                                        strong Status
+                                    span.d-block.text-center(class= (status === 'Running') ? 'green' : 'red')= status || '-'
+                                li.py-2
+                                    span.d-block.text-center 
+                                        strong Premiered
+                                    span.d-block.text-center= premiered || '-'
+                        .col-md-4.d-flex.align-items-center
+                            ul.list-unstyled.mx-auto
+                                li.py-2
+                                    span.d-block.text-center 
+                                        strong Network
+                                    span.d-block.text-center= network || '-'
+                                li.py-2
+                                    span.d-block.text-center
+                                        strong Airdate
+                                    span.d-block.text-center= airdate || '-'
+                        .col-md-4.d-flex.align-items-center
+                            ul.list-unstyled.mx-auto
+                                li.py-2
+                                    span.d-block.text-center 
+                                        strong Imdb
+                                    span.d-block.text-center
+                                        a(href=imdb)= imdbRating || '-'
+                                li.py-2
+                                    span.d-block.text-center
+                                        strong Genre
+                                    +genre()
+            .row.mb-3
+                .col-md-11.mx-auto
+                    h3.d-inline-block
+                        i(aria-hidden='true').fa.fa-list.mr-1
+                        | Episodes
+                    select#season-select.custom-select.pull-right
+                        - for (i = 1; i <= season; i++) {
+                            - if (i === season) {
+                                option(selected, value = i)= 'Season ' + i
+                            - } else {
+                                option(value = i)= 'Season ' + i
+                            - }
+                        - }
+            .row.mb-5.justify-content-center
+                .col-md-3
+                    img#poster(src=poster, alt=name).img-fluid
+                .col-md-8
+                    if episodes
+                        table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped
+                            tbody
+                                each episode in episodes
+                                    tr(data-episodeid= episode.id)
+                                        td.num #{episode.num.toString().padStart(2, '0')}
+                                        td.title= episode.name || 'TBC'
+                                        td.airdate= episode.airdate || 'TBC'
+                                        td.markwatched
+                                            i(aria-hidden='true', class={'watched' : episode.watched}).fa.fa-eye
+                    else
+                        p Ooops. Something went wrong while fetching the episodes. Please try again later.
+            include modals/login
+            include modals/bug

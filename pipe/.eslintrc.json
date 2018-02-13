@@ -1,0 +1,10 @@
+{
+  "extends": "airbnb-base",
+  "rules": {
+    "linebreak-style": ["error", "windows"],
+    "indent": ["error", 4],
+    "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+    "func-names": ["error", "never"],
+    "global-require": 0
+  }
+}

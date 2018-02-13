@@ -1,354 +1,79 @@
+/* eslint-disable func-names */
+
 'use strict';
 
-function renderEpisodesTable(episodes) {
-    const table = $('#episodes-table > tbody');
-    table.empty();
-    episodes.forEach((episode) => {
-        table.append(`<tr> <td>${episode.num}</td> <td class="name">${episode.name}</td> <td class="airdate">${episode.airdate}</td> <td><i class="fa fa-eye" aria-hidden="true"></i></td> </tr>`);
-    }, this);
-}
+const handlers = require('./handlers');
+const typeahead = require('./config/typeahead');
+const toastrOptions = require('./config/toastr');
+require('./cookies');
 
-const sanitize = new RegExp(/^[\w\-\s.,;:]+$/);
+(function ($) {
+    $(() => {
+        // Initialize event handlers
+        $('#login-form').submit(e => handlers.login(e));
+        $('#signup-form').submit(e => handlers.signup(e));
+        $('#resetpw-form').submit(e => handlers.resetPassword(e));
+        $('#forgotpw-form').submit(e => handlers.forgotPassword(e));
+        $('#season-select').change(e => handlers.updateEpisodesTable(e));
+        $('#userTvShowState').click(e => handlers.addOrRemoveTvshow(e));
+        $('#bug-form').submit(e => handlers.bug(e));
+        $('#toggle-sidebar').click(e => handlers.toggleSidebar(e));
+        $('.poster > img').click(e => handlers.watchlistPosters(e));
+        $('div[data-tvshowid] table > tbody > tr > td > i').click(e => handlers.setEpisodeWatched(e));
+        $('.mark-watched').click(e => handlers.setSeasonWatched(e));
+        $('.calendar__table input[type=checkbox]').change(e => handlers.changeEpisodeWatchedStatusCalendar(e));
+        $('#episodes-table i.fa.fa-eye').click(e => handlers.changeEpisodeWatchedStatusTvshow(e));
 
-$(() => {
-    // set-up toastr options (notifications)
-    toastr.options = {
-        closeButton: true,
-        newestOnTop: true,
-        positionClass: 'toast-bottom-right',
-        preventDuplicates: false,
-        onclick: null,
-        showDuration: '300',
-        hideDuration: '1000',
-        timeOut: '5000',
-        extendedTimeOut: '1000',
-        showEasing: 'swing',
-        hideEasing: 'linear',
-        showMethod: 'fadeIn',
-        hideMethod: 'fadeOut',
-    };
-    // handle login modal
-    $('#login-modal').on('shown.bs.modal', () => {
-        $('#login-email').focus();
-    });
-    // login form
-    $('#login-form').submit((e) => {
-        // remove previous alert message
-        $('.alert').remove();
-        // prevent form submition
-        e.preventDefault();
-        // get email and password
-        const email = $('#login-email').val();
-        const password = $('#login-password').val();
-        // validate email
-        if (!email || !validator.isEmail(email)) {
-            return $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email ! </div>');
-        }
-        // validate password length (8-30 chars)
-        if (!password || password.length < 8 || password.length > 30) {
-            return $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>');
-        }
-        const normalizedEmail = validator.normalizeEmail(email);
-        $.post('/auth/login', { email: normalizedEmail, password })
-            .done((data, textStatus, jqXHR) => {
-                if (jqXHR.status === 200) {
-                    window.location.replace('/calendar');
-                } else {
-                    $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
-                }
-            })
-            .fail((jqXHR) => {
-                const resStatusCode = jqXHR.status;
-                if (resStatusCode === 401) {
-                    $('#login-email').addClass('is-invalid');
-                    $('#login-password').addClass('is-invalid');
-                    $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid credentials ! </div>');
-                } else if (resStatusCode === 422) {
-                    $('#login-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
-                } else {
-                    $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
-                }
+        // Initialize typeahead event handlers
+        $('.typeahead').typeahead(...typeahead)
+            .on('typeahead:asyncrequest', () => {
+                $('.tt-input').addClass('input-loading');
+            }).on('typeahead:asynccancel typeahead:asyncreceive', () => {
+                $('.tt-input').removeClass('input-loading');
             });
-        return false;
-    });
-    // handle forgot password modal
-    $('#login-password-forgot').click((e) => {
-        e.preventDefault();
-        $('#login-modal')
-            .modal('hide')
-            .on('hidden.bs.modal', () => {
-                $('#forgotpw-modal').modal('show');
-                $(this).off('hidden.bs.modal'); // Remove the 'on' event binding
-            });
-    });
-    // forgot password form
-    $('#forgotpw-form').submit((e) => {
-        // remove previous alert message
-        $('.alert').remove();
-        // prevent form submition
-        e.preventDefault();
-        // get email
-        const email = $('#forgotpw-email').val();
-        const emailDuplicate = $('#forgotpw-email-d').val();
-        // get recaptcha
-        const recaptcha = $('#g-recaptcha-response-1').val();
-        // get token
-        const token = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
-        // validate recaptcha
-        if (!recaptcha) {
-            return $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: You need to complete the captcha ! </div>');
-        }
-        // validate email
-        if (!email || !emailDuplicate || !validator.isEmail(email) || !validator.isEmail(emailDuplicate)) {
-            return $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>');
-        } else if (email !== emailDuplicate) {
-            return $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Email adresses don\'t match ! </div>');
-        }
-        const normalizedEmail = validator.normalizeEmail(email);
-        const normalizedEmailDuplicate = validator.normalizeEmail(emailDuplicate);
-        $.post(`/auth/reset/${token}`, { email: normalizedEmail, emailDuplicate: normalizedEmailDuplicate, recaptcha })
-            .done((data, textStatus, jqXHR) => {
-                if (jqXHR.status === 200) {
-                    $('#forgotpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
-                } else {
-                    $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
-                }
-            })
-            .fail((jqXHR) => {
-                const resStatusCode = jqXHR.status;
-                grecaptcha.reset();
-                if (resStatusCode === 400) {
-                    $('#forgotpw-email').addClass('is-invalid');
-                    $('#forgotpw-email-d').addClass('is-invalid');
-                    $('#forgotpw-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
-                } else {
-                    $('#forgotpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
-                }
-            });
-        return false;
-    });
-    // handle reset form modal
-    // 'resetPw' comes from pug template which comes from express
-    // eslint-disable-next-line no-undef
-    if (typeof resetPw !== 'undefined' && resetPw) {
-        $('#resetpw-modal').modal('show');
-    }
-    // reset password form
-    $('#resetpw-form').submit((e) => {
-        // remove previous alert message
-        $('.alert').remove();
-        // prevent form submition
-        e.preventDefault();
-        // get email and password
-        const password = $('#resetpw-password').val();
-        const passwordDuplicate = $('#resetpw-password-d').val();
-        const urlParams = window.location.href.split('/');
-        const token = urlParams[urlParams.length - 1];
-        const email = urlParams[urlParams.length - 2];
-        // validate password length (8-30 chars)
-        if (password.length < 8 || password.length > 30) {
-            return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>');
-        }
-        // validate passwords
-        if (password !== passwordDuplicate) {
-            return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>');
-        }
-        // validate email
-        if (!email || !validator.isEmail(email)) {
-            return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>');
-        }
-        const normalizedEmail = validator.normalizedEmail(email);
-        $.post(`/auth/reset/${normalizedEmail}/${token}`, { password, passwordDuplicate })
-            .done((data, textStatus, jqXHR) => {
-                if (jqXHR.status === 200) {
-                    $('#resetpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
-                } else {
-                    $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
-                }
-            })
-            .fail((jqXHR) => {
-                const resStatusCode = jqXHR.status;
-                if (resStatusCode === 400) {
-                    $('#resetpw-password').addClass('is-invalid');
-                    $('#resetpw-password-d').addClass('is-invalid');
-                    $('#resetpw-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
-                }
-                $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>');
-            });
-        return false;
-    });
-    // handle signup modal
-    $('#signup-modal').on('shown.bs.modal', () => {
-        $('#signup-email').focus();
-    });
-    // signup form
-    $('#signup-form').submit((e) => {
-        // remove previous alert message
-        $('.alert').remove();
-        // prevent form submition
-        e.preventDefault();
-        // get email and password
-        const email = $('#signup-email').val();
-        const password = $('#signup-password').val();
-        const passwordDuplicate = $('#signup-password-d').val();
-        const recaptcha = $('#g-recaptcha-response').val();
-        console.log('recaptcha response: ', recaptcha);
-        // validate recaptcha
-        if (!recaptcha) {
-            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: You need to complete the captcha ! </div>');
-        }
-        // validate email
-        if (!email || !validator.isEmail(email)) {
-            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>');
-        }
-        // validate password length (8-30 chars)
-        if (!password || !passwordDuplicate || password.length < 8 || password.length > 30) {
-            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>');
-        }
-        // validate passwords
-        if (password !== passwordDuplicate) {
-            return $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>');            
-        }
-        const normalizedEmail = validator.normalizeEmail(email);
-        $.post('/auth/signup', { email: normalizedEmail, password, passwordDuplicate, recaptcha })
-            .done((data, textStatus, jqXHR) => {
-                if (jqXHR.status === 200) {
-                    window.location.replace('/calendar');
-                } else {
-                    $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
-                }
-            })
-            .fail((jqXHR) => {
-                const resStatusCode = jqXHR.status;
-                grecaptcha.reset();
-                if (resStatusCode === 401) {
-                    $('#signup-email').addClass('is-invalid');
-                    $('#signup-password').addClass('is-invalid');
-                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
-                } else if (resStatusCode === 422) {
-                    $('#signup-form').before(`<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`);
-                } else {
-                    $('#signup-form').before('<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>');
-                }
-            });
-        return false;
-    });
-    // search input
-    const tvshows = new Bloodhound({
-        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '/tvshows/search/%QUERY',
-            wildcard: '%QUERY',
-        },
-    });
-    $('.typeahead').typeahead({
-        hint: true,
-        highlight: true,
-        minLength: 3,
-    }, {
-        name: 'tvshows',
-        displayKey: 'seriesName',
-        source: tvshows,
-        limit: 5,
-        templates: {
-            suggestion(item) { return `<div data-id=${item.id}> ${item.seriesName} </div>`; },
-            notFound(query) { return `<div> '${query.query}' not found </div>`; },
-        },
-    }).on('typeahead:asyncrequest', () => {
-        $('.tt-input').addClass('input-loading');
-    }).on('typeahead:asynccancel typeahead:asyncreceive', () => {
-        $('.tt-input').removeClass('input-loading');
-    });
-    // redirect when a tvshow is selected
-    // this event returns 3 args (obj, datum, name)
-    $('#tvshow-search').bind('typeahead:select', (obj, datum) => {
-        window.location.replace(`/tvshows/${datum.id}`);
-    });
-    // update episodes table when season select changes
-    $('#season-select').change(() => {
-        const showid = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
-        const season = $('#season-select :selected').val();
-        $.get(`/tvshows/${showid}/episodes`, { season })
-            .done((data) => {
-                renderEpisodesTable(data.episodes);
-            })
-            .fail(() => {
-                $('#episodes-table').append(`<p> Error requesting season ${season} episodes. Please try again later. </p>`);
-            });
-        return false;
-    });
-    // handle add/remove tvshow
-    $('#userTvShowState').click(() => {
-        const tvshowId = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
-        if ($('#userTvShowState').hasClass('btn-primary')) {
-            // User is not following this show and wants to add it
-            $.get(`/tvshows/${tvshowId}/add`)
-                .done((data) => {
-                    if (data) {
-                        const tvshowName = $('#tvshow-name')[0].innerText;
-                        toastr.success(`${tvshowName} added successfully!`);
-                        $('#userTvShowState').removeClass('btn-primary').addClass('btn-secondary').html('Remove from my shows');
-                    }
-                })
-                .fail((jqXHR) => {
-                    if (jqXHR.status === 401 || jqXHR.status === 403) {
-                        toastr.error(jqXHR.responseJSON.error);
-                    } else {
-                        toastr.error('Server error. Please try again later.');
-                    }
+
+        // Setup toastr options
+        toastr.options = toastrOptions;
+
+        // redirect when a tvshow is selected
+        // TODO: check if this can be moved to the "on" chain above
+        $('#tvshow-search').bind('typeahead:select', (obj, datum) => {
+            window.location.replace(`/tvshows/${datum.id}`);
+        });
+
+        // login modal handler
+        $('#login-modal').on('shown.bs.modal', () => {
+            $('#login-email').focus();
+        });
+
+        // signup modal handler
+        $('#signup-modal').on('shown.bs.modal', () => {
+            $('#signup-email').focus();
+        });
+
+        // bug modal handler
+        $('#bug-modal').on('shown.bs.modal', () => {
+            $('#bug-email').focus();
+        });
+
+        // forgot password modal handler
+        $('#login-password-forgot').click((e) => {
+            e.preventDefault();
+            $('#login-modal')
+                .modal('hide')
+                .on('hidden.bs.modal', () => {
+                    $('#forgotpw-modal').modal('show');
+                    // Remove the 'on' event binding
+                    $(this).off('hidden.bs.modal');
                 });
-            return false;
+        });
+
+        // handle reset form modal
+        // 'resetPw' comes from pug template which comes from express
+        // TODO: Create a view for reset password and remove this
+        // eslint-disable-next-line no-undef
+        if (typeof resetPw !== 'undefined' && resetPw) {
+            $('#resetpw-modal').modal('show');
         }
-        // User is following this show and wants to remove it
-        $.get(`/tvshows/${tvshowId}/remove`)
-            .done((data) => {
-                if (data) {
-                    const tvshowName = $('#tvshow-name')[0].innerText;
-                    toastr.success(`${tvshowName} removed successfully!`);
-                    $('#userTvShowState').removeClass('btn-secondary').addClass('btn-primary').html('Add to my shows');
-                }
-            })
-            .fail((jqXHR) => {
-                if (jqXHR.status === 401 || jqXHR.status === 403) {
-                    toastr.error(jqXHR.responseJSON.error);
-                } else {
-                    toastr.error('Server error. Please try again later.');
-                }
-            });
-        return false;
     });
-    // handle submit bug modal
-    $('#bug-modal').on('shown.bs.modal', () => {
-        $('#bug-email').focus();
-    });
-    // bug form
-    $('#bug-form').submit((e) => {
-        // remove previous alert message
-        $('.alert').remove();
-        // prevent form submition
-        e.preventDefault();
-        // get user id if logged in
-        const bugDescription = $('#bug-description').val();
-        // validate text
-        if (!bugDescription || !sanitize.test(bugDescription)) {
-            return $('#bug-form').before('<div class="alert alert-danger" role="alert"> Error: Please fill in the bug description. Only alphanumerical characters! </div>');
-        }
-        $.post('/bug', { description: bugDescription })
-            .done(() => {
-                $('#bug-form').before('<div class="alert alert-success" role="alert"> Bug submited successfully. Thanks! </div>');
-            })
-            .fail(() => {
-                $('#bug-form').before('<div class="alert alert-danger" role="alert"> Error: Something went wrong. Please try again. </div>');
-            });
-        return false;
-    });
-    // handle messages in cookies
-    // For now, this is only used in authentication errors
-    // (ie: when a user clicks on "calendar" but isnt logged in)
-    const messageFromCookies = Cookies.get('message');
-    if (messageFromCookies) {
-        toastr.error(messageFromCookies);
-        Cookies.remove('message');
-    }
-});
+}(jQuery));

@@ -7,7 +7,7 @@ module.exports = function () {
     const util = require('gulp-util');
 
     const { config } = util.env.boilerplate;
-    const sassPipe = require('./sass-pipe');
+    const sassPipe = require('../pipe/sass');
 
     const sassConfig = config.tasks.sass;
 
@@ -23,6 +23,7 @@ module.exports = function () {
         .pipe(sassPipe())
         .pipe(gulp.dest(config.destinationRoot + sassConfig.destination))
         .pipe(gulpif(isWatching, browserSync.stream()))
+        .pipe(notify({ message: 'Successfully compiled SASS', onLast: true }))
         .on('error', function () {
             this.emit('error', new Error('SASS compilation Error'));
         });

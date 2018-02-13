@@ -1,7 +1,7 @@
 span.twitter-typeahead {
     .tt-suggestion {
         @extend .dropdown-item;
-        color: #fff;
+        color: $white;
         font-size: 14px;
         &.tt-cursor {
             @extend .dropdown-item.active;
@@ -17,33 +17,27 @@ span.twitter-typeahead {
         flex: 1 1 auto;
         width: 1%;
     }
-    .tt-menu, .tt-hint, .tt-input {
-        width: 100%;
-        background: transparent !important;
-        border: 1px solid $gray-700;
-        color: #fff;
-    }
+    .tt-menu,
+    .tt-hint,
     .tt-input {
-        &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-            color: $gray;
-        }
-        &::-moz-placeholder { /* Firefox 19+ */
-            color: $gray;
-        }
-        &:-ms-input-placeholder { /* IE 10+ */
-            color: $gray;
-        }
-        &:-moz-placeholder { /* Firefox 18- */
-            color: $gray;
-        }
+        width: 100%;
+        background-color: $gray-900 !important;
+        border: 1px solid $gray-700;
+        color: $white;
+    }
+    .tt-input::placeholder {
+        color: $gray;
     }
     .tt-menu {
         @extend .dropdown-menu;
-        left: 150px !important;
+        left: 160px !important;
         top: -5px !important;
         width: 250px !important;
         background-color: $gray-900 !important;
         border: 1px solid $gray-200;
-        color: #fff;
+        color: $white;
+        .tt-dataset {
+            padding: 0 5px;
+        }
     }
 }

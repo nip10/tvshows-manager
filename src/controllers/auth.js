@@ -44,7 +44,7 @@ const authController = {
             return next();
         }
         // set error message in cookie to be displayed on a toastr notification
-        res.cookie('message', 'You need to be authenticated.');
+        res.cookie('message_error', 'You need to be authenticated.');
         return res.redirect('/');
     },
     /**
@@ -78,7 +78,7 @@ const authController = {
             }
             return next();
         } catch (e) {
-            return res.status(400).json({ error: 'Invalid captcha. Please try again.' });
+            return res.status(500).json({ error: 'Ooops. Something went wrong... Please try again.' });
         }
     },
     /**
@@ -93,10 +93,8 @@ const authController = {
         // logout() is not enough, so I use session.destroy()
         // the redirect is done in the callback to make sure
         // the session is destroyed before the redirect
-        req.session.destroy((err) => {
-            if (!_.isNil(err)) console.log(err);
-            return res.redirect('/');
-        });
+        // destroy callback has 'err' available in the callback
+        req.session.destroy(() => res.redirect('/'));
     },
     /**
      * Request password reset
@@ -116,7 +114,7 @@ const authController = {
         try {
             const userExists = await User.checkIfUserExistsByEmail(normalizedEmail);
             if (!userExists) {
-                return res.status(400).json({ error: 'Invalid email address.' });
+                return res.status(422).json({ error: 'Invalid email address.' });
             }
             const reset = {
                 token: uuidv4(),
@@ -144,19 +142,19 @@ const authController = {
         const { email, token } = req.params;
         const normalizedEmail = validator.normalizeEmail(email);
         if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
-            return res.status(400).render('error', {
+            return res.status(422).render('error', {
                 message: 'Invalid email address.',
             });
         }
         if (!token) {
-            return res.status(400).render('error', {
+            return res.status(422).render('error', {
                 message: 'Invalid token.',
             });
         }
         try {
             const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
             if (!isTokenValid) {
-                return res.status(400).render('error', {
+                return res.status(422).render('error', {
                     message: 'Token is not valid or has already expired.',
                 });
             }
@@ -215,7 +213,7 @@ const authController = {
      * @param {Function} next - Express next middleware function
      * @returns {undefined}
      */
-    login(req, res, next) {
+    async login(req, res, next) {
         if (req.isAuthenticated()) {
             return res.status(400).json({ error: 'You are already logged in.' });
         }
@@ -224,11 +222,18 @@ const authController = {
         if (!_.isNil(validateLogin.error)) {
             return res.status(422).json({ error: validateLogin.error });
         }
+        try {
+            const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
+            if (!isUserAccountActive) {
+                return res.status(422).json({ error: 'Your account has not been activated yet.' });
+            }
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+        }
         return passport.authenticate('local', (err, user, info) => {
             if (err) return next(err);
-            if (!user) {
-                return res.status(422).json({ error: info.message });
-            }
+            if (!user) return res.status(422).json({ error: info.message });
             return req.logIn(user, (err2) => {
                 if (err) return next(err2);
                 return res.sendStatus(200);
@@ -243,7 +248,7 @@ const authController = {
      * @param {Function} next - Express next middleware function
      * @returns {undefined}
      */
-    async signup(req, res, next) {
+    async signup(req, res) {
         if (req.isAuthenticated()) {
             return res.status(400).json({ error: 'You are already logged in.' });
         }
@@ -253,18 +258,54 @@ const authController = {
             return res.status(422).json({ error: validateSignup.error });
         }
         try {
-            const user = await User.createUser(validateSignup.normalizedEmail, password);
-            if (user) {
-                return req.logIn(user, (err) => {
-                    if (err) return next(err);
-                    return req.session.save(() => res.sendStatus(200));
-                });
-            }
+            // generate token to activate account
+            const token = uuidv4();
+            const user = await User.createUser(validateSignup.normalizedEmail, password, token);
+            if (user) return res.sendStatus(201);
             return res.status(422).json({ error: 'Email already registred.' });
         } catch (e) {
             console.log(e);
             return res.status(500).json({ error: 'Oooops. Something went wrong.' });
         }
+    },
+    /**
+     * Change password
+     *
+     * @param {Object} req - Express request object
+     * @param {Object} res - Express response object
+     * @returns {undefined}
+     */
+    async changePassword(req, res) {
+        if (!req.isAuthenticated()) {
+            return res.status(401).json({ error: 'You are not logged in.' });
+        }
+        const userId = req.user;
+        const { newPassword, currentPassword } = req.body;
+        try {
+            const changedPassword = await User.changePassword(userId, currentPassword, newPassword);
+            if (changedPassword) {
+                return res.sendStatus(200);
+            } else if (changedPassword.error) {
+                return res.status(400).json({ error: changedPassword.error });
+            }
+            throw new Error();
+        } catch (e) {
+            console.log(e);
+            return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+        }
+    },
+    async activateAccount(req, res) {
+        const { token } = req.params;
+        try {
+            const activatedAccout = await User.activateAccount(token);
+            if (activatedAccout) {
+                return res.cookie('message_success', 'Your account has been activated! You can now login.');
+            }
+        } catch (e) {
+            console.log(e);
+            return res.cookie('message_error', 'Oooops. Something went wrong.');
+        }
+        return res.redirect('/');
     },
 };
 

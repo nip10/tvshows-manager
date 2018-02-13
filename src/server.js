@@ -1,4 +1,4 @@
-import http from 'http';
+import { createServer } from 'http';
 import app from './app';
 
 function normalizePort(val) {
@@ -15,7 +15,7 @@ function normalizePort(val) {
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-const server = http.createServer(app);
+const server = createServer(app);
 
 function onError(error) {
     if (error.syscall !== 'listen') {

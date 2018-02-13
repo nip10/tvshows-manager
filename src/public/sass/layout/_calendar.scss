@@ -22,6 +22,8 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
     &__date {
         background-color: $gray;
         padding: 5px;
+        font-size: 13px;
+        height: 28px;
     }
     &__day {
         &-othermonth {
@@ -37,6 +39,10 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
                 &:not(:last-child) {
                     padding-bottom: 10px;
                 }
+                &.watched {
+                    text-decoration: line-through;
+                    opacity: 0.5;
+                }
             }
         }
         &--checkbox {
@@ -49,6 +55,12 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
             font-size: 0.8em;
         }
     }
+}
+
+.month-nav-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .month-nav {

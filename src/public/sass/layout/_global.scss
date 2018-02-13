@@ -3,6 +3,7 @@
 @import 'index';
 @import 'sidebar';
 @import 'tvshows';
+@import 'watchlist';
 
 .main-container {
     @extend .container-fluid;
@@ -10,6 +11,9 @@
     padding-right: 0;
     .row {
         margin: 0;
+    }
+    &.reduced {
+        padding-left: 70px;
     }
 }
 
@@ -24,6 +28,6 @@
 
 .cardbox {
     transition: box-shadow .25s;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 2px 10px 0 rgba(0,0,0,0.12);
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .16), 0 2px 10px 0 rgba(0, 0, 0, .12);
     border-radius: 2px;
 }
