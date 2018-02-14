@@ -41,7 +41,7 @@ Object.keys(config.tasks).forEach((taskName) => {
 });
 
 // Clean build directory
-gulp.task('clean', () => del(cleanFolderList, { cwd: config.destinationRoot }));
+gulp.task('clean', () => del('./dist'));
 
 // Build app from sources
 gulp.task('build', ['clean'], () => runSequence(taskList));

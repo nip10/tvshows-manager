@@ -23,7 +23,4 @@ RUN npm config set registry http://registry.npmjs.org \
 COPY .env .
 COPY migrate.sh .
 COPY wait-for-it.sh .
-ADD dist .
-
-# DEBUG
-RUN ls
+COPY dist ./dist
