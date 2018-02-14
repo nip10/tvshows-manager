@@ -29,6 +29,6 @@ services:
       - db
       - redis
     restart: always
-    command: ["./wait-for-it.sh", "db:5432", "--", "node", "./server.js"]
+    command: ["./wait-for-it.sh", "db:5432", "--", "node", "./dist/server.js"]
 networks:
   webnet:

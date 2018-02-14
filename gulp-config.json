@@ -32,7 +32,7 @@
             "source": ["public/js/app.js"],
             "destination": "public/js",
             "destinationFile": "app.js",
-            "babelPresets": "airbnb"
+            "babelPresets": "env"
         },
         "eslint": {
             "source": ["public/js/**/*.js"],

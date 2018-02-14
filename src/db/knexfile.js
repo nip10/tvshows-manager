@@ -25,8 +25,8 @@ module.exports = {
             database: DATABASE_NAME,
         },
         pool: {
-            min: DATABASE_POOL_MIN,
-            max: DATABASE_POOL_MAX,
+            min: Number.parseInt(DATABASE_POOL_MIN, 10),
+            max: Number.parseInt(DATABASE_POOL_MAX, 10),
         },
         migrations: {
             directory: `${__dirname}/migrations`,
@@ -46,8 +46,8 @@ module.exports = {
             database: DATABASE_NAME,
         },
         pool: {
-            min: DATABASE_POOL_MIN,
-            max: DATABASE_POOL_MAX,
+            min: Number.parseInt(DATABASE_POOL_MIN, 10),
+            max: Number.parseInt(DATABASE_POOL_MAX, 10),
         },
         migrations: {
             directory: `${__dirname}/migrations`,
@@ -68,8 +68,8 @@ module.exports = {
             database: DATABASE_NAME,
         },
         pool: {
-            min: DATABASE_POOL_MIN,
-            max: DATABASE_POOL_MAX,
+            min: Number.parseInt(DATABASE_POOL_MIN, 10),
+            max: Number.parseInt(DATABASE_POOL_MAX, 10),
         },
         migrations: {
             directory: `${__dirname}/migrations`,

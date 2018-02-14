@@ -26,7 +26,6 @@ module.exports = function () {
         };
     };
 
-    // TODO: If no babel presets, don't use babel at all
     let bundler = browserify(scriptConfig.source, {
         basedir: config.sourceRoot,
         debug: !util.env.production,
