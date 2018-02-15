@@ -1,4 +1,3 @@
 src/db/migrations
 src/db/seeds
 dist
-.vscode

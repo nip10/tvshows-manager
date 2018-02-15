@@ -7,8 +7,7 @@ const hashPassword = password => {
 };
 
 exports.seed = function(knex, Promise) {
-    return knex('users')
-        .del()
+    return knex('users').del()
         .then(() =>
             knex('users').insert({
                 username: 'warrior',
