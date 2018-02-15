@@ -104,23 +104,17 @@ const tvshowsController = {
                 // Get tvshow imdb rating
                 const imdbRating = await Tvshow.getImdbRating(getTvshowData[0].imdb);
                 // Merge tvshow info and artwork
-                const tvshowInfo = Object.assign(
+                tvshowData = Object.assign(
                     {},
                     getTvshowData[0],
                     { images: [getTvshowData[0].images[0], getTvshowData[1]] },
                     { imdbRating },
-                );
-                // Merge episodes
-                const [,, episodes] = getTvshowData;
-                tvshowData = Object.assign(
-                    {},
-                    tvshowInfo,
-                    { episodes },
+                    { episodes: getTvshowData[2] },
                     { latestSeason },
                 );
-                // TODO: Merge the 2 object assign's
                 // Add tvshow info to the db (in the background)
-                Tvshow.addTvshowToDb(tvshowInfo).catch(e => console.log(e));
+                Tvshow.addTvshowToDb(_.pick(tvshowData, ['name', 'overview', 'status', 'imdb', 'imdbRating', 'thetvdb', 'genre', 'premiered', 'network', 'airdate', 'tvrating', 'images']))
+                    .catch(e => console.log(e));
             } catch (e) {
                 console.log(e);
                 // TODO: this should break here because there's no info on the show
