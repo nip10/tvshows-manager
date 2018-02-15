@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-    sanitize: new RegExp(/^[\w\-\s.,;:]+$/),
+  sanitize: new RegExp(/^[\w\-\s.,;:]+$/),
 };

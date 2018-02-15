@@ -10,8 +10,8 @@ const { config } = util.env.boilerplate;
 const sassConfig = config.tasks.sass;
 
 module.exports = lazypipe()
-    .pipe(() => gulpif(!util.env.production, sourcemaps.init()))
-    .pipe(sass, sassConfig.config)
-    .pipe(autoprefixer, { browsers: sassConfig.browsers })
-    .pipe(() => gulpif(util.env.production, cleanCss()))
-    .pipe(() => gulpif(!util.env.production, sourcemaps.write()));
+  .pipe(() => gulpif(!util.env.production, sourcemaps.init()))
+  .pipe(sass, sassConfig.config)
+  .pipe(autoprefixer, { browsers: sassConfig.browsers })
+  .pipe(() => gulpif(util.env.production, cleanCss()))
+  .pipe(() => gulpif(!util.env.production, sourcemaps.write()));

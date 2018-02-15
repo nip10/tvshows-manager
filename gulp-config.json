@@ -1,53 +1,72 @@
 {
-    "vhost": "http://localhost:3001",
-    "sourceRoot": "./src/",
-    "destinationRoot": "./dist/",
-    "tasks": {
-        "sass": {
-            "source": ["public/sass/**/*.scss"],
-            "destination": "public/css",
-            "browsers": ["last 2 versions"],
-            "config": {
-                "includePaths": []
-            }
+  "vhost": "http://localhost:3001",
+  "sourceRoot": "./src/",
+  "destinationRoot": "./dist/",
+  "tasks": {
+    "sass": {
+      "source": [
+        "public/sass/**/*.scss"
+      ],
+      "destination": "public/css",
+      "browsers": [
+        "last 2 versions"
+      ],
+      "config": {
+        "includePaths": []
+      }
+    },
+    "sasslint": {
+      "source": [
+        "public/sass/**/*.scss",
+        "!public/sass/vendor/**/*.scss"
+      ],
+      "ignore": [
+        "sass/vendor/**/*.scss"
+      ]
+    },
+    "postcss": {
+      "source": [
+        "public/pcss/**/*.pcss"
+      ],
+      "destination": "public/css",
+      "destinationFile": "app.css",
+      "config": {
+        "bem": {
+          "style": "bem"
         },
-        "sasslint": {
-            "source": ["public/sass/**/*.scss", "!public/sass/vendor/**/*.scss"],
-            "ignore": ["sass/vendor/**/*.scss"]
-        },
-        "postcss": {
-            "source": ["public/pcss/**/*.pcss"],
-            "destination": "public/css",
-            "destinationFile": "app.css",
-            "config": {
-                "bem": {
-                    "style": "bem"
-                },
-                "next": {
-                    "browsers": "last 5 versions, ie >= 9"
-                }
-            }
-        },
-        "scripts": {
-            "source": ["public/js/app.js"],
-            "destination": "public/js",
-            "destinationFile": "app.js",
-            "babelPresets": "env"
-        },
-        "eslint": {
-            "source": ["public/js/**/*.js"],
-            "config": {
-                "configFile": ".eslintrc.json"
-            }
-        },
-        "images": {
-            "source": ["public/img/**/*"],
-            "destination": "public/img",
-            "minify": true
-        },
-        "views": {
-            "source": ["views/**/*"],
-            "destination": "views"
+        "next": {
+          "browsers": "last 5 versions, ie >= 9"
         }
+      }
+    },
+    "scripts": {
+      "source": [
+        "public/js/app.js"
+      ],
+      "destination": "public/js",
+      "destinationFile": "app.js",
+      "babelPresets": "env"
+    },
+    "eslint": {
+      "source": [
+        "public/js/**/*.js"
+      ],
+      "config": {
+        "configFile": ".eslintrc.json"
+      }
+    },
+    "images": {
+      "source": [
+        "public/img/**/*"
+      ],
+      "destination": "public/img",
+      "minify": true
+    },
+    "views": {
+      "source": [
+        "views/**/*"
+      ],
+      "destination": "views"
     }
+  }
 }
