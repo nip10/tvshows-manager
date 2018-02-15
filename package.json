@@ -7,11 +7,13 @@
     "build:server": "babel src -d dist --ignore src/public,src/views,src/db/knexfile.sample.js",
     "build:client": "gulp --production",
     "lint": "eslint .",
-    "start": "node ./dist/server.js",
-    "watch:assets": "gulp serve",
-    "watch:server": "nodemon ./src/server.js --exec babel-node",
-    "watch:debug": "nodemon ./src/server.js --exec babel-node --inspect",
+    "start": "set NODE_ENV=production&&node ./dist/server.js",
+    "watch:assets": "set NODE_ENV=development&&gulp serve",
+    "watch:server": "set NODE_ENV=development&&nodemon ./src/server.js --exec babel-node",
+    "watch:debug": "set NODE_ENV=development&&nodemon ./src/server.js --exec babel-node --inspect",
+    "migrate": "knex migrate:rollback --knexfile ./src/db/knexfile.js --env development && knex migrate:latest --knexfile ./src/db/knexfile.js --env development",
     "migrate:prod": "knex migrate:rollback --knexfile ./dist/db/knexfile.js --env production && knex migrate:latest --knexfile ./dist/db/knexfile.js --env production",
+    "seed": "knex seed:run --knexfile ./src/db/knexfile.js --env development",
     "seed:prod": "knex seed:run --knexfile ./dist/db/knexfile.js --env production"
   },
   "repository": {
