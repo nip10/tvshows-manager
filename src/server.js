@@ -1,6 +1,8 @@
 import { createServer } from 'http';
 import app from './app';
 
+const { PORT, NODE_ENV } = process.env;
+
 function normalizePort(val) {
     const p = parseInt(val, 10);
     if (Number.isNaN(p)) {
@@ -12,7 +14,7 @@ function normalizePort(val) {
     return false;
 }
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(PORT || '3000');
 app.set('port', port);
 
 const server = createServer(app);
@@ -39,7 +41,7 @@ function onError(error) {
 function onListening() {
     const addr = server.address();
     const bind = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
-    console.log(`Listening on ${bind}`);
+    console.log(`Listening on ${bind} in ${NODE_ENV} mode`);
 }
 
 process.on('unhandledRejection', (reason, p) => {
