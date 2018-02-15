@@ -222,18 +222,18 @@ const authController = {
         if (!_.isNil(validateLogin.error)) {
             return res.status(422).json({ error: validateLogin.error });
         }
-        try {
-            const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
-            if (!isUserAccountActive) {
-                return res.status(422).json({ error: 'Your account has not been activated yet.' });
-            }
-        } catch (e) {
-            console.log(e);
-            return res.status(500).json({ error: 'Oooops. Something went wrong.' });
-        }
-        return passport.authenticate('local', (err, user, info) => {
+        return passport.authenticate('local', async (err, user, info) => {
             if (err) return next(err);
             if (!user) return res.status(422).json({ error: info.message });
+            try {
+                const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
+                if (!isUserAccountActive) {
+                    return res.status(422).json({ error: 'Your account has not been activated yet.' });
+                }
+            } catch (e) {
+                console.log(e);
+                return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+            }
             return req.logIn(user, (err2) => {
                 if (err) return next(err2);
                 return res.sendStatus(200);
@@ -294,6 +294,13 @@ const authController = {
             return res.status(500).json({ error: 'Oooops. Something went wrong.' });
         }
     },
+    /**
+     * Activate user account
+     *
+     * @param {Object} req - Express request object
+     * @param {Object} res - Express response object
+     * @returns {undefined}
+     */
     async activateAccount(req, res) {
         const { token } = req.params;
         try {
