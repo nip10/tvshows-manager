@@ -1,4 +1,4 @@
-exports.up = (knex, Promise) => knex.schema.hasTable('bugs', (exists) => {
+exports.up = (knex, Promise) => knex.schema.hasTable('bugs').then((exists) => {
     if (!exists) {
         return knex.schema.createTable('bugs', (table) => {
             table.increments('id');
