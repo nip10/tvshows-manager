@@ -2,14 +2,14 @@ version: "3"
 services:
   redis:
     image: redis:alpine
-    networks: 
+    networks:
       - webnet
     restart: always
   db:
     image: postgres:alpine
     volumes:
       - ./pgdata:/var/lib/postgresql
-    networks: 
+    networks:
       - webnet
     environment:
       POSTGRES_PASSWORD: skillz21

@@ -14,12 +14,14 @@ import knex from '../db/connection';
 passport.serializeUser((user, done) => done(null, user.id));
 
 passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await knex('users').where({ id }).first();
-        return done(null, user.id);
-    } catch (e) {
-        return done(e, null);
-    }
+  try {
+    const user = await knex('users')
+      .where({ id })
+      .first();
+    return done(null, user.id);
+  } catch (e) {
+    return done(e, null);
+  }
 });
 
 // Configure the local strategy for use by Passport.
@@ -30,19 +32,24 @@ passport.deserializeUser(async (id, done) => {
 // will be set at 'req.user' in route handlers after authentication.
 
 const options = {
-    usernameField: 'email',
-    passwordField: 'password',
+  usernameField: 'email',
+  passwordField: 'password',
 };
 
-passport.use(new LocalStrategy(options, async (email, password, done) => {
+passport.use(
+  new LocalStrategy(options, async (email, password, done) => {
     try {
-        const user = await knex('users').where({ email }).first();
-        if (!user) return done(null, false, { message: `Email ${email} not found.` });
-        if (!comparePassword(password, user.password)) return done(null, false, { message: 'Invalid email or password.' });
-        return done(null, user);
+      const user = await knex('users')
+        .where({ email })
+        .first();
+      if (!user) return done(null, false, { message: `Email ${email} not found.` });
+      if (!comparePassword(password, user.password))
+        return done(null, false, { message: 'Invalid email or password.' });
+      return done(null, user);
     } catch (e) {
-        return done(e);
+      return done(e);
     }
-}));
+  })
+);
 
 module.exports = passport;

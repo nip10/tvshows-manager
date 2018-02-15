@@ -1,24 +1,68 @@
 {
-    "extends": "airbnb-base",
+    "extends": [
+        "airbnb-base",
+        "prettier"
+    ],
     "rules": {
-        "linebreak-style": ["error", "windows"],
-        "indent": ["error", 4]
+        "linebreak-style": [
+            "error",
+            "windows"
+        ],
+        "no-console": "off",
+        "prettier/prettier": [
+            "error",
+            {
+                "trailingComma": "es5",
+                "singleQuote": true,
+                "printWidth": 120
+            }
+        ]
     },
-    "overrides": [{
-        "files": ["src/public/js/**/*.js"],
-        "parserOptions": {
-            "sourceType": "script"
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "plugins": [
+        "prettier"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "src/public/js/**/*.js"
+            ],
+            "parserOptions": {
+                "sourceType": "script"
+            },
+            "env": {
+                "browser": true,
+                "jquery": true
+            },
+            "globals": {
+                "toastr": true,
+                "Bloodhound": true,
+                "Cookies": true,
+                "validator": true,
+                "grecaptcha": true
+            }
         },
-        "env": {
-            "browser": true,
-            "jquery": true
-        },
-        "globals": {
-            "toastr": true,
-            "Bloodhound": true,
-            "Cookies": true,
-            "validator": true,
-            "grecaptcha": true
+        {
+            "files": [
+                "gulp-tasks/*.js",
+                "pipe/*.js"
+            ],
+            "rules": {
+                "import/no-extraneous-dependencies": [
+                    "error",
+                    {
+                        "devDependencies": true
+                    }
+                ],
+                "func-names": [
+                    "error",
+                    "never"
+                ],
+                "global-require": 0
+            }
         }
-    }]
+    ]
 }

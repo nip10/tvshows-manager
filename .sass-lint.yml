@@ -57,7 +57,7 @@ rules:
     - 1
     - max-depth: 3
   no-color-keywords: 1
-  no-color-literals: 
+  no-color-literals:
     - 1
     - allow-rgba: true
   no-css-comments: 1

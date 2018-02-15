@@ -1,14 +1,14 @@
 import express from 'express';
 import {
-    validateRecaptcha,
-    resetPasswordRequest,
-    resetPasswordWithToken,
-    resetPassword,
-    changePassword,
-    login,
-    signup,
-    logout,
-    activateAccount,
+  validateRecaptcha,
+  resetPasswordRequest,
+  resetPasswordWithToken,
+  resetPassword,
+  changePassword,
+  login,
+  signup,
+  logout,
+  activateAccount,
 } from '../controllers/auth';
 
 const router = express.Router();
