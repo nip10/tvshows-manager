@@ -260,7 +260,7 @@ const User = {
     async isActive(email) {
         try {
             const isAccountActive = await knex('users').select('active').where('email', email).first();
-            return isAccountActive;
+            return isAccountActive.active;
         } catch (e) {
             console.log(e);
             return false;
