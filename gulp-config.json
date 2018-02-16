@@ -64,7 +64,7 @@
     },
     "views": {
       "source": [
-        "views/**/*"
+        "views/**/*.pug"
       ],
       "destination": "views"
     }
