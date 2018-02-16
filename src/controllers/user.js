@@ -2,6 +2,7 @@ import _ from 'lodash';
 import knex from '../db/connection';
 import User from './../models/user';
 import Tvshow from './../models/tvshow';
+import CONSTANTS from '../utils/constants';
 
 /**
  * User controller - All functions related to users
@@ -9,24 +10,6 @@ import Tvshow from './../models/tvshow';
  */
 
 const userController = {
-  /**
-   * Create a new user
-   *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
-   * @returns {undefined}
-   */
-  async createUser(req, res, next) {
-    const { email, password } = req.body;
-    try {
-      await User.createUser(email, password);
-      return next();
-    } catch (e) {
-      console.log(e);
-      return next(); // TODO: This should break here !!
-    }
-  },
   /**
    * Add tvshow to user
    *
@@ -40,7 +23,7 @@ const userController = {
     try {
       const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
       if (isUserFollowingTvshow) {
-        return res.status(400).json({ error: 'You are already following this tvshow.' });
+        return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.ALREADY_FOLLOWING });
       }
       const addTvshowToUser = await User.addTvshow(userId, tvshowId);
       if (addTvshowToUser) {
@@ -49,7 +32,7 @@ const userController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Server error. Please try again later.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -65,7 +48,7 @@ const userController = {
     try {
       const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
       if (!isUserFollowingTvshow) {
-        return res.status(400).json({ error: 'You are not following this tvshow.' });
+        return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.NOT_FOLLOWING });
       }
       const removeTvshowFromUser = await User.removeTvshow(userId, tvshowId);
       if (removeTvshowFromUser) {
@@ -74,7 +57,7 @@ const userController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Server error. Please try again later.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -92,7 +75,7 @@ const userController = {
       if (action === 'add') {
         const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
         if (isUserFollowingTvshow) {
-          return res.status(400).json({ error: 'You are already following this tvshow.' });
+          return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.ALREADY_FOLLOWING });
         }
         const addTvshowToUser = await User.addTvshow(userId, tvshowId);
         if (addTvshowToUser) {
@@ -102,7 +85,7 @@ const userController = {
       } else if (action === 'remove') {
         const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
         if (!isUserFollowingTvshow) {
-          return res.status(400).json({ error: 'You are not following this tvshow.' });
+          return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.NOT_FOLLOWING });
         }
         const removeTvshowFromUser = await User.removeTvshow(userId, tvshowId);
         if (removeTvshowFromUser) {
@@ -114,7 +97,7 @@ const userController = {
       }
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Server error. Please try again later.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -130,26 +113,7 @@ const userController = {
     let unwatchedEpisodesCount;
     try {
       // Fetch unwatched episodes
-      // TODO: Move this to Model
-      /* eslint-disable func-names */
-      const unwatchedEpisodes = await knex
-        .select('episodes.id', 'episodes.title', 'episodes.overview')
-        .select(knex.raw('to_char(episodes.season, \'FM00\') as "season"'))
-        .select(knex.raw('to_char(episodes.epnum, \'FM00\') as "epnum"'))
-        .select(knex.raw('to_char(episodes.airdate, \'DD-MM-YYYY\') as "airdate"'))
-        .select(knex.raw('to_char(episodes.tvshow_id, \'FM99999999\') as "tvshowId"'))
-        .from('episodes')
-        .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
-        .where('usertv.user_id', userId)
-        .where('episodes.airdate', '<=', knex.fn.now())
-        .andWhere(function() {
-          this.whereNotIn('episodes.id', function() {
-            this.select('ep_id').from('usereps');
-          });
-        })
-        .orderBy('season', 'asc')
-        .orderBy('epnum', 'asc');
-      /* eslint-enable func-names */
+      const unwatchedEpisodes = await User.getWatchlist(userId);
       // Group unwatched episodes by tvshowId
       // Remove unecessary property tvshowId from all episodes
       /* eslint-disable no-param-reassign */
@@ -178,10 +142,8 @@ const userController = {
         .select('images', 'name as tvshowName')
         .select(knex.raw('to_char(thetvdb, \'FM99999999\') as "tvshowId"'))
         .whereRaw('thetvdb = ANY(?)', [tvshowIds]);
-      /* eslint-disable max-len */
       watchlist = _.map(watchlist, item => _.extend(item, _.find(tvshowPosters, { tvshowId: item.tvshowId })));
       // TODO: Merge the above maps if possible (check notes for code snippet)
-      /* eslint-enable max-len */
     } catch (e) {
       console.log(e);
       watchlist = null;
@@ -203,29 +165,23 @@ const userController = {
     const { tvshowId } = req.params;
     const userId = req.user;
     const { setWatched, episodeId } = req.body;
+    console.log('im here');
     try {
       if (setWatched === true) {
-        /* eslint-disable max-len */
         const setEpisodeWatched = await Tvshow.setEpisodeWatched(userId, tvshowId, episodeId);
         if (!setEpisodeWatched) {
-          // TODO: I'm assuming that the error is on the user when in reality
-          // it could be a server error. Check the knex error properties to be
-          // able to distinguish both scenarios.
-          // (if knex_error.client_error return 400 else return 500)
-          // Note: This happens in multiple places.
-          return res.status(400).json({ error: 'You already set this episode as watched.' });
+          return res.status(400).json({ error: CONSTANTS.ERROR.EPISODE.ALREADY_WATCHED });
         }
       } else {
         const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeId);
         if (!setEpisodeUnwatched) {
-          return res.status(400).json({ error: 'You already set this episode as unwatched.' });
+          return res.status(400).json({ error: CONSTANTS.ERROR.EPISODE.ALREADY_UNWATCHED });
         }
       }
-      /* eslint-enable max-len */
       return res.sendStatus(200);
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Server error' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -245,7 +201,7 @@ const userController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Server error' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**

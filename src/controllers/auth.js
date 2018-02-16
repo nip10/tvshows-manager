@@ -5,6 +5,7 @@ import rp from 'request-promise';
 import _ from 'lodash';
 import passport from '../auth/local';
 import User from '../models/user';
+import CONSTANTS from '../utils/constants';
 
 const { RECAPTCHA_SECRET } = process.env;
 const RECAPTCHA_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
@@ -28,7 +29,7 @@ const authController = {
     if (req.isAuthenticated()) {
       return next();
     }
-    return res.status(401).json({ error: 'Please login/signup first.' });
+    return res.status(401).json({ error: CONSTANTS.ERROR.AUTH.REQUIRED });
   },
   /**
    * Check if a user is logged-in
@@ -44,7 +45,7 @@ const authController = {
       return next();
     }
     // set error message in cookie to be displayed on a toastr notification
-    res.cookie('message_error', 'You need to be authenticated.');
+    res.cookie('message_error', CONSTANTS.ERROR.AUTH.REQUIRED);
     return res.redirect('/');
   },
   /**
@@ -58,7 +59,7 @@ const authController = {
   async validateRecaptcha(req, res, next) {
     const { recaptcha } = req.body;
     if (!recaptcha) {
-      return res.status(401).json({ error: 'You need complete the recaptcha.' });
+      return res.status(401).json({ error: CONSTANTS.ERROR.AUTH.RECAPTCHA });
     }
     const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     const requestOptions = {
@@ -78,7 +79,7 @@ const authController = {
       }
       return next();
     } catch (e) {
-      return res.status(500).json({ error: 'Ooops. Something went wrong... Please try again.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -106,15 +107,15 @@ const authController = {
   async resetPasswordRequest(req, res) {
     const { email, emailDuplicate } = req.body;
     if (!email || validator.isEmail(email)) {
-      return res.status(422).json({ error: 'Invalid email address.' });
+      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
     } else if (email !== emailDuplicate) {
-      return res.status(422).json({ error: 'Email addresses don\t match.' });
+      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.EMAIL_MATCH });
     }
     const normalizedEmail = validator.normalizeEmail(email);
     try {
       const userExists = await User.checkIfUserExistsByEmail(normalizedEmail);
       if (!userExists) {
-        return res.status(422).json({ error: 'Invalid email address.' });
+        return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
       }
       const reset = {
         token: uuidv4(),
@@ -128,7 +129,7 @@ const authController = {
       }
       console.log(`New token generated for ${normalizedEmail}: ${reset.token}. Expires at: ${reset.expiration}`);
     } catch (e) {
-      return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
     // TODO: Send email here
     return res.json({ message: 'An email has been sent to your email address.' });
@@ -145,19 +146,19 @@ const authController = {
     const normalizedEmail = validator.normalizeEmail(email);
     if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
       return res.status(422).render('error', {
-        message: 'Invalid email address.',
+        error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL,
       });
     }
     if (!token) {
       return res.status(422).render('error', {
-        message: 'Invalid token.',
+        error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN,
       });
     }
     try {
       const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
       if (!isTokenValid) {
         return res.status(422).render('error', {
-          message: 'Token is not valid or has already expired.',
+          error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN,
         });
       }
       return res.render('index', {
@@ -166,7 +167,7 @@ const authController = {
     } catch (e) {
       console.log(e);
       return res.status(500).render('error', {
-        message: 'Oooops. Something went wrong.',
+        error: CONSTANTS.ERROR.SERVER,
       });
     }
   },
@@ -182,21 +183,21 @@ const authController = {
     const { email, token } = req.params;
     const normalizedEmail = validator.normalizeEmail(email);
     if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
-      return res.status(422).json({ error: 'Invalid email address.' });
+      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
     }
     if (!token) {
-      return res.status(422).json({ error: 'Invalid token.' });
+      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN });
     }
     if (!password || password.length < 8 || password.length > 30) {
-      return res.status(422).json({ error: 'Password must be 8-30 chars.' });
+      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.PASSWORD_LEN });
     }
     if (password !== passwordDuplicate) {
-      return res.status(422).json({ error: 'Passwords don\t match.' });
+      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.PASSWORD_MATCH });
     }
     try {
       const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
       if (!isTokenValid) {
-        return res.status(422).json({ error: 'Invalid token. Please request a new token.' });
+        return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN });
       }
       const changedPassword = await User.changePassword(normalizedEmail, password);
       if (!changedPassword) {
@@ -204,7 +205,7 @@ const authController = {
       }
       return res.json({ message: 'Password changed successfully.' });
     } catch (e) {
-      return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -217,7 +218,7 @@ const authController = {
    */
   async login(req, res, next) {
     if (req.isAuthenticated()) {
-      return res.status(400).json({ error: 'You are already logged in.' });
+      return res.status(400).json({ error: CONSTANTS.ERROR.AUTH.ALREADY_AUTHENTICATED });
     }
     const { email, password } = req.body;
     const validateLogin = User.validateLogin(email, password);
@@ -230,11 +231,11 @@ const authController = {
       try {
         const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
         if (!isUserAccountActive) {
-          return res.status(422).json({ error: 'Your account has not been activated yet.' });
+          return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.NOT_ACTIVATED });
         }
       } catch (e) {
         console.log(e);
-        return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+        return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
       }
       return req.logIn(user, err2 => {
         if (err) return next(err2);
@@ -252,7 +253,7 @@ const authController = {
    */
   async signup(req, res) {
     if (req.isAuthenticated()) {
-      return res.status(400).json({ error: 'You are already logged in.' });
+      return res.status(400).json({ error: CONSTANTS.ERROR.AUTH.ALREADY_AUTHENTICATED });
     }
     const { email, password, passwordDuplicate } = req.body;
     const validateSignup = User.validateSignup(email, password, passwordDuplicate);
@@ -264,10 +265,10 @@ const authController = {
       const token = uuidv4();
       const user = await User.createUser(validateSignup.normalizedEmail, password, token);
       if (user) return res.sendStatus(201);
-      return res.status(422).json({ error: 'Email already registred.' });
+      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.EMAIL_EXISTS });
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -278,14 +279,11 @@ const authController = {
    * @returns {undefined}
    */
   async changePassword(req, res) {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ error: 'You are not logged in.' });
-    }
     const userId = req.user;
     const { newPassword, currentPassword } = req.body;
     try {
       const changedPassword = await User.changePassword(userId, currentPassword, newPassword);
-      if (changedPassword) {
+      if (changedPassword && !changedPassword.error) {
         return res.sendStatus(200);
       } else if (changedPassword.error) {
         return res.status(400).json({ error: changedPassword.error });
@@ -293,7 +291,7 @@ const authController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Oooops. Something went wrong.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -312,7 +310,7 @@ const authController = {
       }
     } catch (e) {
       console.log(e);
-      return res.cookie('message_error', 'Oooops. Something went wrong.');
+      return res.cookie('message_error', CONSTANTS.ERROR.SERVER);
     }
     return res.redirect('/');
   },

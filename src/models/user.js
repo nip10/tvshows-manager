@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import validator from 'validator';
 import _ from 'lodash';
 import knex from '../db/connection';
+import CONSTANTS from '../utils/constants';
 
 const User = {
   /**
@@ -209,11 +210,11 @@ const User = {
    */
   validateSignup(email, password, passwordDuplicate) {
     if (!email || !validator.isEmail(email)) {
-      return { error: 'Invalid email address.' };
+      return { error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL };
     } else if (!password || password.length < 8 || password.length > 30) {
-      return { error: 'Password must be 8-30 chars.' };
+      return { error: CONSTANTS.ERROR.AUTH.PASSWORD_LEN };
     } else if (!password || password !== passwordDuplicate) {
-      return { error: "Passwords don't match." };
+      return { error: CONSTANTS.ERROR.AUTH.PASSWORD_MATCH };
     }
     return {
       normalizedEmail: validator.normalizeEmail(email),
@@ -229,9 +230,9 @@ const User = {
    */
   validateLogin(email, password) {
     if (!email || !validator.isEmail(email)) {
-      return { error: 'Invalid email address.' };
+      return { error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL };
     } else if (!password || password.length < 8 || password.length > 30) {
-      return { error: 'Password must be 8-30 chars.' };
+      return { error: CONSTANTS.ERROR.AUTH.PASSWORD_LEN };
     }
     return {
       normalizedEmail: validator.normalizeEmail(email),
@@ -248,19 +249,17 @@ const User = {
    */
   async changePassword(userId, currentPassword, newPassword) {
     try {
-      const passwordFromDb = await knex('users')
-        .select('password')
+      const { passwordFromDb } = await knex('users')
+        .select('password as passwordFromDb')
         .where('id', userId)
         .first();
       const isCurrentPasswordCorrect = this.comparePassword(currentPassword, passwordFromDb);
-      if (!isCurrentPasswordCorrect) return false;
+      if (!isCurrentPasswordCorrect) return { error: CONSTANTS.ERROR.AUTH.PASSWORD_INVALID };
       const newPasswordHashed = this.genHashPassword(newPassword);
-      /* eslint-disable no-unused-vars */
-      const changedPassword = await knex('users')
+      await knex('users')
         .where('id', userId)
         .update({ password: newPasswordHashed });
-      /* eslint-enable no-unused-vars */
-      return true; // TODO: Return the response from knex after checking its content
+      return true;
     } catch (e) {
       console.log(e);
       return false;
@@ -287,17 +286,15 @@ const User = {
   /**
    * Activate user account
    *
-   * @param {string} token - activation token
-   * @returns {boolean} - account activated
+   * @param {String} token - activation token
+   * @returns {Boolean} - account activated
    */
   async activateAccount(token) {
     try {
-      /* eslint-disable no-unused-vars */
-      const activatedAccount = await knex('users')
+      await knex('users')
         .update('active', true)
         .where('token', token);
-      /* eslint-enable no-unused-vars */
-      return true; // TODO: Return the response from knex after checking its content
+      return true;
     } catch (e) {
       console.log(e);
       return false;
@@ -320,6 +317,39 @@ const User = {
       console.log(e);
       return null;
     }
+  },
+  /**
+   * Get unwatched episodes
+   *
+   * @param {Number} userId - user id
+   * @returns {[{}]} - list of unwatched episodes
+   */
+  async getWatchlist(userId) {
+    /* eslint-disable func-names */
+    try {
+      const unwatchedEpisodes = await knex
+        .select('episodes.id', 'episodes.title', 'episodes.overview')
+        .select(knex.raw('to_char(episodes.season, \'FM00\') as "season"'))
+        .select(knex.raw('to_char(episodes.epnum, \'FM00\') as "epnum"'))
+        .select(knex.raw('to_char(episodes.airdate, \'DD-MM-YYYY\') as "airdate"'))
+        .select(knex.raw('to_char(episodes.tvshow_id, \'FM99999999\') as "tvshowId"'))
+        .from('episodes')
+        .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
+        .where('usertv.user_id', userId)
+        .where('episodes.airdate', '<=', knex.fn.now())
+        .andWhere(function() {
+          this.whereNotIn('episodes.id', function() {
+            this.select('ep_id').from('usereps');
+          });
+        })
+        .orderBy('season', 'asc')
+        .orderBy('epnum', 'asc');
+      return unwatchedEpisodes;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+    /* eslint-enable func-names */
   },
 };
 

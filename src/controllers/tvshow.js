@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import Tvshow from '../models/tvshow';
 import User from '../models/user';
+import CONSTANTS from '../utils/constants';
 
 /**
  * Tvshow controller - All functions related to the tvshows feature
@@ -18,15 +19,15 @@ const tvshowsController = {
   async search(req, res) {
     const { tvshowName } = req.params;
     if (!_.isString(tvshowName)) {
-      return res.status(400).json({ error: 'Invalid tvshow name.' });
+      return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.INVALID });
     }
     try {
       const data = await Tvshow.search(tvshowName);
-      if (_.isNil(data)) return res.json({ error: 'Tvshow not found.' });
+      if (_.isNil(data)) return res.json({ error: CONSTANTS.ERROR.TVSHOW.NOT_FOUND });
       return res.json(data);
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Server error.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -44,7 +45,7 @@ const tvshowsController = {
       return res.json({ episodes });
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: 'Server error.' });
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
   },
   /**
@@ -77,6 +78,7 @@ const tvshowsController = {
       // Get tvshow data from the db
       try {
         const latestSeason = await Tvshow.getLatestSeasonFromDb(tvshowId);
+        if (!latestSeason) throw new Error();
         const getTvshowData = await Promise.all([
           Tvshow.getInfoFromDb(tvshowId),
           Tvshow.getEpisodesFromSeasonFromDb(tvshowId, latestSeason),
@@ -84,6 +86,9 @@ const tvshowsController = {
         tvshowData = Object.assign({}, getTvshowData[0], { episodes: getTvshowData[1] }, { latestSeason });
       } catch (e) {
         console.log(e);
+        return res.status(500).render('error', {
+          error: CONSTANTS.ERROR.SERVER,
+        });
       }
     } else {
       // Get tvshow data from the api
@@ -126,8 +131,9 @@ const tvshowsController = {
         ).catch(e => console.log(e));
       } catch (e) {
         console.log(e);
-        // TODO: this should break here because there's no info on the show
-        // TODO: try using next(err) to render the error page
+        return res.status(500).render('error', {
+          error: CONSTANTS.ERROR.SERVER,
+        });
       }
     }
     const userId = _.get(req, 'user', false);

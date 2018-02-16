@@ -1,13 +1,9 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable quote-props */
-/* eslint-disable no-console */
 
 import { CronJob } from 'cron';
 import rp from 'request-promise';
 
 console.log('[CHILD] [0] Child process started!');
-
-// let oldToken = null;
 
 const job = new CronJob(
   // Runs every 12h (12 is the max for cronjob, more than that is not recognized)
