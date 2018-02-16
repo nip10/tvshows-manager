@@ -48,7 +48,8 @@
         {
             "files": [
                 "gulp-tasks/*.js",
-                "pipe/*.js"
+                "pipe/*.js",
+                "gulpfile.js"
             ],
             "rules": {
                 "import/no-extraneous-dependencies": [
@@ -57,6 +58,7 @@
                         "devDependencies": true
                     }
                 ],
+                "import/no-dynamic-require": 0,
                 "func-names": [
                     "error",
                     "never"

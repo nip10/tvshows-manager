@@ -1,7 +1,3 @@
-/* eslint-disable func-names */
-/* eslint-disable global-require */
-/* eslint-disable import/no-dynamic-require */
-
 const config = require('./gulp-config.json');
 const runSequence = require('run-sequence');
 const gulp = require('gulp');
