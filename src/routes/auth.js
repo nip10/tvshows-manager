@@ -1,5 +1,6 @@
 import express from 'express';
 import {
+  isLoggedIn,
   validateRecaptcha,
   resetPasswordRequest,
   resetPasswordWithToken,
@@ -20,6 +21,6 @@ router.get('/logout', logout);
 router.post('/reset', validateRecaptcha, resetPasswordRequest);
 router.get('/reset/:email/:token', resetPasswordWithToken);
 router.post('/reset/:email/:token', resetPassword);
-router.post('/changepassword', changePassword);
+router.post('/changepassword', isLoggedIn, changePassword);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 import express from 'express';
 import _ from 'lodash';
 import knex from '../db/connection';
+import CONSTANTS from '../utils/constants';
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post('/bug', async (req, res) => {
   const sanitize = new RegExp(/^[\w\-\s.,;:]+$/);
   if (!description || !sanitize.test(description)) {
     return res.status(400).json({
-      error: 'Please fill in the bug description. Only alphanumerical characters are allowed.',
+      error: CONSTANTS.ERROR.BUG.DESCRIPTION,
     });
   }
   try {
@@ -26,7 +27,7 @@ router.post('/bug', async (req, res) => {
     });
     return res.sendStatus(200);
   } catch (e) {
-    return res.status(500).json({ error: 'Something went wrong. Please try again.' });
+    return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
   }
 });
 

@@ -31,7 +31,7 @@ module.exports = {
           return window.location.replace('/calendar');
         }
         return $('#login-form').before(
-          '<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>'
+          `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
         );
       })
       .fail(jqXHR => {
@@ -39,14 +39,16 @@ module.exports = {
         if (resStatusCode === 401) {
           $('#login-email').addClass('is-invalid');
           $('#login-password').addClass('is-invalid');
-          $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid credentials ! </div>');
+          $('#login-form').before(
+            `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
+          );
         } else if (resStatusCode === 422) {
           $('#login-form').before(
             `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
         } else {
           $('#login-form').before(
-            '<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>'
+            `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
         }
       });
@@ -100,7 +102,7 @@ module.exports = {
           );
         }
         return $('#signup-form').before(
-          '<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>'
+          `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
         );
       })
       .fail(jqXHR => {
@@ -119,7 +121,7 @@ module.exports = {
           );
         } else {
           $('#signup-form').before(
-            '<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. Please try again. </div>'
+            `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
         }
       });
@@ -160,11 +162,7 @@ module.exports = {
           }
         })
         .fail(jqXHR => {
-          if (jqXHR.status === 400) {
-            toastr.error(jqXHR.responseJSON.error);
-          } else {
-            toastr.error('Server error. Please try again later.');
-          }
+          toastr.error(jqXHR.responseJSON.error);
         })
         .always(() => {
           // re-enable button
@@ -187,11 +185,7 @@ module.exports = {
         }
       })
       .fail(jqXHR => {
-        if (jqXHR.status === 400) {
-          toastr.error(jqXHR.responseJSON.error);
-        } else {
-          toastr.error('Server error. Please try again later.');
-        }
+        toastr.error(jqXHR.responseJSON.error);
       })
       .always(() => {
         // re-enable button
@@ -222,9 +216,9 @@ module.exports = {
           );
         }
       })
-      .fail(() => {
+      .fail(jqXHR => {
         $('#bug-form').before(
-          '<div class="alert alert-danger" role="alert"> Error: Something went wrong. Please try again. </div>'
+          `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
         );
       });
     return false;
@@ -265,7 +259,7 @@ module.exports = {
           $('#forgotpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
         } else {
           $('#forgotpw-form').before(
-            '<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>'
+            `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
         }
       })
@@ -275,14 +269,10 @@ module.exports = {
         if (resStatusCode === 400) {
           $('#forgotpw-email').addClass('is-invalid');
           $('#forgotpw-email-d').addClass('is-invalid');
-          $('#forgotpw-form').before(
-            `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
-          );
-        } else {
-          $('#forgotpw-form').before(
-            '<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>'
-          );
         }
+        $('#forgotpw-form').before(
+          `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
+        );
       });
     return false;
   },
@@ -331,12 +321,9 @@ module.exports = {
         if (resStatusCode === 400) {
           $('#resetpw-password').addClass('is-invalid');
           $('#resetpw-password-d').addClass('is-invalid');
-          $('#resetpw-form').before(
-            `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
-          );
         }
         $('#resetpw-form').before(
-          '<div class="alert alert-danger" role="alert"> Error: Oooops. Something went wrong. </div>'
+          `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
         );
       });
     return false;
@@ -391,11 +378,7 @@ module.exports = {
         }
       })
       .fail(jqXHR => {
-        if (jqXHR.status === 401) {
-          toastr.error('You are not logged in.');
-        } else {
-          toastr.error(jqXHR.responseJSON.error);
-        }
+        toastr.error(jqXHR.responseJSON.error);
       });
     return false;
   },
@@ -475,11 +458,7 @@ module.exports = {
         }
       })
       .fail(jqXHR => {
-        if (jqXHR.status === 401) {
-          toastr.error('You are not logged in.');
-        } else {
-          toastr.error(jqXHR.responseJSON.error);
-        }
+        toastr.error(jqXHR.responseJSON.error);
       });
   },
   changeEpisodeWatchedStatusCalendar(event) {

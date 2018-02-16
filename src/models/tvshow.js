@@ -1,4 +1,3 @@
-/* eslint-disable quote-props */
 import _ from 'lodash';
 import moment from 'moment';
 import rp from 'request-promise';
@@ -319,13 +318,11 @@ const Tvshow = {
         .select(knex.raw('max(??)', ['season']))
         .where('tvshow_id', tvshowId)
         .first();
+      if (!_.isNumber(latestSeason)) throw new Error();
       return latestSeason.max;
     } catch (e) {
       console.log(e);
-      return 1;
-      // TODO: This should probabably return an error
-      // If this throws, the db is probably unreachable so its useless
-      // to try fetch the episodes or the latest season from the api
+      return false;
     }
   },
   /**

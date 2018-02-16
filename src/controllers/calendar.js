@@ -2,6 +2,7 @@ import moment from 'moment';
 import pick from 'lodash/pick';
 import User from '../models/user';
 import Calendar from '../models/calendar';
+import CONSTANTS from '../utils/constants';
 
 /**
  * Calendar controller - All functions related to the calendar feature
@@ -51,8 +52,9 @@ const calendarController = {
       });
     } catch (e) {
       console.log(e);
-      // TODO: render generic server error page
-      return res.status(500).json({ error: 'Server error.' });
+      return res.status(500).render('error', {
+        error: CONSTANTS.ERROR.SERVER,
+      });
     }
   },
 };
