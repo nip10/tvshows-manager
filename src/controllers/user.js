@@ -165,7 +165,6 @@ const userController = {
     const { tvshowId } = req.params;
     const userId = req.user;
     const { setWatched, episodeId } = req.body;
-    console.log('im here');
     try {
       if (setWatched === true) {
         const setEpisodeWatched = await Tvshow.setEpisodeWatched(userId, tvshowId, episodeId);
