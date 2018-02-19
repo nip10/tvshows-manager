@@ -9,7 +9,7 @@ exports.up = (knex, Promise) =>
           .unique()
           .notNullable();
         table.string('password').notNullable();
-        table.string('activationtoken').notNullable();
+        table.string('activationtoken');
         table.boolean('admin').defaultTo(false);
         table.boolean('active').defaultTo(false);
         table.string('resetpwtoken');
