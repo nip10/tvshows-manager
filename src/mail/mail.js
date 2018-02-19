@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { NODE_ENV, EMAIL_HOST, EMAIL_PORT, EMAIL_AUTH_USER, EMAIL_AUTH_PASSWORD, HOSTNAME } = process.env;
+const { NODE_ENV, EMAIL_HOST, EMAIL_PORT, EMAIL_AUTH_USER, EMAIL_AUTH_PASSWORD, EMAIL_REPLYTO, HOSTNAME } = process.env;
 const isDev = NODE_ENV === 'development';
 
 const mail = {
@@ -13,6 +13,7 @@ const mail = {
       message: {
         from: `${EMAIL_AUTH_USER}@${HOSTNAME}`,
         to,
+        replyTo: `${EMAIL_REPLYTO}@${HOSTNAME}`,
       },
       send: !isDev,
       transport: {
