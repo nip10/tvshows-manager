@@ -14,6 +14,7 @@ CONSTANTS.ERROR = {
     INVALID_TOKEN: 'Invalid token.',
     ALREADY_AUTHENTICATED: 'You are already authenticated.',
     NOT_ACTIVATED: 'You need to activate your account first.',
+    INVALID_CREDENTIALS: 'Invalid credentials',
   },
   BUG: {
     DESCRIPTION: 'Please fill in the bug description. Only alphanumerical characters are allowed.',
