@@ -6,10 +6,10 @@ import _ from 'lodash';
 import passport from '../auth/local';
 import User from '../models/user';
 import CONSTANTS from '../utils/constants';
+import mail from '../mail/mail';
 
-const { RECAPTCHA_SECRET } = process.env;
-const RECAPTCHA_VERIFY_URL = 'https://www.google.com/recaptcha/api/siteverify';
-const RESET_PASSWORD_TOKEN_EXPIRATION = 15; // in minutes
+const { RECAPTCHA_SECRET, NODE_ENV, RECAPTCHA_VERIFY_URL, RESET_PASSWORD_TOKEN_EXPIRATION } = process.env;
+const isDev = NODE_ENV === 'development';
 
 /**
  * Authentication controller - All functions related to authentication (login/signup/reset)
@@ -57,6 +57,7 @@ const authController = {
    * @returns {undefined}
    */
   async validateRecaptcha(req, res, next) {
+    if (isDev) return next();
     const { recaptcha } = req.body;
     if (!recaptcha) {
       return res.status(401).json({ error: CONSTANTS.ERROR.AUTH.RECAPTCHA });
@@ -106,7 +107,7 @@ const authController = {
    */
   async resetPasswordRequest(req, res) {
     const { email, emailDuplicate } = req.body;
-    if (!email || validator.isEmail(email)) {
+    if (!email || !validator.isEmail(email)) {
       return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
     } else if (email !== emailDuplicate) {
       return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.EMAIL_MATCH });
@@ -124,15 +125,18 @@ const authController = {
           .toISOString(),
       };
       const addToken = await User.addTokenToUser(normalizedEmail, reset);
-      if (!addToken) {
-        throw new Error();
+      if (!addToken) throw new Error();
+      const sentEmail = await mail.sendEmail(normalizedEmail, 'reset', { email: normalizedEmail, token: reset.token });
+      if (!sentEmail) {
+        return res.status(400).json({
+          error: `Couldn't send email to ${normalizedEmail}.
+              Please check if the email address is correct and try again. `,
+        });
       }
-      console.log(`New token generated for ${normalizedEmail}: ${reset.token}. Expires at: ${reset.expiration}`);
+      return res.json({ message: 'An email has been sent to your email address.' });
     } catch (e) {
       return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
     }
-    // TODO: Send email here
-    return res.json({ message: 'An email has been sent to your email address.' });
   },
   /**
    * Request password reset with token
@@ -196,13 +200,9 @@ const authController = {
     }
     try {
       const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
-      if (!isTokenValid) {
-        return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN });
-      }
-      const changedPassword = await User.changePassword(normalizedEmail, password);
-      if (!changedPassword) {
-        throw new Error();
-      }
+      if (!isTokenValid) return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN });
+      const resetdPassword = await User.resetPassword(normalizedEmail, password);
+      if (!resetdPassword) throw new Error();
       return res.json({ message: 'Password changed successfully.' });
     } catch (e) {
       return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
@@ -230,9 +230,7 @@ const authController = {
       if (!user) return res.status(422).json({ error: info.message });
       try {
         const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
-        if (!isUserAccountActive) {
-          return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.NOT_ACTIVATED });
-        }
+        if (!isUserAccountActive) return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.NOT_ACTIVATED });
       } catch (e) {
         console.log(e);
         return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
@@ -261,10 +259,22 @@ const authController = {
       return res.status(422).json({ error: validateSignup.error });
     }
     try {
-      // generate token to activate account
-      const token = uuidv4();
-      const user = await User.createUser(validateSignup.normalizedEmail, password, token);
-      if (user) return res.sendStatus(201);
+      const activateAccountToken = uuidv4();
+      const user = await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
+      if (user.id) {
+        try {
+          const sentEmail = await mail.sendEmail(email, 'welcome', { token: activateAccountToken });
+          if (!sentEmail) {
+            return res.status(400).json({
+              error: `Couldn't send email to ${email}.
+              Please check if the email address is correct and try again. `,
+            });
+          }
+          return res.sendStatus(201);
+        } catch (e) {
+          return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+        }
+      }
       return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.EMAIL_EXISTS });
     } catch (e) {
       console.log(e);
@@ -304,13 +314,12 @@ const authController = {
   async activateAccount(req, res) {
     const { token } = req.params;
     try {
-      const activatedAccout = await User.activateAccount(token);
-      if (activatedAccout) {
-        return res.cookie('message_success', 'Your account has been activated! You can now login.');
-      }
+      const activatedAccount = await User.activateAccount(token);
+      if (!activatedAccount) throw new Error();
+      res.cookie('message_success', 'Your account has been activated! You can now login.');
     } catch (e) {
       console.log(e);
-      return res.cookie('message_error', CONSTANTS.ERROR.SERVER);
+      res.cookie('message_error', CONSTANTS.ERROR.SERVER);
     }
     return res.redirect('/');
   },
