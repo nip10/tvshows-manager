@@ -18,7 +18,7 @@ import user from './routes/user';
 import watchlist from './routes/watchlist';
 
 // Load environment variables
-dotenv.config({ path: '../.env' });
+dotenv.config();
 const { NODE_ENV, SESSION_SECRET, REDIS_HOST, REDIS_PORT } = process.env;
 const isDev = NODE_ENV === 'development';
 

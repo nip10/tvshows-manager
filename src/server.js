@@ -1,5 +1,8 @@
+import bluebird from 'bluebird';
 import { createServer } from 'http';
 import app from './app';
+
+global.Promise = bluebird;
 
 const { PORT, NODE_ENV } = process.env;
 
