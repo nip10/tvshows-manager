@@ -12,7 +12,7 @@ const messages = {
 
 if (messages) {
   if (messages.success) {
-    toastr.error(messages.success);
+    toastr.success(messages.success);
     Cookies.remove('message_success');
   }
   if (messages.error) {

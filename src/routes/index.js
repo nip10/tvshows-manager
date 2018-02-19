@@ -5,12 +5,10 @@ import CONSTANTS from '../utils/constants';
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.render('index', {
-    homepage: true,
-  });
-});
+router.get('/', (req, res) => res.render('index'));
 
+// This should be in its own route + controller (+ model)
+// Im not doing that now because this is supposed to be temporary
 router.post('/bug', async (req, res) => {
   const userId = _.get(req, 'user', null);
   const { description } = req.body;
