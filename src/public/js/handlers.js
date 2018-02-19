@@ -98,7 +98,10 @@ module.exports = {
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           return $('#login-form').before(
-            `<div class="alert alert-success" role="alert"> An email has been sent to ${normalizedEmail} with a activation link. </div>`
+            `<div class="alert alert-success" role="alert">
+            An email has been sent to ${normalizedEmail} with a activation link.
+            If you don't receive it in the next 5min, check you 'spam' folder.
+            </div>`
           );
         }
         return $('#signup-form').before(
