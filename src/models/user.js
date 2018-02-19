@@ -14,7 +14,7 @@ const User = {
    * @returns {boolean} - if the user was created
    */
   async createUser(email, password, token) {
-    const hashedPassword = this.genHashPassword(password);
+    const hashedPassword = await this.genHashPassword(password);
     const username = email.split('@')[0];
     try {
       const createUser = await knex('users')
@@ -38,8 +38,13 @@ const User = {
    * @param {string} dbPassword - password fetched from the db
    * @returns {boolean} - if the passwords match
    */
-  comparePassword(userPassword, dbPassword) {
-    return bcrypt.compareSync(userPassword, dbPassword);
+  async comparePassword(userPassword, dbPassword) {
+    try {
+      const result = await bcrypt.compare(userPassword, dbPassword);
+      return result;
+    } catch (e) {
+      return false;
+    }
   },
   /**
    * Generate hashed password
@@ -47,10 +52,14 @@ const User = {
    * @param {string} password - user password
    * @returns {string} - hashed password
    */
-  genHashPassword(password) {
-    const salt = bcrypt.genSaltSync();
-    const hashedPassword = bcrypt.hashSync(password, salt);
-    return hashedPassword;
+  async genHashPassword(password) {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      return hashedPassword;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
   },
   /**
    * Check if a email is already registred
@@ -293,7 +302,8 @@ const User = {
     try {
       await knex('users')
         .update('active', true)
-        .where('token', token);
+        .update('activationtoken', null)
+        .where('activationtoken', token);
       return true;
     } catch (e) {
       console.log(e);
@@ -350,6 +360,27 @@ const User = {
       return null;
     }
     /* eslint-enable func-names */
+  },
+  /**
+   * Reset user password
+   *
+   * @param {String} email - user email
+   * @param {String} newPassword - new password
+   * @returns {Boolean} - changed password
+   */
+  async resetPassword(email, newPassword) {
+    try {
+      const newPasswordHashed = await this.genHashPassword(newPassword);
+      await knex('users')
+        .where('email', email)
+        .update('password', newPasswordHashed)
+        .update('resetpwtoken', null)
+        .update('resetpwexp', null);
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
   },
 };
 
