@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { comparePassword } from '../models/user';
 import knex from '../db/connection';
+import CONSTANTS from '../utils/constants';
 
 // Configure Passport authenticated session persistence.
 //
@@ -42,9 +43,9 @@ passport.use(
       const user = await knex('users')
         .where({ email })
         .first();
-      if (!user) return done(null, false, { message: `Email ${email} not found.` });
-      if (!comparePassword(password, user.password))
-        return done(null, false, { message: 'Invalid email or password.' });
+      if (!user) return done(null, false, { message: CONSTANTS.ERROR.AUTH.INVALID_CREDENTIALS });
+      const result = await comparePassword(password, user.password);
+      if (!result) return done(null, false, { message: CONSTANTS.ERROR.AUTH.INVALID_CREDENTIALS });
       return done(null, user);
     } catch (e) {
       return done(e);
