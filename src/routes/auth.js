@@ -10,12 +10,14 @@ import {
   signup,
   logout,
   activateAccount,
+  resendActivateAccount,
 } from '../controllers/auth';
 
 const router = express.Router();
 
 router.post('/login', login);
-router.post('/activate/:token', activateAccount);
+router.post('/activate', resendActivateAccount);
+router.get('/activate/:token', activateAccount);
 router.post('/signup', validateRecaptcha, signup);
 router.get('/logout', logout);
 router.post('/reset', validateRecaptcha, resetPasswordRequest);

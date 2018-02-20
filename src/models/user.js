@@ -62,12 +62,12 @@ const User = {
     }
   },
   /**
-   * Check if a email is already registred
+   * Check if a email is registred
    *
    * @param {string} email - user email
-   * @returns {boolean} - if the email already exists
+   * @returns {boolean} - email is registred
    */
-  async checkIfUserExistsByEmail(email) {
+  async existsByEmail(email) {
     const inner = knex
       .select(1)
       .from('users')
@@ -89,12 +89,30 @@ const User = {
    * @param {{ token: string, expiration: date }} reset - reset password token and expiration date
    * @returns {boolean} - if the token was added
    */
-  async addTokenToUser(email, reset) {
+  async addResetTokenToUser(email, reset) {
     try {
-      await knex('users')
+      const res = await knex('users')
         .where({ email })
         .update({ resetpwtoken: reset.token, resetpwexp: reset.expiration });
-      return true;
+      return res === 1;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
+  /**
+   * Add reset password token to the user
+   *
+   * @param {string} email - user email
+   * @param {{ token: string, expiration: date }} reset - reset password token and expiration date
+   * @returns {boolean} - if the token was added
+   */
+  async addActivationTokenToUser(email, token) {
+    try {
+      const res = await knex('users')
+        .where({ email })
+        .update({ activationtoken: token });
+      return res === 1;
     } catch (e) {
       console.log(e);
       return false;
@@ -143,7 +161,7 @@ const User = {
         .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
         .join('tvshows', 'tvshows.thetvdb', 'episodes.tvshow_id')
         .where('usertv.user_id', userId)
-        .andWhere(function() {
+        .andWhere(function () {
           this.whereBetween('episodes.airdate', [startInterval, endInterval]);
         });
       return episodes;
@@ -300,11 +318,11 @@ const User = {
    */
   async activateAccount(token) {
     try {
-      await knex('users')
+      const res = await knex('users')
         .update('active', true)
         .update('activationtoken', null)
         .where('activationtoken', token);
-      return true;
+      return res === 1;
     } catch (e) {
       console.log(e);
       return false;
@@ -347,8 +365,8 @@ const User = {
         .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
         .where('usertv.user_id', userId)
         .where('episodes.airdate', '<=', knex.fn.now())
-        .andWhere(function() {
-          this.whereNotIn('episodes.id', function() {
+        .andWhere(function () {
+          this.whereNotIn('episodes.id', function () {
             this.select('ep_id').from('usereps');
           });
         })

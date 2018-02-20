@@ -7,7 +7,7 @@ const typeahead = require('./config/typeahead');
 const toastrOptions = require('./config/toastr');
 require('./cookies');
 
-(function($) {
+(function ($) {
   $(() => {
     // Initialize event handlers
     $('#login-form').submit(e => handlers.login(e));
@@ -23,6 +23,7 @@ require('./cookies');
     $('.mark-watched').click(e => handlers.setSeasonWatched(e));
     $('.calendar__table input[type=checkbox]').change(e => handlers.changeEpisodeWatchedStatusCalendar(e));
     $('#episodes-table i.fa.fa-eye').click(e => handlers.changeEpisodeWatchedStatusTvshow(e));
+    $('#resend-activation').click(e => handlers.resendActivation(e));
 
     // Initialize typeahead event handlers
     $('.typeahead')

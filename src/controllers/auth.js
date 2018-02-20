@@ -114,7 +114,7 @@ const authController = {
     }
     const normalizedEmail = validator.normalizeEmail(email);
     try {
-      const userExists = await User.checkIfUserExistsByEmail(normalizedEmail);
+      const userExists = await User.existsByEmail(normalizedEmail);
       if (!userExists) {
         return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
       }
@@ -124,8 +124,8 @@ const authController = {
           .add(RESET_PASSWORD_TOKEN_EXPIRATION, 'minutes')
           .toISOString(),
       };
-      const addToken = await User.addTokenToUser(normalizedEmail, reset);
-      if (!addToken) throw new Error();
+      const addedToken = await User.addResetTokenToUser(normalizedEmail, reset);
+      if (!addedToken) throw new Error();
       const sentEmail = await mail.sendEmail(normalizedEmail, 'reset', { email: normalizedEmail, token: reset.token });
       if (!sentEmail) {
         return res.status(400).json({
@@ -230,7 +230,7 @@ const authController = {
       if (!user) return res.status(422).json({ error: info.message });
       try {
         const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
-        if (!isUserAccountActive) return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.NOT_ACTIVATED });
+        if (!isUserAccountActive) return res.status(403).json({ error: CONSTANTS.ERROR.AUTH.NOT_ACTIVATED });
       } catch (e) {
         console.log(e);
         return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
@@ -315,13 +315,48 @@ const authController = {
     const { token } = req.params;
     try {
       const activatedAccount = await User.activateAccount(token);
-      if (!activatedAccount) throw new Error();
-      res.cookie('message_success', 'Your account has been activated! You can now login.');
+      if (!activatedAccount) {
+        res.cookie('message_error', 'Your account is already activated.');
+      } else {
+        res.cookie('message_success', 'Your account has been activated. You can now login.');
+      }
     } catch (e) {
       console.log(e);
       res.cookie('message_error', CONSTANTS.ERROR.SERVER);
     }
     return res.redirect('/');
+  },
+  /**
+   * Resend activation email
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   * @returns {undefined}
+   */
+  async resendActivateAccount(req, res) {
+    const { email } = req.body;
+    try {
+      const validateUser = await Promise.all([User.existsByEmail(email), User.isActive(email)]);
+      if (validateUser[0] && !validateUser[1]) {
+        const activationToken = uuidv4();
+        const addedToken = await User.addActivationTokenToUser(email, activationToken);
+        if (!addedToken) throw new Error();
+        const sentEmail = await mail.sendEmail(email, 'welcome', { token: activationToken });
+        if (!sentEmail) {
+          return res.status(400).json({
+            error: `Couldn't send email to ${email}.
+                Please check if the email address is correct and try again. `,
+          });
+        }
+        return res.json({ message: `Activation email sent to ${email}` });
+      } else if (validateUser[0] && validateUser[1]) {
+        return res.status(400).json({ error: 'Your account is already activated.' });
+      }
+      throw new Error();
+    } catch (e) {
+      console.log(e);
+      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+    }
   },
 };
 
