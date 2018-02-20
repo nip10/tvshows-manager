@@ -5,19 +5,24 @@ const functions = require('./functions');
 
 module.exports = {
   login(event) {
-    // remove previous alert message
-    $('.alert').remove();
     // prevent form submition
     event.preventDefault();
+    // remove previous alert message
+    $('.alert').remove();
+    // remove previous error styles
+    $('#login-email').removeClass('is-invalid');
+    $('#login-password').removeClass('is-invalid');
     // get email and password
     const email = $('#login-email').val();
     const password = $('#login-password').val();
     // validate email
     if (!email || !validator.isEmail(email)) {
+      $('#login-email').addClass('is-invalid');
       return $('#login-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid email ! </div>');
     }
     // validate password length (8-30 chars)
     if (!password || password.length < 8 || password.length > 30) {
+      $('#login-password').addClass('is-invalid');
       return $('#login-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>'
       );
@@ -43,9 +48,24 @@ module.exports = {
             `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
         } else if (resStatusCode === 422) {
+          $('#login-email').addClass('is-invalid');
+          $('#login-password').addClass('is-invalid');
           $('#login-form').before(
             `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
+        } else if (resStatusCode === 403) {
+          $('#login-form').before(
+            `<div class="alert alert-danger" role="alert">
+            Error: ${jqXHR.responseJSON.error} \n\r Request a new activation link below
+            </div>`
+          );
+          $('#login-modal .modal-footer').prepend(
+            `<button class="btn btn-warning mr-auto" id="resend-activation" data-email=${normalizedEmail}> Request activation email </button>`
+          );
+          $('#resend-activation').click(e => {
+            e.preventDefault();
+            this.resendActivation(e);
+          });
         } else {
           $('#login-form').before(
             `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
@@ -55,10 +75,13 @@ module.exports = {
     return false;
   },
   signup(event) {
-    // remove previous alert message
-    $('.alert').remove();
     // prevent form submition
     event.preventDefault();
+    // remove previous alert message
+    $('.alert').remove();
+    // remove previous error styles
+    $('#signup-email').removeClass('is-invalid');
+    $('#signup-password').removeClass('is-invalid');
     // get email and password
     const email = $('#signup-email').val();
     const password = $('#signup-password').val();
@@ -72,18 +95,23 @@ module.exports = {
     }
     // validate email
     if (!email || !validator.isEmail(email)) {
+      $('#signup-email').addClass('is-invalid');
       return $('#signup-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>'
       );
     }
     // validate password length (8-30 chars)
     if (!password || !passwordDuplicate || password.length < 8 || password.length > 30) {
+      $('#signup-password').addClass('is-invalid');
+      $('#signup-password-d').addClass('is-invalid');
       return $('#signup-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>'
       );
     }
     // validate passwords
     if (password !== passwordDuplicate) {
+      $('#signup-password').addClass('is-invalid');
+      $('#signup-password-d').addClass('is-invalid');
       return $('#signup-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>'
       );
@@ -96,10 +124,10 @@ module.exports = {
       recaptcha,
     })
       .done((data, textStatus, jqXHR) => {
-        if (jqXHR.status === 200) {
-          return $('#login-form').before(
+        if (jqXHR.status === 201) {
+          return $('#signup-form').before(
             `<div class="alert alert-success" role="alert">
-            An email has been sent to ${normalizedEmail} with a activation link.
+            An email has been sent to <strong> ${normalizedEmail} </strong> with a activation link.
             If you don't receive it in the next 5min, check you 'spam' folder.
             </div>`
           );
@@ -119,6 +147,9 @@ module.exports = {
             `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
         } else if (resStatusCode === 422) {
+          $('#signup-email').addClass('is-invalid');
+          $('#signup-password').addClass('is-invalid');
+          $('#signup-password-d').addClass('is-invalid');
           $('#signup-form').before(
             `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
           );
@@ -128,6 +159,16 @@ module.exports = {
           );
         }
       });
+    return false;
+  },
+  resendActivation(event) {
+    const { email } = event.target.dataset;
+    $.post('/auth/activate', { email })
+      .done((data, textStatus, jqXHR) => {
+        $('#login-modal').modal('hide');
+        $('#login-modal').on('hidden.bs.modal', () => toastr.success(jqXHR.responseJSON.message));
+      })
+      .fail(jqXHR => toastr.error(jqXHR.responseJSON.message));
     return false;
   },
   updateEpisodesTable(event) {
