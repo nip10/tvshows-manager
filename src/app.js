@@ -67,13 +67,13 @@ if (isDev) {
 app.use(passport.initialize());
 app.use(passport.session());
 if (isDev) {
-  app.use(express.static(path.join(__dirname, '../dist/public')));
+  app.use(express.static(path.join(__dirname, '..', 'dist', 'public')));
 } else {
   // Using express static in prod for testing.
   // Remove this after setting up nginx
   app.use(express.static(path.join(__dirname, 'public')));
 }
-app.use(favicon(path.join(__dirname, '/public/img/favicon.ico')));
+app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
 
 // Routes
 app.use('/', index);
