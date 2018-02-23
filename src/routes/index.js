@@ -1,11 +1,12 @@
 import express from 'express';
 import _ from 'lodash';
 import knex from '../db/connection';
+import { isLoggedInWithRedirect } from '../controllers/auth';
 import { ERROR } from '../utils/constants';
 
 const router = express.Router();
 
-router.get('/', (req, res) => res.render('index'));
+router.get('/', isLoggedInWithRedirect, (req, res) => res.render('index'));
 
 // This should be in its own route + controller (+ model)
 // Im not doing that now because this is supposed to be temporary

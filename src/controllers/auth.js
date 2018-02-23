@@ -49,6 +49,21 @@ const authController = {
     return res.redirect('/');
   },
   /**
+   * Check if a user is logged-in
+   * If true, redirect to /calender
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   * @param {Function} next - Express next middleware function
+   * @returns {undefined}
+   */
+  isLoggedInWithRedirect(req, res, next) {
+    if (req.isAuthenticated()) {
+      return res.redirect('/calendar');
+    }
+    return next();
+  },
+  /**
    * Validate recaptcha
    *
    * @param {Object} req - Express request object
