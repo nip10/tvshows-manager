@@ -16,6 +16,7 @@ const {
 module.exports = {
   development: {
     client: 'postgresql',
+    // debug: true,
     connection: {
       host: DATABASE_HOST,
       port: DATABASE_PORT,
@@ -58,7 +59,6 @@ module.exports = {
 
   test: {
     client: 'postgresql',
-    debug: true,
     connection: {
       host: DATABASE_HOST,
       port: DATABASE_PORT,

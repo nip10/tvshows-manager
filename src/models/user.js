@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import validator from 'validator';
 import _ from 'lodash';
 import knex from '../db/connection';
-import CONSTANTS from '../utils/constants';
+import { ERROR } from '../utils/constants';
 
 const User = {
   /**
@@ -161,7 +161,7 @@ const User = {
         .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
         .join('tvshows', 'tvshows.thetvdb', 'episodes.tvshow_id')
         .where('usertv.user_id', userId)
-        .andWhere(function () {
+        .andWhere(function() {
           this.whereBetween('episodes.airdate', [startInterval, endInterval]);
         });
       return episodes;
@@ -237,11 +237,11 @@ const User = {
    */
   validateSignup(email, password, passwordDuplicate) {
     if (!email || !validator.isEmail(email)) {
-      return { error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL };
+      return { error: ERROR.AUTH.INVALID_EMAIL };
     } else if (!password || password.length < 8 || password.length > 30) {
-      return { error: CONSTANTS.ERROR.AUTH.PASSWORD_LEN };
+      return { error: ERROR.AUTH.PASSWORD_LEN };
     } else if (!password || password !== passwordDuplicate) {
-      return { error: CONSTANTS.ERROR.AUTH.PASSWORD_MATCH };
+      return { error: ERROR.AUTH.PASSWORD_MATCH };
     }
     return {
       normalizedEmail: validator.normalizeEmail(email),
@@ -257,9 +257,9 @@ const User = {
    */
   validateLogin(email, password) {
     if (!email || !validator.isEmail(email)) {
-      return { error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL };
+      return { error: ERROR.AUTH.INVALID_EMAIL };
     } else if (!password || password.length < 8 || password.length > 30) {
-      return { error: CONSTANTS.ERROR.AUTH.PASSWORD_LEN };
+      return { error: ERROR.AUTH.PASSWORD_LEN };
     }
     return {
       normalizedEmail: validator.normalizeEmail(email),
@@ -281,7 +281,7 @@ const User = {
         .where('id', userId)
         .first();
       const isCurrentPasswordCorrect = this.comparePassword(currentPassword, passwordFromDb);
-      if (!isCurrentPasswordCorrect) return { error: CONSTANTS.ERROR.AUTH.PASSWORD_INVALID };
+      if (!isCurrentPasswordCorrect) return { error: ERROR.AUTH.PASSWORD_INVALID };
       const newPasswordHashed = this.genHashPassword(newPassword);
       await knex('users')
         .where('id', userId)
@@ -365,8 +365,8 @@ const User = {
         .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
         .where('usertv.user_id', userId)
         .where('episodes.airdate', '<=', knex.fn.now())
-        .andWhere(function () {
-          this.whereNotIn('episodes.id', function () {
+        .andWhere(function() {
+          this.whereNotIn('episodes.id', function() {
             this.select('ep_id').from('usereps');
           });
         })

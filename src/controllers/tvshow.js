@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Tvshow from '../models/tvshow';
 import User from '../models/user';
-import CONSTANTS from '../utils/constants';
+import { ERROR } from '../utils/constants';
 
 /**
  * Tvshow controller - All functions related to the tvshows feature
@@ -19,15 +19,15 @@ const tvshowsController = {
   async search(req, res) {
     const { tvshowName } = req.params;
     if (!_.isString(tvshowName)) {
-      return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.INVALID });
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID });
     }
     try {
       const data = await Tvshow.search(tvshowName);
-      if (_.isNil(data)) return res.json({ error: CONSTANTS.ERROR.TVSHOW.NOT_FOUND });
+      if (_.isNil(data)) return res.json({ error: ERROR.TVSHOW.NOT_FOUND });
       return res.json(data);
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -45,7 +45,7 @@ const tvshowsController = {
       return res.json({ episodes });
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -87,7 +87,7 @@ const tvshowsController = {
       } catch (e) {
         console.log(e);
         return res.status(500).render('error', {
-          error: CONSTANTS.ERROR.SERVER,
+          error: ERROR.SERVER,
         });
       }
     } else {
@@ -132,7 +132,7 @@ const tvshowsController = {
       } catch (e) {
         console.log(e);
         return res.status(500).render('error', {
-          error: CONSTANTS.ERROR.SERVER,
+          error: ERROR.SERVER,
         });
       }
     }
