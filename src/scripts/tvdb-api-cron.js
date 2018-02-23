@@ -2,10 +2,11 @@
 
 import { CronJob } from 'cron';
 import rp from 'request-promise';
+import updateDbData from './updatetvshows';
 
 console.log('[CHILD] [0] Child process started!');
 
-const job = new CronJob(
+const job1 = new CronJob(
   // Runs every 12h (12 is the max for cronjob, more than that is not recognized)
   '0 0 */12 * * *', // sec min hour dayofmonth month dayofweek
   () => {
@@ -15,7 +16,7 @@ const job = new CronJob(
     process.send('oldToken');
     // Set the oldToken received from the "parent" process
     process.once('message', msg => {
-      console.log('[CHILD] [3] Received oldToken from the parent process: ', msg);
+      console.log('[CHILD] [3] Received oldToken from the parent process');
       const oldToken = msg;
       // make the request for the new token
       if (oldToken) {
@@ -29,9 +30,14 @@ const job = new CronJob(
         };
         rp(options)
           .then(res => {
-            console.log('[CHILD] [4] New token received: ', res.token);
+            console.log('[CHILD] [4] New token received');
             // send the new token to the "parent" process
             process.send(res.token);
+            // start updating db data (in the background)
+            return updateDbData(res.token);
+          })
+          .then(() => {
+            console.log('[CHILD - DB UPDATE] - Finished');
           })
           .catch(err => {
             console.log('[CHILD] [4(E)] Error getting new token.');
