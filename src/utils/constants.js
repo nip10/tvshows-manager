@@ -1,6 +1,7 @@
-const CONSTANTS = {};
+/* eslint-disable no-template-curly-in-string */
+import _ from 'lodash';
 
-CONSTANTS.ERROR = {
+export const ERROR = {
   SERVER: 'Ooops. Something went wrong. Please try again.',
   AUTH: {
     PASSWORD_LEN: 'Password must be 8-30 characters',
@@ -31,4 +32,16 @@ CONSTANTS.ERROR = {
   },
 };
 
-module.exports = CONSTANTS;
+export const API = {
+  THETVDB: {
+    AUTH_LOGIN: 'https://api.thetvdb.com/login',
+    SEARCH: 'https://api.thetvdb.com/search/series',
+    INFO: _.template('https://api.thetvdb.com/series/${tvshowId}/filter'),
+    IMAGES: _.template('https://api.thetvdb.com/series/${tvshowId}/images/query'),
+    EPISODES_QUERY: _.template('https://api.thetvdb.com/series/${tvshowId}/episodes/query'),
+    SEASON: _.template('https://api.thetvdb.com/series/${tvshowId}/episodes/summary'),
+  },
+  OMDB: {
+    IMDB_RATING: _.template('http://www.omdbapi.com/?i=${imdbId}&apikey=${OMDB_API_KEY}'),
+  },
+};

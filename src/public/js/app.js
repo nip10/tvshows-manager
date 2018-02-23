@@ -7,7 +7,7 @@ const typeahead = require('./config/typeahead');
 const toastrOptions = require('./config/toastr');
 require('./cookies');
 
-(function ($) {
+(function($) {
   $(() => {
     // Initialize event handlers
     $('#login-form').submit(e => handlers.login(e));

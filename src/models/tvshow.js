@@ -4,15 +4,9 @@ import rp from 'request-promise';
 import path from 'path';
 import cp from 'child_process';
 import knex from '../db/connection';
+import { API } from '../utils/constants';
 
 const { THETVDB_API_KEY, OMDB_API_KEY, NODE_ENV } = process.env;
-const THETVDB_API_AUTH_LOGIN = 'https://api.thetvdb.com/login';
-const THETVDB_API_SEARCH = 'https://api.thetvdb.com/search/series';
-const THETVDB_API_INFO = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/filter`;
-const THETVDB_API_IMAGES = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/images/query`;
-const THETVDB_API_EPISODES_QUERY = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/episodes/query`;
-const THETVDB_API_SEASON = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/episodes/summary`;
-const OMDB_API_IMDB_RATING = imdbId => `http://www.omdbapi.com/?i=${imdbId}&apikey=${OMDB_API_KEY}`;
 
 const Tvshow = {
   /**
@@ -28,7 +22,7 @@ const Tvshow = {
           throw new Error('Token received is invalid.');
         }
         this.apiToken = newToken;
-        console.log(`Token received: ${this.apiToken}`);
+        console.log(`Token received`);
       })
       .then(() => {
         if (NODE_ENV !== 'development') {
@@ -46,7 +40,7 @@ const Tvshow = {
    */
   startChildProcess() {
     // create child process using fork
-    const child = cp.fork(path.join(__dirname, '../scripts/tvdb-api-cron'));
+    const child = cp.fork(path.join(__dirname, '..', 'scripts', 'tvdb-api-cron'));
 
     // listen to messages from the child process
     child
@@ -59,7 +53,7 @@ const Tvshow = {
           // send the old token to the child process so it can be renewed
           child.send(this.apiToken);
         } else {
-          console.log('[PARENT] [5] Received new token from the child process: ', msg);
+          console.log('[PARENT] [5] Received new token from the child process');
           // set the new token received from the child process
           this.apiToken = msg;
         }
@@ -76,7 +70,7 @@ const Tvshow = {
   async getToken() {
     const requestOptions = {
       method: 'POST',
-      uri: THETVDB_API_AUTH_LOGIN,
+      uri: API.THETVDB.AUTH_LOGIN,
       body: {
         apikey: THETVDB_API_KEY,
       },
@@ -99,7 +93,7 @@ const Tvshow = {
   async search(tvshowName) {
     const requestOptions = {
       method: 'GET',
-      uri: THETVDB_API_SEARCH,
+      uri: API.THETVDB.SEARCH,
       headers: {
         'Accept-Language': 'en',
         Authorization: `Bearer ${this.apiToken}`,
@@ -127,7 +121,7 @@ const Tvshow = {
   async getInfoFromApi(tvshowId) {
     const requestOptions = {
       method: 'GET',
-      uri: THETVDB_API_INFO(tvshowId),
+      uri: API.THETVDB.INFO({ tvshowId }),
       headers: {
         'Accept-Language': 'en',
         Authorization: `Bearer ${this.apiToken}`,
@@ -199,7 +193,7 @@ const Tvshow = {
   async getArtworkFromApi(tvshowId, imageType) {
     const requestOptions = {
       method: 'GET',
-      uri: THETVDB_API_IMAGES(tvshowId),
+      uri: API.THETVDB.IMAGES({ tvshowId }),
       headers: {
         'Accept-Language': 'en',
         Authorization: `Bearer ${this.apiToken}`,
@@ -229,7 +223,7 @@ const Tvshow = {
   async getLatestSeasonFromApi(tvshowId) {
     const requestOptions = {
       method: 'GET',
-      uri: THETVDB_API_SEASON(tvshowId),
+      uri: API.THETVDB.SEASON({ tvshowId }),
       headers: {
         'Accept-Language': 'en',
         Authorization: `Bearer ${this.apiToken}`,
@@ -257,7 +251,7 @@ const Tvshow = {
   async getEpisodesFromSeasonFromApi(tvshowId, season) {
     const requestOptions = {
       method: 'GET',
-      uri: THETVDB_API_EPISODES_QUERY(tvshowId),
+      uri: API.THETVDB.EPISODES_QUERY({ tvshowId }),
       headers: {
         'Accept-Language': 'en',
         Authorization: `Bearer ${this.apiToken}`,
@@ -355,7 +349,7 @@ const Tvshow = {
   async addTvshowToDb(tvshowInfo) {
     // 1. TvShow information
     try {
-      // 1.2 Insert show information in the database
+      // 1.1 Insert show information in the database
       await knex('tvshows').insert(tvshowInfo);
     } catch (e) {
       return;
@@ -374,7 +368,7 @@ const Tvshow = {
     async function requestPaginated(apiToken, page = 1) {
       const requestOptions = {
         method: 'GET',
-        uri: THETVDB_API_EPISODES_QUERY(tvshowId),
+        uri: API.THETVDB.EPISODES_QUERY({ tvshowId }),
         headers: {
           'Accept-Language': 'en',
           Authorization: `Bearer ${apiToken}`,
@@ -404,12 +398,9 @@ const Tvshow = {
     }
     try {
       const requestEpisodes = await requestPaginated(this.apiToken);
-      if (requestEpisodes) {
-        // 2.2 Insert episodes in the database
-        await knex('episodes').insert(episodes);
-      } else {
-        throw Error('Error inserting episodes in the database.');
-      }
+      if (!requestEpisodes) throw new Error('Error inserting episodes in the database.');
+      // 2.2 Insert episodes in the database
+      await knex('episodes').insert(episodes);
     } catch (e) {
       console.log(`Error fetching episodes. Error details: ${e}`);
     }
@@ -423,7 +414,7 @@ const Tvshow = {
   async getImdbRating(imdbId) {
     const requestOptions = {
       method: 'GET',
-      uri: OMDB_API_IMDB_RATING(imdbId),
+      uri: API.OMDB.IMDB_RATING({ imdbId, OMDB_API_KEY }),
       json: true,
     };
     try {

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import knex from '../db/connection';
 import User from './../models/user';
 import Tvshow from './../models/tvshow';
-import CONSTANTS from '../utils/constants';
+import { ERROR } from '../utils/constants';
 
 /**
  * User controller - All functions related to users
@@ -23,7 +23,7 @@ const userController = {
     try {
       const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
       if (isUserFollowingTvshow) {
-        return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.ALREADY_FOLLOWING });
+        return res.status(400).json({ error: ERROR.TVSHOW.ALREADY_FOLLOWING });
       }
       const addTvshowToUser = await User.addTvshow(userId, tvshowId);
       if (addTvshowToUser) {
@@ -32,7 +32,7 @@ const userController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -48,7 +48,7 @@ const userController = {
     try {
       const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
       if (!isUserFollowingTvshow) {
-        return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.NOT_FOLLOWING });
+        return res.status(400).json({ error: ERROR.TVSHOW.NOT_FOLLOWING });
       }
       const removeTvshowFromUser = await User.removeTvshow(userId, tvshowId);
       if (removeTvshowFromUser) {
@@ -57,7 +57,7 @@ const userController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -75,7 +75,7 @@ const userController = {
       if (action === 'add') {
         const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
         if (isUserFollowingTvshow) {
-          return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.ALREADY_FOLLOWING });
+          return res.status(400).json({ error: ERROR.TVSHOW.ALREADY_FOLLOWING });
         }
         const addTvshowToUser = await User.addTvshow(userId, tvshowId);
         if (addTvshowToUser) {
@@ -85,7 +85,7 @@ const userController = {
       } else if (action === 'remove') {
         const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
         if (!isUserFollowingTvshow) {
-          return res.status(400).json({ error: CONSTANTS.ERROR.TVSHOW.NOT_FOLLOWING });
+          return res.status(400).json({ error: ERROR.TVSHOW.NOT_FOLLOWING });
         }
         const removeTvshowFromUser = await User.removeTvshow(userId, tvshowId);
         if (removeTvshowFromUser) {
@@ -97,7 +97,7 @@ const userController = {
       }
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -169,18 +169,18 @@ const userController = {
       if (setWatched === true) {
         const setEpisodeWatched = await Tvshow.setEpisodeWatched(userId, tvshowId, episodeId);
         if (!setEpisodeWatched) {
-          return res.status(400).json({ error: CONSTANTS.ERROR.EPISODE.ALREADY_WATCHED });
+          return res.status(400).json({ error: ERROR.EPISODE.ALREADY_WATCHED });
         }
       } else {
         const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeId);
         if (!setEpisodeUnwatched) {
-          return res.status(400).json({ error: CONSTANTS.ERROR.EPISODE.ALREADY_UNWATCHED });
+          return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
         }
       }
       return res.sendStatus(200);
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -200,7 +200,7 @@ const userController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**

@@ -5,7 +5,7 @@ import rp from 'request-promise';
 import _ from 'lodash';
 import passport from '../auth/local';
 import User from '../models/user';
-import CONSTANTS from '../utils/constants';
+import { ERROR } from '../utils/constants';
 import mail from '../mail/mail';
 
 const { RECAPTCHA_SECRET, NODE_ENV, RECAPTCHA_VERIFY_URL, RESET_PASSWORD_TOKEN_EXPIRATION } = process.env;
@@ -29,7 +29,7 @@ const authController = {
     if (req.isAuthenticated()) {
       return next();
     }
-    return res.status(401).json({ error: CONSTANTS.ERROR.AUTH.REQUIRED });
+    return res.status(401).json({ error: ERROR.AUTH.REQUIRED });
   },
   /**
    * Check if a user is logged-in
@@ -45,7 +45,7 @@ const authController = {
       return next();
     }
     // set error message in cookie to be displayed on a toastr notification
-    res.cookie('message_error', CONSTANTS.ERROR.AUTH.REQUIRED);
+    res.cookie('message_error', ERROR.AUTH.REQUIRED);
     return res.redirect('/');
   },
   /**
@@ -60,7 +60,7 @@ const authController = {
     if (isDev) return next();
     const { recaptcha } = req.body;
     if (!recaptcha) {
-      return res.status(401).json({ error: CONSTANTS.ERROR.AUTH.RECAPTCHA });
+      return res.status(401).json({ error: ERROR.AUTH.RECAPTCHA });
     }
     const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     const requestOptions = {
@@ -80,7 +80,7 @@ const authController = {
       }
       return next();
     } catch (e) {
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -108,15 +108,15 @@ const authController = {
   async resetPasswordRequest(req, res) {
     const { email, emailDuplicate } = req.body;
     if (!email || !validator.isEmail(email)) {
-      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
+      return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
     } else if (email !== emailDuplicate) {
-      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.EMAIL_MATCH });
+      return res.status(422).json({ error: ERROR.AUTH.EMAIL_MATCH });
     }
     const normalizedEmail = validator.normalizeEmail(email);
     try {
       const userExists = await User.existsByEmail(normalizedEmail);
       if (!userExists) {
-        return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
+        return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
       }
       const reset = {
         token: uuidv4(),
@@ -135,7 +135,7 @@ const authController = {
       }
       return res.json({ message: 'An email has been sent to your email address.' });
     } catch (e) {
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -150,19 +150,19 @@ const authController = {
     const normalizedEmail = validator.normalizeEmail(email);
     if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
       return res.status(422).render('error', {
-        error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL,
+        error: ERROR.AUTH.INVALID_EMAIL,
       });
     }
     if (!token) {
       return res.status(422).render('error', {
-        error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN,
+        error: ERROR.AUTH.INVALID_TOKEN,
       });
     }
     try {
       const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
       if (!isTokenValid) {
         return res.status(422).render('error', {
-          error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN,
+          error: ERROR.AUTH.INVALID_TOKEN,
         });
       }
       return res.render('index', {
@@ -171,7 +171,7 @@ const authController = {
     } catch (e) {
       console.log(e);
       return res.status(500).render('error', {
-        error: CONSTANTS.ERROR.SERVER,
+        error: ERROR.SERVER,
       });
     }
   },
@@ -187,25 +187,25 @@ const authController = {
     const { email, token } = req.params;
     const normalizedEmail = validator.normalizeEmail(email);
     if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
-      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_EMAIL });
+      return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
     }
     if (!token) {
-      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN });
+      return res.status(422).json({ error: ERROR.AUTH.INVALID_TOKEN });
     }
     if (!password || password.length < 8 || password.length > 30) {
-      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.PASSWORD_LEN });
+      return res.status(422).json({ error: ERROR.AUTH.PASSWORD_LEN });
     }
     if (password !== passwordDuplicate) {
-      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.PASSWORD_MATCH });
+      return res.status(422).json({ error: ERROR.AUTH.PASSWORD_MATCH });
     }
     try {
       const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
-      if (!isTokenValid) return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.INVALID_TOKEN });
+      if (!isTokenValid) return res.status(422).json({ error: ERROR.AUTH.INVALID_TOKEN });
       const resetdPassword = await User.resetPassword(normalizedEmail, password);
       if (!resetdPassword) throw new Error();
       return res.json({ message: 'Password changed successfully.' });
     } catch (e) {
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -218,7 +218,7 @@ const authController = {
    */
   async login(req, res, next) {
     if (req.isAuthenticated()) {
-      return res.status(400).json({ error: CONSTANTS.ERROR.AUTH.ALREADY_AUTHENTICATED });
+      return res.status(400).json({ error: ERROR.AUTH.ALREADY_AUTHENTICATED });
     }
     const { email, password } = req.body;
     const validateLogin = User.validateLogin(email, password);
@@ -230,10 +230,10 @@ const authController = {
       if (!user) return res.status(422).json({ error: info.message });
       try {
         const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
-        if (!isUserAccountActive) return res.status(403).json({ error: CONSTANTS.ERROR.AUTH.NOT_ACTIVATED });
+        if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
       } catch (e) {
         console.log(e);
-        return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+        return res.status(500).json({ error: ERROR.SERVER });
       }
       return req.logIn(user, err2 => {
         if (err) return next(err2);
@@ -251,7 +251,7 @@ const authController = {
    */
   async signup(req, res) {
     if (req.isAuthenticated()) {
-      return res.status(400).json({ error: CONSTANTS.ERROR.AUTH.ALREADY_AUTHENTICATED });
+      return res.status(400).json({ error: ERROR.AUTH.ALREADY_AUTHENTICATED });
     }
     const { email, password, passwordDuplicate } = req.body;
     const validateSignup = User.validateSignup(email, password, passwordDuplicate);
@@ -272,13 +272,13 @@ const authController = {
           }
           return res.sendStatus(201);
         } catch (e) {
-          return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+          return res.status(500).json({ error: ERROR.SERVER });
         }
       }
-      return res.status(422).json({ error: CONSTANTS.ERROR.AUTH.EMAIL_EXISTS });
+      return res.status(422).json({ error: ERROR.AUTH.EMAIL_EXISTS });
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -301,7 +301,7 @@ const authController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
   /**
@@ -322,7 +322,7 @@ const authController = {
       }
     } catch (e) {
       console.log(e);
-      res.cookie('message_error', CONSTANTS.ERROR.SERVER);
+      res.cookie('message_error', ERROR.SERVER);
     }
     return res.redirect('/');
   },
@@ -355,7 +355,7 @@ const authController = {
       throw new Error();
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: CONSTANTS.ERROR.SERVER });
+      return res.status(500).json({ error: ERROR.SERVER });
     }
   },
 };
