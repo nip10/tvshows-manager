@@ -312,7 +312,7 @@ const Tvshow = {
         .select(knex.raw('max(??)', ['season']))
         .where('tvshow_id', tvshowId)
         .first();
-      if (!_.isNumber(latestSeason)) throw new Error();
+      if (!_.isNumber(latestSeason.max)) throw new Error();
       return latestSeason.max;
     } catch (e) {
       console.log(e);
