@@ -41,7 +41,7 @@ require('./cookies');
     // redirect when a tvshow is selected
     // TODO: check if this can be moved to the "on" chain above
     $('#tvshow-search').bind('typeahead:select', (obj, datum) => {
-      window.location.replace(`/tvshows/${datum.id}`);
+      window.location.replace(`/tsm/tvshows/${datum.id}`);
     });
 
     // login modal handler

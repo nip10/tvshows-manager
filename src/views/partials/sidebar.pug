@@ -2,7 +2,7 @@
     nav.d-xs-none.mmh-100
         span
             i#toggle-sidebar(aria-hidden='true').fa.fa-caret-left.fa-2x
-        a.logo(href='/', class={'home' : homepage})
+        a.logo(href='/tsm', class={'home' : homepage})
             i(aria-hidden='true').fa.fa-television.fa-5x.d-flex.justify-content-center.my-3
         ul.nav.nav-pills.flex-column
             li.nav-item.my-2
@@ -13,11 +13,11 @@
                                 i(aria-hidden='true').fa.fa-search.px-3
                             input(type='text', placeholder='Search')#tvshow-search.form-control.typeahead
             li.nav-item(class={'active': (sidebarIndex === 'calendar')})
-                a.nav-link(href='/calendar')
+                a.nav-link(href='/tsm/calendar')
                     i(aria-hidden='true').fa.fa-calendar.fa-lg.mr-2
                     span Calendar
             li.nav-item(class={'active': (sidebarIndex === 'watchlist')})
-                a.nav-link(href='/watchlist')
+                a.nav-link(href='/tsm/watchlist')
                     i(aria-hidden='true').fa.fa-list.fa-lg.mr-2
                     span Watchlist
         .beta

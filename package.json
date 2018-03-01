@@ -4,6 +4,7 @@
   "description": "Tvshow Manager",
   "main": "./dist/server.js",
   "scripts": {
+    "build": "npm run build:client&&npm run build:server",
     "build:server": "babel src -d dist --ignore src/public,src/views,src/db/knexfile.sample.js",
     "build:client": "gulp --production",
     "lint": "eslint .",

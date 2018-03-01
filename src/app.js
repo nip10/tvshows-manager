@@ -40,7 +40,7 @@ if (isDev) {
       secret: SESSION_SECRET,
       saveUninitialized: true,
       resave: true,
-      cookie: { httpOnly: false, maxAge: 2419200000 },
+      cookie: { httpOnly: false, secure: false, maxAge: 2419200000 },
     })
   );
 } else {
@@ -59,8 +59,7 @@ if (isDev) {
       resave: true,
       saveUninitialized: true,
       rolling: true,
-      cookie: { httpOnly: false, secure: false, maxAge: 2419200000 },
-      // cookie: { httpOnly: false, secure: true, maxAge: 2419200000 },
+      cookie: { httpOnly: false, secure: true, maxAge: 2419200000 },
     })
   );
 }
@@ -68,31 +67,24 @@ app.use(passport.initialize());
 app.use(passport.session());
 if (isDev) {
   app.use(express.static(path.join(__dirname, '..', 'dist', 'public')));
-} else {
-  // Using express static in prod for testing.
-  // Remove this after setting up nginx
-  app.use(express.static(path.join(__dirname, 'public')));
 }
 app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
 
 // Routes
-app.use('/', index);
-app.use('/auth', auth);
-app.use('/tvshows', tvshows);
-app.use('/calendar', calendar);
-app.use('/user', user);
-app.use('/watchlist', watchlist);
+app.use('/tsm/', index);
+app.use('/tsm/auth', auth);
+app.use('/tsm/tvshows', tvshows);
+app.use('/tsm/calendar', calendar);
+app.use('/tsm/user', user);
+app.use('/tsm/watchlist', watchlist);
 
-// Handle 404 (dev = express, prod = nginx)
-if (isDev) {
-  app.use((req, res) => {
-    const err = new Error('Not Found');
-    err.status = 404;
-    return res.status(404).render('error', {
-      error: isDev ? err : null,
-    });
+app.use((req, res) => {
+  const err = new Error('Not Found');
+  err.status = 404;
+  return res.status(404).render('error', {
+    error: isDev ? err : null,
   });
-}
+});
 
 // Handle server errors
 app.use((err, req, res, next) => {

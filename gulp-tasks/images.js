@@ -9,6 +9,6 @@ module.exports = function() {
 
   return gulp
     .src(imagesConfig.source, { cwd: config.sourceRoot })
-    .pipe(imagemin())
+    .pipe(imagemin({ verbose: true }))
     .pipe(gulp.dest(config.destinationRoot + imagesConfig.destination));
 };

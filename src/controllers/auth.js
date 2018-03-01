@@ -46,7 +46,7 @@ const authController = {
     }
     // set error message in cookie to be displayed on a toastr notification
     res.cookie('message_error', ERROR.AUTH.REQUIRED);
-    return res.redirect('/');
+    return res.redirect('/tsm');
   },
   /**
    * Check if a user is logged-in
@@ -59,7 +59,7 @@ const authController = {
    */
   isLoggedInWithRedirect(req, res, next) {
     if (req.isAuthenticated()) {
-      return res.redirect('/calendar');
+      return res.redirect('/tsm/calendar');
     }
     return next();
   },
@@ -111,7 +111,7 @@ const authController = {
     // the redirect is done in the callback to make sure
     // the session is destroyed before the redirect
     // destroy callback has 'err' available in the callback
-    req.session.destroy(() => res.redirect('/'));
+    req.session.destroy(() => res.redirect('/tsm'));
   },
   /**
    * Request password reset
@@ -339,7 +339,7 @@ const authController = {
       console.log(e);
       res.cookie('message_error', ERROR.SERVER);
     }
-    return res.redirect('/');
+    return res.redirect('/tsm');
   },
   /**
    * Resend activation email

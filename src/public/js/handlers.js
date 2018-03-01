@@ -29,7 +29,7 @@ module.exports = {
     }
     const currentPath = window.location.pathname;
     const normalizedEmail = validator.normalizeEmail(email);
-    $.post('/auth/login', { email: normalizedEmail, password })
+    $.post('/tsm/auth/login', { email: normalizedEmail, password })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           if (currentPath !== '/') return window.location.replace(currentPath);
@@ -117,7 +117,7 @@ module.exports = {
       );
     }
     const normalizedEmail = validator.normalizeEmail(email);
-    $.post('/auth/signup', {
+    $.post('/tsm/auth/signup', {
       email: normalizedEmail,
       password,
       passwordDuplicate,
@@ -163,7 +163,7 @@ module.exports = {
   },
   resendActivation(event) {
     const { email } = event.target.dataset;
-    $.post('/auth/activate', { email })
+    $.post('/tsm/auth/activate', { email })
       .done((data, textStatus, jqXHR) => {
         $('#login-modal').modal('hide');
         $('#login-modal').on('hidden.bs.modal', () => toastr.success(jqXHR.responseJSON.message));
@@ -174,7 +174,7 @@ module.exports = {
   updateEpisodesTable(event) {
     const tvshowId = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
     const season = event.target.value;
-    $.get(`/tvshows/${tvshowId}/episodes`, { season })
+    $.get(`/tsm/tvshows/${tvshowId}/episodes`, { season })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) functions.renderEpisodesTable(data.episodes);
       })
@@ -194,7 +194,7 @@ module.exports = {
     const add = $('#userTvShowState').hasClass('btn-primary');
     if (add) {
       // User is not following this show and wants to add it
-      $.post(`/tvshows/${tvshowId}`, { action: 'add' })
+      $.post(`/tsm/tvshows/${tvshowId}`, { action: 'add' })
         .done((data, textStatus, jqXHR) => {
           if (jqXHR.status === 200) {
             const tvshowName = $('#tvshow-name')[0].innerText;
@@ -217,7 +217,7 @@ module.exports = {
       return false;
     }
     // User is following this show and wants to remove it
-    $.post(`/tvshows/${tvshowId}`, { action: 'remove' })
+    $.post(`/tsm/tvshows/${tvshowId}`, { action: 'remove' })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           const tvshowName = $('#tvshow-name')[0].innerText;
@@ -252,7 +252,7 @@ module.exports = {
         '<div class="alert alert-danger" role="alert"> Error: Please fill in the bug description. Only alphanumerical characters! </div>'
       );
     }
-    $.post('/bug', { description: bugDescription })
+    $.post('/tsm/bug', { description: bugDescription })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           $('#bug-form').before(
@@ -297,7 +297,7 @@ module.exports = {
     }
     const normalizedEmail = validator.normalizeEmail(email);
     const normalizedEmailDuplicate = validator.normalizeEmail(emailDuplicate);
-    $.post(`/auth/reset/${token}`, { email: normalizedEmail, emailDuplicate: normalizedEmailDuplicate, recaptcha })
+    $.post(`/tsm/auth/reset/${token}`, { email: normalizedEmail, emailDuplicate: normalizedEmailDuplicate, recaptcha })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           $('#forgotpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
@@ -350,7 +350,7 @@ module.exports = {
       );
     }
     const normalizedEmail = validator.normalizedEmail(email);
-    $.post(`/auth/reset/${normalizedEmail}/${token}`, { password, passwordDuplicate })
+    $.post(`/tsm/auth/reset/${normalizedEmail}/${token}`, { password, passwordDuplicate })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           $('#resetpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
@@ -392,7 +392,7 @@ module.exports = {
     const tvshowId = $('div[data-tvshowId]:not(.d-none)').data('tvshowid');
     const episodeId = row.data('epid');
     const setWatched = true;
-    $.post(`/tvshows/${tvshowId}/ep`, { setWatched, episodeId })
+    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeId })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status !== 200) {
           toastr.error('Server error. Please try again later.');
@@ -467,7 +467,7 @@ module.exports = {
     $(`div[data-tvshowid=${tvshowid}] div[data-season=${season}] table tr`).each((i, el) =>
       episodes.push($(el).data('epid'))
     );
-    $.post(`/tvshows/${tvshowid}/s`, { episodes })
+    $.post(`/tsm/tvshows/${tvshowid}/s`, { episodes })
       .done(() => {
         // update unwatched episodes counter (global)
         let counter = $('.counter span').text();
@@ -508,7 +508,7 @@ module.exports = {
   changeEpisodeWatchedStatusCalendar(event) {
     const setWatched = event.target.checked;
     const { tvshowid, episodeid } = event.target.dataset;
-    $.post(`/tvshows/${tvshowid}/ep`, { setWatched, episodeid })
+    $.post(`/tsm/tvshows/${tvshowid}/ep`, { setWatched, episodeid })
       .done(() => {
         if (setWatched) {
           $(`#episode-${episodeid}`)
@@ -530,7 +530,7 @@ module.exports = {
     const episodeId = $(event.target)
       .closest('tr')
       .data('episodeid');
-    $.post(`/tvshows/${tvshowId}/ep`, { setWatched, episodeId })
+    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeId })
       .done(() => {
         if (setWatched) {
           $(event.target).addClass('watched');
