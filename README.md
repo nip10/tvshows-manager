@@ -1,7 +1,7 @@
 # TvShows-Manager
 
 Allows you to explore and manage your favourite tvshows.
-Check it live here (soon).
+Check it live [here](https://www.p.dcdev.pt/tsm).
 
 # Tech
 
@@ -17,9 +17,8 @@ Check it live here (soon).
 
 1. Clone/Fork the repo
 2. Edit .env.sample and rename to .env
-3. Edit src/db/knexfile.sample.js and rename to knexfile.js
-4. Build client and server
-5. Deploy
+3. Build client and server
+4. Deploy
     - With Docker: Build docker image, Run docker-compose up, Run migrate.sh
     - Witout Docker: Run db migrations, Run the app
 
@@ -36,7 +35,6 @@ The structure chosen for this project is based on the MVC architecture, where th
 Since this was a "first approach" to some new concepts and tech (as mentioned above), there will be only a limited amount of features/corrections added in the future:
 - User profile (basic)
 - Social authentication (Facebook)
-- Emails for account activation/recovery
 - Fix all the front-end CSS to match BEM rules
 
 # What's missing

@@ -1,6 +1,6 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 
-dotenv.config({ path: '../../.env' });
+dotenv.config();
 
 const {
   DATABASE_HOST,
@@ -16,7 +16,6 @@ const {
 module.exports = {
   development: {
     client: 'postgresql',
-    // debug: true,
     connection: {
       host: DATABASE_HOST,
       port: DATABASE_PORT,

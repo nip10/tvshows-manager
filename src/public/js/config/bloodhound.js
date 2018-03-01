@@ -4,7 +4,7 @@ const bloodhoundConfig = {
   datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
   queryTokenizer: Bloodhound.tokenizers.whitespace,
   remote: {
-    url: '/tvshows/search/%QUERY',
+    url: '/tsm/tvshows/search/%QUERY',
     wildcard: '%QUERY',
   },
 };

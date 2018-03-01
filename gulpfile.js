@@ -8,7 +8,7 @@ const util = require('gulp-util');
 const fs = require('fs');
 
 const cleanFolderList = [];
-const taskList = [];
+const taskList = ['copyenv', 'copymailtemplates'];
 const watchTaskList = [];
 
 util.env.boilerplate = {
@@ -66,6 +66,18 @@ gulp.task('watch', ['build'], () => {
       })(watchTask.task)
     );
   });
+});
+
+// Copy env file
+gulp.task('copyenv', () => {
+  gulp.src('.env', { base: '.' }).pipe(gulp.dest('dist/'));
+});
+
+// Copy mail/templates folder
+gulp.task('copymailtemplates', () => {
+  gulp
+    .src('mail/templates/**/*.*', { cwd: config.sourceRoot })
+    .pipe(gulp.dest(`${config.destinationRoot}mail/templates`));
 });
 
 gulp.task('serve', ['build', 'watch', 'browser-sync']);

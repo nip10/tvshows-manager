@@ -19,7 +19,7 @@ services:
   web:
     image: nip10/tvshows-manager:latest
     ports:
-      - "3001:3001"
+      - "3002:3002"
     networks:
       - webnet
     environment:
