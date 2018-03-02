@@ -10,10 +10,10 @@ block content
                     span.month-nav-header
                         - const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                         h6.d-inline-block.px-2.my-0.text-right.month-nav
-                            a(href='/calendar/' + monthNavigation.previousYear + '/' + monthNavigation.previousMonth)= '« ' + monthsOfYear[monthNavigation.previousMonth - 1]
+                            a(href='/tsm/calendar/' + monthNavigation.previousYear + '/' + monthNavigation.previousMonth)= '« ' + monthsOfYear[monthNavigation.previousMonth - 1]
                         h4.d-inline-block.px-2.my-0= monthNavigation.month
                         h6.d-inline-block.px-2.my-0.text-left.month-nav
-                            a(href='/calendar/' + monthNavigation.nextYear + '/' + monthNavigation.nextMonth)= monthsOfYear[monthNavigation.nextMonth - 1] + ' »'
+                            a(href='/tsm/calendar/' + monthNavigation.nextYear + '/' + monthNavigation.nextMonth)= monthsOfYear[monthNavigation.nextMonth - 1] + ' »'
             .row
                 .col-md-11.py-3.my-2.mx-auto
                     table(cellspacing=0, cellpadding=0).calendar__table
@@ -26,7 +26,7 @@ block content
                                 th.calendar__weekday.center Fri
                                 th.calendar__weekday.center Sat
                                 th.calendar__weekday.center Sun
-                        tbody  
+                        tbody
                             - const numRows = calendar.calendarData.length / 7;
                             - for(let i = 0; i < numRows; i++) {
                                 tr
@@ -41,12 +41,12 @@ block content
                                                             each episode in calendar.calendarData[k + j].episodes
                                                                 li(class={'watched' : episode.watched})
                                                                     .calendar__cell--checkbox
-                                                                        input(type='checkbox', id=`episode-${episode.id}`, data-tvshowid=episode.thetvdb, data-episodeid=episode.id)
+                                                                        input(type='checkbox', id=`episode-${episode.id}`, data-tvshowid=episode.thetvdb, data-episodeid=episode.id, checked=(episode.watched) ? true : false)
                                                                         label(for=`episode-${episode.id}`)
-                                                                    a(href='/tvshows/' + episode.thetvdb).calendar__cell--tvshow= episode.name
+                                                                    a(href='/tsm/tvshows/' + episode.thetvdb).calendar__cell--tvshow= episode.name
                                                                     span.calendar__cell--episode
                                                                         br
                                                                     = `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
                                     - }
-                            - }       
+                            - }
             include modals/bug.pug

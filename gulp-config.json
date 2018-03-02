@@ -1,5 +1,5 @@
 {
-  "vhost": "http://localhost:3002",
+  "vhost": "http://localhost:3002/tsm",
   "sourceRoot": "./src/",
   "destinationRoot": "./dist/",
   "tasks": {

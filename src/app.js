@@ -24,22 +24,35 @@ const isDev = NODE_ENV === 'development';
 
 // Create Express server
 const app = express();
+// Global variable that is passed to all renders,
+// so that pug selects the right assets path
+app.locals.dev = isDev;
 
-// Express configuration
+/* *********************
+  Express configuration
+********************** */
+
+// Security middleware
 app.use(helmet());
+// Logging
+app.use(morgan(isDev ? 'dev' : 'combined'));
+// View engine/assets path
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-app.use(morgan('dev'));
+// Cookie/JSON parsers
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// Configure session store (dev = local, prod = redis)
+
+// Session store
+// In prod, session store is Redis
 if (isDev) {
   app.use(
     session({
       secret: SESSION_SECRET,
       saveUninitialized: true,
       resave: true,
+      rolling: true,
       cookie: { httpOnly: false, secure: false, maxAge: 2419200000 },
     })
   );
@@ -59,12 +72,17 @@ if (isDev) {
       resave: true,
       saveUninitialized: true,
       rolling: true,
-      cookie: { httpOnly: false, secure: true, maxAge: 2419200000 },
+      cookie: { httpOnly: false, secure: false, maxAge: 2419200000 },
     })
   );
 }
+
+// Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Static files/favicon handlers
+// In prod, static files are handled by Nginx
 if (isDev) {
   app.use(express.static(path.join(__dirname, '..', 'dist', 'public')));
 }
@@ -78,6 +96,7 @@ app.use('/tsm/calendar', calendar);
 app.use('/tsm/user', user);
 app.use('/tsm/watchlist', watchlist);
 
+// Handle 404s
 app.use((req, res) => {
   const err = new Error('Not Found');
   err.status = 404;
