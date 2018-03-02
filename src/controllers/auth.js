@@ -122,7 +122,7 @@ const authController = {
    */
   async resetPasswordRequest(req, res) {
     const { email, emailDuplicate } = req.body;
-    if (!email || !validator.isEmail(email)) {
+    if (!email || !emailDuplicate || !validator.isEmail(email) || !validator.isEmail(emailDuplicate)) {
       return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
     } else if (email !== emailDuplicate) {
       return res.status(422).json({ error: ERROR.AUTH.EMAIL_MATCH });
