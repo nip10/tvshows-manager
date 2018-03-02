@@ -32,8 +32,9 @@ module.exports = {
     $.post('/tsm/auth/login', { email: normalizedEmail, password })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
-          if (currentPath !== '/') return window.location.replace(currentPath);
-          return window.location.replace('/calendar');
+          if (currentPath !== '/tsm' && !currentPath.startsWith('/tsm/auth'))
+            return window.location.replace(currentPath);
+          return window.location.replace('/tsm/calendar');
         }
         return $('#login-form').before(
           `<div class="alert alert-danger" role="alert"> Error: ${jqXHR.responseJSON.error} </div>`
@@ -277,8 +278,6 @@ module.exports = {
     const emailDuplicate = $('#forgotpw-email-d').val();
     // get recaptcha
     const recaptcha = $('#g-recaptcha-response-1').val();
-    // get token
-    const token = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
     // validate recaptcha
     if (!recaptcha) {
       return $('#forgotpw-form').before(
@@ -297,7 +296,7 @@ module.exports = {
     }
     const normalizedEmail = validator.normalizeEmail(email);
     const normalizedEmailDuplicate = validator.normalizeEmail(emailDuplicate);
-    $.post(`/tsm/auth/reset/${token}`, { email: normalizedEmail, emailDuplicate: normalizedEmailDuplicate, recaptcha })
+    $.post(`/tsm/auth/reset`, { email: normalizedEmail, emailDuplicate: normalizedEmailDuplicate, recaptcha })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           $('#forgotpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
@@ -331,25 +330,26 @@ module.exports = {
     const urlParams = window.location.href.split('/');
     const token = urlParams[urlParams.length - 1];
     const email = urlParams[urlParams.length - 2];
-    // validate password length (8-30 chars)
-    if (password.length < 8 || password.length > 30) {
+    // validate password(s) length
+    if (!password || !passwordDuplicate || password.length < 8 || password.length > 30) {
       return $('#resetpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>'
       );
-    }
-    // validate passwords
-    if (password !== passwordDuplicate) {
+    } else if (password !== passwordDuplicate) {
+      // validate passwords match
       return $('#resetpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>'
       );
-    }
-    // validate email
-    if (!email || !validator.isEmail(email)) {
+    } else if (!email || !validator.isEmail(email)) {
+      // validate email
       return $('#resetpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>'
       );
+    } else if (!token) {
+      // validate token
+      return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid token ! </div>');
     }
-    const normalizedEmail = validator.normalizedEmail(email);
+    const normalizedEmail = validator.normalizeEmail(email);
     $.post(`/tsm/auth/reset/${normalizedEmail}/${token}`, { password, passwordDuplicate })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
@@ -390,9 +390,9 @@ module.exports = {
       .closest('tr')
       .first();
     const tvshowId = $('div[data-tvshowId]:not(.d-none)').data('tvshowid');
-    const episodeId = row.data('epid');
+    const episodeid = row.data('epid');
     const setWatched = true;
-    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeId })
+    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeid })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status !== 200) {
           toastr.error('Server error. Please try again later.');
@@ -527,10 +527,10 @@ module.exports = {
   changeEpisodeWatchedStatusTvshow(event) {
     const setWatched = !$(event.target).hasClass('watched');
     const tvshowId = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
-    const episodeId = $(event.target)
+    const episodeid = $(event.target)
       .closest('tr')
       .data('episodeid');
-    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeId })
+    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeid })
       .done(() => {
         if (setWatched) {
           $(event.target).addClass('watched');

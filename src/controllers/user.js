@@ -164,18 +164,20 @@ const userController = {
   async setEpisodeWatchedStatus(req, res) {
     const { tvshowId } = req.params;
     const userId = req.user;
-    const { setWatched, episodeId } = req.body;
+    const { setWatched, episodeid } = req.body;
     try {
-      if (setWatched === true) {
-        const setEpisodeWatched = await Tvshow.setEpisodeWatched(userId, tvshowId, episodeId);
+      if (setWatched === 'true') {
+        const setEpisodeWatched = await Tvshow.setEpisodeWatched(userId, tvshowId, episodeid);
         if (!setEpisodeWatched) {
           return res.status(400).json({ error: ERROR.EPISODE.ALREADY_WATCHED });
         }
-      } else {
-        const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeId);
+      } else if (setWatched === 'false') {
+        const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeid);
         if (!setEpisodeUnwatched) {
           return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
         }
+      } else {
+        throw new Error();
       }
       return res.sendStatus(200);
     } catch (e) {
