@@ -98,10 +98,10 @@ app.use('/tsm/watchlist', watchlist);
 
 // Handle 404s
 app.use((req, res) => {
-  const err = new Error('Not Found');
+  const err = new Error('Error: Page Not Found.');
   err.status = 404;
   return res.status(404).render('error', {
-    error: isDev ? err : null,
+    error: err,
   });
 });
 
