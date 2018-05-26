@@ -17,3 +17,16 @@ h1.title {
     width: auto !important;
     height: auto !important;
 }
+
+.action {
+    @include media-breakpoint-down(md) {
+        height: calc(100vh - 70px);
+        padding: 0 !important;
+    }
+}
+
+.card {
+    @include media-breakpoint-down(md) {
+        margin: 1em 0;
+    }
+}

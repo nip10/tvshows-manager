@@ -2,37 +2,38 @@ extends layout/base
 
 block content
     include partials/sidebar
+    include partials/topbar
     #page-content-wrapper
         .main-container
             .row
                 .col-md-11.pt-3.mx-auto
-                    .row.py-7
-                        .col-md-8.center-vh
+                    .row.py-7.action
+                        .col-12.col-md-8.center-vh
                             h1.title.text-center NEVER MISS AN EPISODE
                             p.text-center Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, porro eos esse officia praesentium quaerat.
-                        .col-md-4.center-vh
+                        .col-12.col-md-4.center-vh
                             button(type='button', data-toggle='modal', data-target='#signup-modal').btn.btn-primary.btn-lg.btn-block Signup
                             button(type='button', data-toggle='modal', data-target='#login-modal').btn.btn-secondary.btn-block Login
                     .row
-                        .col-md-3
+                        .col-12.col-md-3
                             .card
                                 .card-body
                                     i(aria-hidden='true').fa.fa-calendar.fa-5x.d-flex.justify-content-center
                                     h2.card-title.mt-3.text-center Card title
                                     p.card-text.text-center Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, voluptas!
-                        .col-md-3
+                        .col-12.col-md-3
                             .card
                                 .card-body
                                     i(aria-hidden='true').fa.fa-calendar.fa-5x.d-flex.justify-content-center
                                     h2.card-title.mt-3.text-center Card title
                                     p.card-text.text-center Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, voluptas!
-                        .col-md-3
+                        .col-12.col-md-3
                             .card
                                 .card-body
                                     i(aria-hidden='true').fa.fa-calendar.fa-5x.d-flex.justify-content-center
                                     h2.card-title.mt-3.text-center Card title
                                     p.card-text.text-center Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, voluptas!
-                        .col-md-3
+                        .col-12.col-md-3
                             .card
                                 .card-body
                                     i(aria-hidden='true').fa.fa-calendar.fa-5x.d-flex.justify-content-center

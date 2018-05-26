@@ -4,6 +4,7 @@
 @import 'sidebar';
 @import 'tvshows';
 @import 'watchlist';
+@import 'topbar';
 
 .main-container {
     @extend .container-fluid;
@@ -15,6 +16,9 @@
     &.reduced {
         padding-left: 70px;
     }
+    @include media-breakpoint-down(md) {
+        padding-left: 0;
+    }
 }
 
 #wrapper {
@@ -24,6 +28,10 @@
 #page-content-wrapper {
     width: 100%;
     position: absolute;
+    z-index: 100;
+    @include media-breakpoint-down(md) {
+        margin-top: 70px;
+    }
 }
 
 .cardbox {
