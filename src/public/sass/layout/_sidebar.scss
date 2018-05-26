@@ -8,137 +8,137 @@
     // margin-left: -200px;
     overflow-y: auto;
     background: $black;
-}
+    nav {
+        transition: width .3s ease-in-out;
+        &.reduced {
+            width: 70px;
+            .logo i {
+                font-size: 3em;
+            }
+            ul {
+                padding: 0 8px;
+                li a span {
+                    display: none;
+                }
+                li form {
+                    span {
+                        font-size: 20px;
+                        border: none;
+                        padding: 0 8px;
+                    }
+                    .twitter-typeahead {
+                        display: none !important;
+                    }
+                }
+            }
+        }
+        width: 200px;
+        position: fixed;
+        background-color: $gray-900;
+        > span {
+            position: absolute;
+            // right: 0;
+            right: -15px;
+            color: $gray-400;
+            // padding-right: 0.5em;
+        }
+        .logo {
+            text-decoration: none;
+            i {
+                color: $gray-400;
+                transition: font-size .3s ease-in-out;
+                font-size: 5em;
+                &.home {
+                    color: #f1c40f;
+                }
+                &:hover {
+                    color: #f1c40f;
+                }
+            }
+        }
+        form {
+            width: 90%;
+            @extend .mx-auto;
+            input {
+                background-color: transparent;
+                border: none;
+                color: $white;
 
-nav {
-    transition: width .3s ease-in-out;
-    &.reduced {
-        width: 70px;
-        .logo i {
-            font-size: 3em;
+            }
+            span.input-group-prepend {
+                background-color: transparent;
+                border: 1px solid $gray-700;
+                border-right: 0;
+                & i {
+                    color: $gray;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+            }
         }
         ul {
-            padding: 0 8px;
-            li a span {
-                display: none;
-            }
-            li form {
-                span {
-                    font-size: 20px;
-                    border: none;
-                    padding: 0 8px;
-                }
-                .twitter-typeahead {
-                    display: none !important;
-                }
-            }
-        }
-    }
-    width: 200px;
-    position: fixed;
-    background-color: $gray-900;
-    > span {
-        position: absolute;
-        // right: 0;
-        right: -15px;
-        color: $gray-400;
-        // padding-right: 0.5em;
-    }
-    .logo {
-        text-decoration: none;
-        i {
-            color: $gray-400;
-            transition: font-size .3s ease-in-out;
-            font-size: 5em;
-            &.home {
-                color: #f1c40f;
-            }
-            &:hover {
-                color: #f1c40f;
-            }
-        }
-    }
-    form {
-        width: 90%;
-        @extend .mx-auto;
-        input {
-            background-color: transparent;
-            border: none;
-            color: $white;
-            
-        }
-        span.input-group-prepend {
-            background-color: transparent;
-            border: 1px solid $gray-700;
-            border-right: 0;
-            & i {
-                color: $gray;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-        }
-    }
-    ul {
-        li {
-            a {
-                color: $gray;
-            }
-            &.active:not(:first-child), 
-            &:hover:not(:first-child) {
-                background-color: $gray-800;
+            li {
                 a {
-                    background-color: transparent !important;
-                    span {
+                    color: $gray;
+                }
+                &.active:not(:first-child),
+                &:hover:not(:first-child) {
+                    background-color: $gray-800;
+                    a {
+                        background-color: transparent !important;
+                        span {
+                            color: $white;
+                        }
+                    }
+                    i {
+                        color: #f1c40f;
+                    }
+                }
+                &:not(.active):not(:first-child) {
+                    & a:hover {
+                        color: $gray;
+                    }
+                    & span:hover {
                         color: $white;
                     }
                 }
                 i {
-                    color: #f1c40f;
+                    width: 21px;
+                    text-align: center;
                 }
             }
-            &:not(.active):not(:first-child) {
-                & a:hover {
-                    color: $gray;
-                }
-                & span:hover {
-                    color: $white;
-                }
-            }
-            i {
-                width: 21px;
-                text-align: center;
-            }
+        }
+    }
+
+    .input-loading {
+        background-color: $gray-900 !important;
+        background-image: url("http://loadinggif.com/images/image-selection/3.gif") !important;
+        background-size: 15px 15px !important;
+        background-position: right 10px center !important;
+        background-repeat: no-repeat !important;
+    }
+
+    .beta {
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        background-color: $indigo;
+        text-align: center;
+        font-weight: bold;
+        padding: 1em 0;
+        & span {
+            color: $white;
+            font-size: 1.5em;
+        }
+        & button {
+            width: 80%;
+            text-align: center;
+            margin: 0.5em auto;
+            background-color: transparent;
+            border-width: 2px;
+            border-color: $white;
         }
     }
 }
 
-.input-loading {    
-    background-color: $gray-900 !important;
-    background-image: url("http://loadinggif.com/images/image-selection/3.gif") !important;
-    background-size: 15px 15px !important;
-    background-position: right 10px center !important;
-    background-repeat: no-repeat !important;
-}
-
-.beta {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    background-color: $indigo;
-    text-align: center;
-    font-weight: bold;
-    padding: 1em 0;
-    & span {
-        color: $white;
-        font-size: 1.5em;
-    }
-    & button {
-        width: 80%;
-        text-align: center;
-        margin: 0.5em auto;
-        background-color: transparent;
-        border-width: 2px;
-        border-color: $white;
-    }
-}

@@ -1,0 +1,30 @@
+div#topbar-wrapper {
+  position: fixed;
+  height: 70px;
+  min-width: 100%;
+  z-index: 101;
+  nav {
+    height: 70px;
+    background-color: $gray-900;
+    display: flex;
+    justify-content: space-between;
+    a {
+      text-decoration: none;
+      &.logo {
+        padding-left: 1em;
+        i {
+          font-size: 4em;
+          color: $gray-400;
+        }
+      }
+      &.menu {
+        padding-right: 1em;
+        i {
+          font-size: 3em;
+          color: $gray-400;
+          line-height: inherit;
+        }
+      }
+    }
+  }
+}

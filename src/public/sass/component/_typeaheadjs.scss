@@ -6,8 +6,8 @@ span.twitter-typeahead {
         &.tt-cursor {
             @extend .dropdown-item.active;
         }
-        &:hover { 
-            cursor: pointer; 
+        &:hover {
+            cursor: pointer;
         }
     }
     .input-group & {
