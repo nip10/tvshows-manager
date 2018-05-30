@@ -18,8 +18,13 @@ const userController = {
    * @returns {undefined}
    */
   async addTvshowToUser(req, res) {
-    const { tvshowId } = req.params;
-    const userId = req.user;
+    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
+    const userId = parseInt(_.get(req, 'user'), 10);
+    if (!_.isNumber(tvshowId)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
+    } else if (!_.isNumber(userId)) {
+      return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
+    }
     try {
       const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
       if (isUserFollowingTvshow) {
@@ -43,8 +48,13 @@ const userController = {
    * @returns {undefined}
    */
   async removeTvshowFromUser(req, res) {
-    const { tvshowId } = req.params;
-    const userId = req.user;
+    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
+    const userId = parseInt(_.get(req, 'user'), 10);
+    if (!_.isNumber(tvshowId)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
+    } else if (!_.isNumber(userId)) {
+      return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
+    }
     try {
       const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
       if (!isUserFollowingTvshow) {
@@ -68,9 +78,17 @@ const userController = {
    * @returns {undefined}
    */
   async setFollowingTvshow(req, res) {
-    const { tvshowId } = req.params;
-    const { action } = req.body;
-    const userId = req.user;
+    const action = _.get(req, 'body.action');
+    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
+    const userId = parseInt(_.get(req, 'user'), 10);
+    if (!_.isNumber(tvshowId)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
+    } else if (!_.isNumber(userId)) {
+      return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
+    } else if (!_.isString(action) || (action !== 'add' && action !== 'remove')) {
+      // TODO: Check if lodash has something like "isEnum"
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ACTION });
+    }
     try {
       if (action === 'add') {
         const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
@@ -81,7 +99,6 @@ const userController = {
         if (addTvshowToUser) {
           return res.sendStatus(200);
         }
-        throw new Error();
       } else if (action === 'remove') {
         const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
         if (!isUserFollowingTvshow) {
@@ -91,10 +108,8 @@ const userController = {
         if (removeTvshowFromUser) {
           return res.sendStatus(200);
         }
-        throw new Error();
-      } else {
-        return res.sendStatus(400);
       }
+      throw new Error();
     } catch (e) {
       console.log(e);
       return res.status(500).json({ error: ERROR.SERVER });
@@ -108,9 +123,14 @@ const userController = {
    * @returns {undefined}
    */
   async getWatchlist(req, res) {
-    const userId = req.user;
-    let watchlist;
-    let unwatchedEpisodesCount;
+    const userId = parseInt(_.get(req, 'user'), 10);
+    if (!_.isNumber(userId)) {
+      return res.render('watchlist', {
+        sidebarIndex: 'watchlist',
+      });
+    }
+    let watchlist = null;
+    let unwatchedEpisodesCount = null;
     try {
       // Fetch unwatched episodes
       const unwatchedEpisodes = await User.getWatchlist(userId);
@@ -146,9 +166,8 @@ const userController = {
       // TODO: Merge the above maps if possible (check notes for code snippet)
     } catch (e) {
       console.log(e);
-      watchlist = null;
     }
-    res.render('watchlist', {
+    return res.render('watchlist', {
       sidebarIndex: 'watchlist',
       watchlist,
       unwatchedEpisodesCount,
@@ -162,9 +181,19 @@ const userController = {
    * @returns {undefined}
    */
   async setEpisodeWatchedStatus(req, res) {
-    const { tvshowId } = req.params;
-    const userId = req.user;
-    const { setWatched, episodeid } = req.body;
+    const userId = parseInt(_.get(req, 'user'), 10);
+    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
+    const episodeid = parseInt(_.get(req, 'body.episodeid'), 10);
+    const setWatched = _.get(req, 'body.setWatched');
+    if (!_.isNumber(userId)) {
+      return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
+    } else if (!_.isNumber(tvshowId)) {
+      return res.status(500).json({ error: ERROR.TVSHOW.INVALID_ID });
+    } else if (!_.isNumber(episodeid)) {
+      return res.status(500).json({ error: ERROR.EPISODE.INVALID_ID });
+    } else if (!_.isString(setWatched) || (setWatched !== 'true' && setWatched !== 'false')) {
+      return res.status(500).json({ error: ERROR.EPISODE.INVALID_ACTION });
+    }
     try {
       if (setWatched === 'true') {
         const setEpisodeWatched = await Tvshow.setEpisodeWatched(userId, tvshowId, episodeid);
@@ -176,8 +205,6 @@ const userController = {
         if (!setEpisodeUnwatched) {
           return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
         }
-      } else {
-        throw new Error();
       }
       return res.sendStatus(200);
     } catch (e) {
@@ -193,9 +220,15 @@ const userController = {
    * @returns {undefined}
    */
   async setSeasonWatched(req, res) {
-    const userId = req.user;
-    const { tvshowId } = req.params;
-    const { episodes } = req.body;
+    const userId = parseInt(_.get(req, 'user'), 10);
+    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
+    const episodes = _.get(req, 'body.episodes');
+    if (!_.isNumber(userId)) {
+      return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
+    } else if (!_.isNumber(tvshowId)) {
+      return res.status(500).json({ error: ERROR.TVSHOW.INVALID_ID });
+    }
+    // TODO: Add validation for "episodes". I dont remember whats the type.. array ?
     try {
       const setSeasonWatched = await Tvshow.setSeasonWatched(userId, tvshowId, episodes);
       if (setSeasonWatched) return res.sendStatus(200);
@@ -213,7 +246,12 @@ const userController = {
    * @returns {undefined}
    */
   getProfile(req, res) {
-    const userId = req.user;
+    const userId = parseInt(_.get(req, 'user'), 10);
+    if (!_.isNumber(userId)) {
+      return res.status(400).render('error', {
+        error: ERROR.AUTH.INVALID_ID,
+      });
+    }
     return res.render('user', {
       id: userId,
     });

@@ -7,6 +7,7 @@ export const ERROR = {
     PASSWORD_LEN: 'Password must be 8-30 characters',
     PASSWORD_MATCH: "Passwords don't match.",
     PASSWORD_INVALID: 'Invalid password.',
+    INVALID_ID: 'Invalid user id',
     INVALID_EMAIL: 'Invalid email address',
     EMAIL_MATCH: "Email addresses don't match",
     EMAIL_EXISTS: 'Email address already registred.',
@@ -23,12 +24,18 @@ export const ERROR = {
   TVSHOW: {
     ALREADY_FOLLOWING: 'You are already following this tvshow.',
     NOT_FOLLOWING: 'You are not following this tvshow.',
-    INVALID: 'Invalid tvshow name.',
+    INVALID_NAME: 'Invalid tvshow name.',
+    INVALID_SEASON: 'Invalid tvshow season.',
+    INVALID_ID: 'Invalid tvshow id.',
+    INVALID_ACTION: 'Invalid action.',
     NOT_FOUND: 'Tvshow not found.',
   },
   EPISODE: {
     ALREADY_WATCHED: 'You already set this episode as watched.',
     ALREADY_UNWATCHED: 'You already set this episode as unwatched.',
+    NOT_FOUND: 'Episode not found.',
+    INVALID_ID: 'Invalid episode id.',
+    INVALID_ACTION: 'Invalid action',
   },
 };
 

@@ -43,6 +43,7 @@ passport.use(
       const user = await knex('users')
         .where({ email })
         .first();
+      // If the user doesnt exist, we dont want to send that information to the client
       if (!user) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
       const result = await comparePassword(password, user.password);
       if (!result) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });

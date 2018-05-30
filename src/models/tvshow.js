@@ -18,7 +18,7 @@ const Tvshow = {
     console.log('Requesting token from TheTvDb API');
     return this.getToken()
       .then(newToken => {
-        if (!newToken || newToken.length === 0) {
+        if (!_.isString(newToken)) {
           throw new Error('Token received is invalid.');
         }
         this.apiToken = newToken;
@@ -31,6 +31,9 @@ const Tvshow = {
         }
       })
       .catch(e => console.log(e));
+    // TODO: This should make the app unusable ie: in a suspended state.
+    // The ideal solution would be alert the user that service is degraded but they can
+    // still use the "non external api" dependencies.
   },
   /**
    * Start child process that renews the TheTVDB api token
@@ -316,7 +319,7 @@ const Tvshow = {
       return latestSeason.max;
     } catch (e) {
       console.log(e);
-      return false;
+      return null;
     }
   },
   /**
@@ -384,9 +387,9 @@ const Tvshow = {
           tvshow_id: tvshowId,
           season: episode.airedSeason,
           epnum: episode.airedEpisodeNumber,
-          title: episode.episodeName || null,
-          overview: episode.overview || null,
-          airdate: episode.firstAired || null,
+          title: _.get(episode, 'episodeName', null),
+          overview: _.get(episode, 'overview', null),
+          airdate: _.get(episode, 'firstAired', null),
         }));
         Array.prototype.push.apply(episodes, filteredEpisodes);
         if (res.links.next) return requestPaginated(apiToken, res.links.next);
@@ -419,7 +422,7 @@ const Tvshow = {
     };
     try {
       const { imdbRating } = await rp(requestOptions);
-      return imdbRating;
+      return parseInt(imdbRating, 10);
     } catch (e) {
       console.log(e);
       return null;
@@ -485,10 +488,7 @@ const Tvshow = {
     }));
     try {
       const seasonWatched = await knex('usereps').insert(queryData);
-      if (seasonWatched.rowCount === queryData.length) {
-        return true;
-      }
-      return false;
+      return seasonWatched.rowCount === queryData.length;
     } catch (e) {
       console.log(e);
       return false;

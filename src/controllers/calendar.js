@@ -1,5 +1,5 @@
 import moment from 'moment';
-import pick from 'lodash/pick';
+import _ from 'lodash';
 import User from '../models/user';
 import Calendar from '../models/calendar';
 import { ERROR } from '../utils/constants';
@@ -18,13 +18,15 @@ const calendarController = {
    * @returns {undefined}
    */
   async getCalendar(req, res) {
-    const userId = req.user;
-    let month;
-    let year;
-    if (req.params.month && req.params.year) {
-      month = parseInt(req.params.month, 10);
-      year = parseInt(req.params.year, 10);
-    } else {
+    const userId = parseInt(_.get(req, 'user'), 10);
+    if (!_.isNumber(userId)) {
+      return res.status(500).render('error', {
+        error: ERROR.AUTH.INVALID_ID,
+      });
+    }
+    let month = parseInt(_.get(req, 'params.month'), 10);
+    let year = parseInt(_.get(req, 'params.year'), 10);
+    if (!_.isNumber(month) || !_.isNumber(year)) {
       const date = new Date();
       month = parseInt(date.getMonth() + 1, 10);
       year = parseInt(date.getFullYear(), 10);
@@ -39,7 +41,7 @@ const calendarController = {
         calendar.addEpisodesToCalendar(episodes);
       }
       return res.render('calendar', {
-        calendar: pick(calendar, ['daysFromPreviousMonth', 'daysFromNextMonth', 'calendarData']),
+        calendar: _.pick(calendar, ['daysFromPreviousMonth', 'daysFromNextMonth', 'calendarData']),
         monthNavigation: {
           previousYear: month === 1 ? year - 1 : year,
           nextYear: month === 12 ? year + 1 : year,
