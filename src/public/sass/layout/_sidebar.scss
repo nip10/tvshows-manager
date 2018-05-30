@@ -48,9 +48,6 @@
             color: $gray-400;
             i.fa-times {
                 color: $gray-900;
-                span & {
-
-                }
             }
         }
         .logo {
@@ -60,10 +57,10 @@
                 transition: font-size .3s ease-in-out;
                 font-size: 5em;
                 &.home {
-                    color: #f1c40f;
+                    color: $amber;
                 }
                 &:hover {
-                    color: #f1c40f;
+                    color: $amber;
                 }
             }
         }
@@ -103,7 +100,7 @@
                         }
                     }
                     i {
-                        color: #f1c40f;
+                        color: $amber;
                     }
                 }
                 &:not(.active):not(:first-child) {
