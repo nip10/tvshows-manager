@@ -17,13 +17,15 @@ const tvshowsController = {
    * @returns {undefined}
    */
   async search(req, res) {
-    const { tvshowName } = req.params;
+    const tvshowName = _.get(req, 'params.tvshowName');
     if (!_.isString(tvshowName)) {
-      return res.status(400).json({ error: ERROR.TVSHOW.INVALID });
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_NAME });
     }
     try {
       const data = await Tvshow.search(tvshowName);
-      if (_.isNil(data)) return res.json({ error: ERROR.TVSHOW.NOT_FOUND });
+      if (_.isNil(data)) {
+        return res.json({ error: ERROR.TVSHOW.NOT_FOUND });
+      }
       return res.json(data);
     } catch (e) {
       console.log(e);
@@ -38,10 +40,19 @@ const tvshowsController = {
    * @returns {undefined}
    */
   async getEpisodes(req, res) {
-    const { tvshowId } = req.params;
-    const { season } = req.query;
+    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
+    const season = parseInt(_.get(req, 'query.season'), 10);
+    if (!_.isNumber(tvshowId)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
+    }
+    if (!_.isNumber(season)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_SEASON });
+    }
     try {
       const episodes = await Tvshow.getEpisodesFromSeasonFromDb(tvshowId, season);
+      if (_.isNil(episodes)) {
+        return res.json({ error: ERROR.EPISODE.NOT_FOUND });
+      }
       return res.json({ episodes });
     } catch (e) {
       console.log(e);
@@ -69,16 +80,22 @@ const tvshowsController = {
     let isTvshowOnDb;
     try {
       isTvshowOnDb = await Tvshow.isOnDb(tvshowId);
+      if (_.isNil(isTvshowOnDb)) {
+        isTvshowOnDb = false;
+      }
     } catch (e) {
       console.log(e);
+      // If the DB is offline, we allow this to continue and fetch the data from the external API
       isTvshowOnDb = false;
     }
     let tvshowData;
     if (isTvshowOnDb) {
       // Get tvshow data from the db
       try {
+        // Get latest season (in order to display the last season episodes)
         const latestSeason = await Tvshow.getLatestSeasonFromDb(tvshowId);
         if (!latestSeason) throw new Error();
+        // Get tvshow info, artwork and episodes
         const getTvshowData = await Promise.all([
           Tvshow.getInfoFromDb(tvshowId),
           Tvshow.getEpisodesFromSeasonFromDb(tvshowId, latestSeason),
@@ -95,6 +112,7 @@ const tvshowsController = {
       try {
         // Get latest season (in order to display the last season episodes)
         const latestSeason = await Tvshow.getLatestSeasonFromApi(tvshowId);
+        if (!latestSeason) throw new Error();
         // Get tvshow info, artwork and episodes
         const getTvshowData = await Promise.all([
           Tvshow.getInfoFromApi(tvshowId),
@@ -113,22 +131,21 @@ const tvshowsController = {
           { latestSeason }
         );
         // Add tvshow info to the db (in the background)
-        Tvshow.addTvshowToDb(
-          _.pick(tvshowData, [
-            'name',
-            'overview',
-            'status',
-            'imdb',
-            'imdbRating',
-            'thetvdb',
-            'genre',
-            'premiered',
-            'network',
-            'airdate',
-            'tvrating',
-            'images',
-          ])
-        ).catch(e => console.log(e));
+        const keysToPick = [
+          'name',
+          'overview',
+          'status',
+          'imdb',
+          'imdbRating',
+          'thetvdb',
+          'genre',
+          'premiered',
+          'network',
+          'airdate',
+          'tvrating',
+          'images',
+        ];
+        Tvshow.addTvshowToDb(_.pick(tvshowData, keysToPick)).catch(e => console.log(e));
       } catch (e) {
         console.log(e);
         return res.status(500).render('error', {
@@ -136,16 +153,17 @@ const tvshowsController = {
         });
       }
     }
-    const userId = _.get(req, 'user', false);
+    const userId = _.get(req, 'user', null);
     // Check if user is following the tvshow
     let isUserFollowingTvshow;
-    if (!userId) {
+    if (_.isNil(userId)) {
       isUserFollowingTvshow = false;
     } else {
       try {
         isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
       } catch (e) {
         console.log(e);
+        // If we can't get the following status, assume the user is not following the tvshow
         isUserFollowingTvshow = false;
       }
     }

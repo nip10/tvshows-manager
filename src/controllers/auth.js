@@ -72,9 +72,10 @@ const authController = {
    * @returns {undefined}
    */
   async validateRecaptcha(req, res, next) {
+    // Skip recaptcha if we are in development env
     if (isDev) return next();
-    const { recaptcha } = req.body;
-    if (!recaptcha) {
+    const recaptcha = _.get(req, 'body.recaptcha');
+    if (_.isNill(recaptcha)) {
       return res.status(401).json({ error: ERROR.AUTH.RECAPTCHA });
     }
     const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -110,7 +111,7 @@ const authController = {
     // logout() is not enough, so I use session.destroy()
     // the redirect is done in the callback to make sure
     // the session is destroyed before the redirect
-    // destroy callback has 'err' available in the callback
+    // note: destroy callback has 'err' available in the callback
     req.session.destroy(() => res.redirect('/tsm'));
   },
   /**
@@ -121,8 +122,14 @@ const authController = {
    * @returns {undefined}
    */
   async resetPasswordRequest(req, res) {
-    const { email, emailDuplicate } = req.body;
-    if (!email || !emailDuplicate || !validator.isEmail(email) || !validator.isEmail(emailDuplicate)) {
+    const email = _.get(req, 'body.email');
+    const emailDuplicate = _.get(req, 'body.emailDuplicate');
+    if (
+      !_.isString(email) ||
+      !_.isString(emailDuplicate) ||
+      !validator.isEmail(email) ||
+      !validator.isEmail(emailDuplicate)
+    ) {
       return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
     } else if (email !== emailDuplicate) {
       return res.status(422).json({ error: ERROR.AUTH.EMAIL_MATCH });
@@ -161,14 +168,15 @@ const authController = {
    * @returns {undefined}
    */
   async resetPasswordWithToken(req, res) {
-    const { email, token } = req.params;
-    const normalizedEmail = validator.normalizeEmail(email);
-    if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
+    const email = _.get(req, 'params.email');
+    const token = _.get(req, 'params.token');
+    if (!_.isString(email) || !validator.isEmail(email)) {
       return res.status(422).render('error', {
         error: ERROR.AUTH.INVALID_EMAIL,
       });
     }
-    if (!token) {
+    const normalizedEmail = validator.normalizeEmail(email);
+    if (!_.isString(token)) {
       return res.status(422).render('error', {
         error: ERROR.AUTH.INVALID_TOKEN,
       });
@@ -198,12 +206,14 @@ const authController = {
    * @returns {undefined}
    */
   async resetPassword(req, res) {
-    const { password, passwordDuplicate } = req.body;
-    const { email, token } = req.params;
-    const normalizedEmail = validator.normalizeEmail(email);
-    if (!normalizedEmail || !validator.isEmail(normalizedEmail)) {
+    const password = _.get(req, 'body.password');
+    const passwordDuplicate = _.get(req, 'body.passwordDuplicate');
+    const email = _.get(req, 'params.email');
+    const token = _.get(req, 'params.token');
+    if (!_.isString(email) || !validator.isEmail(email)) {
       return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
     }
+    const normalizedEmail = validator.normalizeEmail(email);
     if (!token) {
       return res.status(422).json({ error: ERROR.AUTH.INVALID_TOKEN });
     }
@@ -304,7 +314,10 @@ const authController = {
    * @returns {undefined}
    */
   async changePassword(req, res) {
-    const userId = req.user;
+    const userId = parseInt(_.get(req, 'user'), 10);
+    if (!_.isNumber(userId)) {
+      return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
+    }
     const { newPassword, currentPassword } = req.body;
     try {
       const changedPassword = await User.changePassword(userId, currentPassword, newPassword);
