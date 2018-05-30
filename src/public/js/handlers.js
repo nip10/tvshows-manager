@@ -461,6 +461,44 @@ module.exports = {
       }, 300);
     }
   },
+  toggleSidebarMobile(event) {
+    event.preventDefault(event);
+    const isShowing = $('#sidebar-wrapper > nav').hasClass('mobile');
+    if (!isShowing) {
+      $('#sidebar-wrapper').removeClass('d-none');
+      $('#sidebar-wrapper > nav').addClass('mobile');
+      $('#topbar-wrapper').addClass('opacity20');
+      $('#page-content-wrapper').addClass('opacity20');
+      $('#toggle-sidebar').addClass('d-none');
+      $('#close-sidebar').removeClass('d-none');
+    } else {
+      $('#sidebar-wrapper').addClass('d-none');
+      $('#sidebar-wrapper > nav').removeClass('mobile');
+      $('#topbar-wrapper').removeClass('opacity20');
+      $('#page-content-wrapper').removeClass('opacity20');
+      $('#toggle-sidebar').removeClass('d-none');
+      $('#close-sidebar').addClass('d-none');
+    }
+  },
+  closeSidebar(event) {
+    event.preventDefault();
+    $('#sidebar-wrapper').addClass('d-none');
+    $('#sidebar-wrapper > nav').removeClass('mobile');
+    $('#topbar-wrapper').removeClass('opacity20');
+    $('#page-content-wrapper').removeClass('opacity20');
+    $('#toggle-sidebar').removeClass('d-none');
+    $('#close-sidebar').addClass('d-none');
+  },
+  forgotPasswordModal(event) {
+    event.preventDefault();
+    $('#login-modal')
+      .modal('hide')
+      .on('hidden.bs.modal', () => {
+        $('#forgotpw-modal').modal('show');
+        // Remove the 'on' event binding
+        $(this).off('hidden.bs.modal');
+      });
+  },
   setSeasonWatched(event) {
     const { tvshowid, season } = event.target.dataset;
     const episodes = [];
