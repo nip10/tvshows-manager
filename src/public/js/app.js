@@ -14,16 +14,19 @@ require('./cookies');
     $('#signup-form').submit(e => handlers.signup(e));
     $('#resetpw-form').submit(e => handlers.resetPassword(e));
     $('#forgotpw-form').submit(e => handlers.forgotPassword(e));
+    $('#login-password-forgot').click(e => handlers.forgotPasswordModal(e));
     $('#season-select').change(e => handlers.updateEpisodesTable(e));
     $('#userTvShowState').click(e => handlers.addOrRemoveTvshow(e));
     $('#bug-form').submit(e => handlers.bug(e));
     $('#toggle-sidebar').click(e => handlers.toggleSidebar(e));
+    $('#close-sidebar').click(e => handlers.closeSidebar(e));
     $('.poster > img').click(e => handlers.watchlistPosters(e));
     $('div[data-tvshowid] table > tbody > tr > td > i').click(e => handlers.setEpisodeWatched(e));
     $('.mark-watched').click(e => handlers.setSeasonWatched(e));
     $('.calendar__table input[type=checkbox]').change(e => handlers.changeEpisodeWatchedStatusCalendar(e));
     $('#episodes-table i.fa.fa-eye').click(e => handlers.changeEpisodeWatchedStatusTvshow(e));
     $('#resend-activation').click(e => handlers.resendActivation(e));
+    $('#mobilemenu').click(e => handlers.toggleSidebarMobile(e));
 
     // Initialize typeahead event handlers
     $('.typeahead')
@@ -57,18 +60,6 @@ require('./cookies');
     // bug modal handler
     $('#bug-modal').on('shown.bs.modal', () => {
       $('#bug-email').focus();
-    });
-
-    // forgot password modal handler
-    $('#login-password-forgot').click(e => {
-      e.preventDefault();
-      $('#login-modal')
-        .modal('hide')
-        .on('hidden.bs.modal', () => {
-          $('#forgotpw-modal').modal('show');
-          // Remove the 'on' event binding
-          $(this).off('hidden.bs.modal');
-        });
     });
 
     // handle reset form modal

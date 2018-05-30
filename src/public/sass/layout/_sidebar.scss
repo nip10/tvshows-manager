@@ -10,6 +10,9 @@
     background: $black;
     nav {
         transition: width .3s ease-in-out;
+        width: 200px;
+        position: fixed;
+        background-color: $gray-900;
         &.reduced {
             width: 70px;
             .logo i {
@@ -32,15 +35,23 @@
                 }
             }
         }
-        width: 200px;
-        position: fixed;
-        background-color: $gray-900;
+        &.mobile {
+            width: 65%;
+            z-index: 103;
+            > span {
+                right: -30px;
+            }
+        }
         > span {
             position: absolute;
-            // right: 0;
             right: -15px;
             color: $gray-400;
-            // padding-right: 0.5em;
+            i.fa-times {
+                color: $gray-900;
+                span & {
+
+                }
+            }
         }
         .logo {
             text-decoration: none;
