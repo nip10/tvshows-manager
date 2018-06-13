@@ -3,6 +3,7 @@
 import { CronJob } from 'cron';
 import rp from 'request-promise';
 import updateDbData from './updatetvshows';
+import { API } from '../utils/constants';
 
 console.log('[CHILD] [0] Child process started!');
 
@@ -22,7 +23,7 @@ const job1 = new CronJob(
       if (oldToken) {
         // request options
         const options = {
-          uri: 'https://api.thetvdb.com/refresh_token',
+          uri: API.THETVDB.REFRESH_TOKEN,
           headers: {
             Authorization: `Bearer ${oldToken}`,
           },
