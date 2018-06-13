@@ -266,12 +266,13 @@ const Tvshow = {
     };
     try {
       const { data } = await rp(requestOptions);
-      return data.map(episode => ({
+      const episodes = _.map(data, episode => ({
         num: episode.airedEpisodeNumber,
         name: episode.episodeName,
         airdate: episode.firstAired,
         overview: episode.overview,
       }));
+      return episodes;
     } catch (e) {
       console.log(e);
       return null;
@@ -355,6 +356,7 @@ const Tvshow = {
       // 1.1 Insert show information in the database
       await knex('tvshows').insert(tvshowInfo);
     } catch (e) {
+      console.log(e);
       return;
     }
     // 2. Episodes information
@@ -422,7 +424,9 @@ const Tvshow = {
     };
     try {
       const { imdbRating } = await rp(requestOptions);
-      return parseInt(imdbRating, 10);
+      const imdbRatingParsed = Number.parseInt(imdbRating, 10);
+      if (!_.isNumber(imdbRatingParsed)) throw new Error();
+      return imdbRatingParsed;
     } catch (e) {
       console.log(e);
       return null;
