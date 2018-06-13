@@ -41,8 +41,10 @@ export const ERROR = {
 
 export const API = {
   THETVDB: {
+    REFRESH_TOKEN: 'https://api.thetvdb.com/refresh_token',
     AUTH_LOGIN: 'https://api.thetvdb.com/login',
     SEARCH: 'https://api.thetvdb.com/search/series',
+    INFO_SIMPLE: _.template('https://api.thetvdb.com/series/${tvshowId}'),
     INFO: _.template('https://api.thetvdb.com/series/${tvshowId}/filter'),
     IMAGES: _.template('https://api.thetvdb.com/series/${tvshowId}/images/query'),
     EPISODES_QUERY: _.template('https://api.thetvdb.com/series/${tvshowId}/episodes/query'),
@@ -51,4 +53,12 @@ export const API = {
   OMDB: {
     IMDB_RATING: _.template('http://www.omdbapi.com/?i=${imdbId}&apikey=${OMDB_API_KEY}'),
   },
+};
+
+export const MISC = {
+  THETVDB: {
+    BANNER: _.template('https://www.thetvdb.com/banners/${bannerId}'),
+    POSTER: _.template('https://www.thetvdb.com/banners/${posterId}'),
+  },
+  IMDB: _.template('https://imdb.com/title/${imdbId}'),
 };

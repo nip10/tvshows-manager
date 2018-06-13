@@ -4,10 +4,8 @@ import rp from 'request-promise';
 import moment from 'moment';
 import _ from 'lodash';
 import knex from '../db/connection';
+import { API } from '../utils/constants';
 
-const THETVDB_API_URL = tvshowId => `https://api.thetvdb.com/series/${tvshowId}`;
-const THETVDB_API_INFO = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/filter`;
-const THETVDB_API_EPISODES_QUERY = tvshowId => `https://api.thetvdb.com/series/${tvshowId}/episodes/query`;
 let apiToken;
 
 function getTvshowIdsFromDb() {
@@ -16,7 +14,7 @@ function getTvshowIdsFromDb() {
 
 async function getLastUpdateFromApi(tvshowId) {
   const options = {
-    uri: THETVDB_API_URL(tvshowId),
+    uri: API.THETVDB.INFO_SIMPLE({ tvshowId }),
     method: 'HEAD',
     headers: {
       Authorization: `Bearer ${apiToken}`,
@@ -46,7 +44,7 @@ async function getLastUpdateFromApi(tvshowId) {
 async function getEpisodes(tvshowId, page = 1, episodes = []) {
   const requestOptions = {
     method: 'GET',
-    uri: THETVDB_API_EPISODES_QUERY(tvshowId),
+    uri: API.THETVDB.EPISODES_QUERY({ tvshowId }),
     headers: {
       'Accept-Language': 'en',
       Authorization: `Bearer ${apiToken}`,
@@ -78,7 +76,7 @@ async function getEpisodes(tvshowId, page = 1, episodes = []) {
 async function getTvshowInfo(tvshowId) {
   const requestOptions = {
     method: 'GET',
-    uri: THETVDB_API_INFO(tvshowId),
+    uri: API.THETVDB.INFO_SIMPLE({ tvshowId }),
     headers: {
       'Accept-Language': 'en',
       Authorization: `Bearer ${apiToken}`,

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import Tvshow from '../models/tvshow';
 import User from '../models/user';
-import { ERROR } from '../utils/constants';
+import { ERROR, MISC } from '../utils/constants';
 
 /**
  * Tvshow controller - All functions related to the tvshows feature
@@ -187,15 +187,15 @@ const tvshowsController = {
     return res.render('tvshow', {
       name: tvshowData.name,
       id: tvshowId,
-      banner: `https://www.thetvdb.com/banners/${tvshowData.images[0]}`,
-      poster: `https://www.thetvdb.com/banners/${tvshowData.images[1]}`,
+      banner: MISC.THETVDB.BANNER({ bannerId: tvshowData.images[0] }),
+      poster: MISC.THETVDB.POSTER({ posterId: tvshowData.images[1] }),
       overview: tvshowData.overview,
       premiered: tvshowData.premiered,
       network: tvshowData.network,
       status: tvshowData.status,
       airdate: tvshowData.airdate,
       genre: tvshowData.genre,
-      imdb: `https://imdb.com/title/${tvshowData.imdb}`,
+      imdb: MISC.IMDB({ imdbId: tvshowData.imdb }),
       imdbRating: tvshowData.imdbRating,
       season: tvshowData.latestSeason,
       episodes: tvshowData.episodes,
