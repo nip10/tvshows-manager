@@ -385,6 +385,15 @@ module.exports = {
     // add highlight to the current poster
     $(`li[data-tvshowid=${tvshowId}]`).addClass('highlight');
   },
+  watchlistSelect(event) {
+    // get tvshow id
+    const tvshowId = event.target.selectedOptions[0].dataset.tvshowid;
+    // hide current table
+    const visibleWatchlist = $('div[data-tvshowId]:not(.d-none)');
+    visibleWatchlist.addClass('d-none');
+    // show new table
+    $(`div[data-tvshowid=${tvshowId}]`).removeClass('d-none');
+  },
   setEpisodeWatched(event) {
     const row = $(event.target)
       .closest('tr')
@@ -507,13 +516,13 @@ module.exports = {
     );
     $.post(`/tsm/tvshows/${tvshowid}/s`, { episodes })
       .done(() => {
-        // update unwatched episodes counter (global)
-        let counter = $('.counter span').text();
         const numEps = $(`table[data-tvshowid=${tvshowid}][data-season=${season}] tbody tr`).length;
-        counter -= numEps;
-        $('.counter span').text(counter);
+        // update unwatched episodes counter (global)
+        const globalCounter = Number.parseInt($('.counter span').text(), 10);
+        $('.counter span').text(globalCounter - numEps);
         // update unwatched episodes counter (poster)
-        $(`li[data-tvshowid=${tvshowid}] span`).text(counter);
+        const localCounter = Number.parseInt($(`li[data-tvshowid=${tvshowid}] span`).text(), 10);
+        $(`li[data-tvshowid=${tvshowid}] span`).text(localCounter - numEps);
         // remove container of the selected season + tvshow
         $(`div[data-tvshowid=${tvshowid}] div[data-season=${season}]`).remove();
         // check if there are more unwatched episodes from other seasons
@@ -532,7 +541,7 @@ module.exports = {
             .first()
             .removeClass('d-none');
           // add message informing that there are no more unwatched episodes
-          if (counter === 0) {
+          if (globalCounter === 0) {
             $('#page-content-wrapper > div > div:nth-child(2) > div').append(
               "<p> You don't have any unwatched episodes. </p>"
             );
@@ -579,5 +588,10 @@ module.exports = {
       .fail(jqXHR => {
         toastr.error(jqXHR.responseJSON.error);
       });
+  },
+  search(event) {
+    event.preventDefault();
+    const tvshowName = event.target[1].value;
+    window.location.replace(`/tsm/tvshows/search_full/${tvshowName}`);
   },
 };
