@@ -1,0 +1,25 @@
+extends layout/base
+
+block content
+    include partials/sidebar
+    include partials/topbar
+    #page-content-wrapper
+        .main-container
+          .row
+            .col-md-11.pt-3.mx-auto
+              if tvshows
+                h2= `Found ${tvshows.length} episodes`
+                each tvshow in tvshows
+                  .card__search
+                    .card-body
+                      div.poster-container
+                        a(href=`/tsm/tvshows/${tvshow.id}`)
+                          if tvshow.banner
+                            img(src=`https://www.thetvdb.com/banners/${tvshow.banner}`)
+                          else
+                            img(src=`http://via.placeholder.com/218x40`)
+                      a(href=`/tsm/tvshows/${tvshow.id}`).tvshow= tvshow.seriesName
+                      p= tvshow.status || 'NA'
+              else
+                p No tvshows found.
+    include modals/bug

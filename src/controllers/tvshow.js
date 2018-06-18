@@ -14,7 +14,6 @@ const tvshowsController = {
    *
    * @param {Object} req - Express request object
    * @param {Object} res - Express response object
-   * @returns {undefined}
    */
   async search(req, res) {
     const tvshowName = _.get(req, 'params.tvshowName');
@@ -33,6 +32,31 @@ const tvshowsController = {
     }
   },
   /**
+   * Search for a tvshow and render the search results view.
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   */
+  async searchFull(req, res) {
+    const tvshowName = _.get(req, 'params.tvshowName');
+    if (!_.isString(tvshowName)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_NAME });
+    }
+    try {
+      const tvshows = await Tvshow.search(tvshowName);
+      return res.render('search', { tvshows });
+      /*
+        "id": 266189,
+        "seriesName": "The Blacklist",
+        "banner": "graphical/266189-g24.jpg",
+        "status": "Continuing"
+      */
+    } catch (e) {
+      console.log(e);
+      return res.status(500).render('error');
+    }
+  },
+  /**
    * Get episodes from the db
    *
    * @param {Object} req - Express request object
@@ -40,8 +64,8 @@ const tvshowsController = {
    * @returns {undefined}
    */
   async getEpisodes(req, res) {
-    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
-    const season = parseInt(_.get(req, 'query.season'), 10);
+    const tvshowId = Number.parseInt(_.get(req, 'params.tvshowId'), 10);
+    const season = Number.parseInt(_.get(req, 'query.season'), 10);
     if (!_.isNumber(tvshowId)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
     }
@@ -183,12 +207,17 @@ const tvshowsController = {
         console.log(e);
       }
     }
+    // Check if there are images for the tvshow
+    let banner = null;
+    let poster = null;
+    if (_.isString(tvshowData.images[0])) banner = MISC.THETVDB.GRAPHICS({ id: tvshowData.images[0] });
+    if (_.isString(tvshowData.images[1])) poster = MISC.THETVDB.GRAPHICS({ id: tvshowData.images[1] });
     // Render tvshow view
     return res.render('tvshow', {
       name: tvshowData.name,
       id: tvshowId,
-      banner: MISC.THETVDB.BANNER({ bannerId: tvshowData.images[0] }),
-      poster: MISC.THETVDB.POSTER({ posterId: tvshowData.images[1] }),
+      banner,
+      poster,
       overview: tvshowData.overview,
       premiered: tvshowData.premiered,
       network: tvshowData.network,

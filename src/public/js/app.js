@@ -27,6 +27,8 @@ require('./cookies');
     $('#episodes-table i.fa.fa-eye').click(e => handlers.changeEpisodeWatchedStatusTvshow(e));
     $('#resend-activation').click(e => handlers.resendActivation(e));
     $('#mobilemenu').click(e => handlers.toggleSidebarMobile(e));
+    $('#search-form').submit(e => handlers.search(e));
+    $('.watchlist-list select').change(e => handlers.watchlistSelect(e));
 
     // Initialize typeahead event handlers
     $('.typeahead')

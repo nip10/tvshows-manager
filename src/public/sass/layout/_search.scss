@@ -1,0 +1,33 @@
+.card {
+  &__search {
+    width: 250px;
+    height: 150px;
+    text-align: center;
+    display: inline-block;
+    padding: 1em;
+    overflow: hidden;
+    @include media-breakpoint-down(md) {
+      width: 100%;
+    }
+    &:hover {
+      background-color: rgba($color: $amber, $alpha: 0.5);
+    }
+    img {
+      width: 100%;
+    }
+    a.tvshow {
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 1em;
+    }
+    p {
+      margin-bottom: 0;
+    }
+    .poster-container {
+      margin-bottom: 0.5em;
+    }
+  }
+  &-body {
+    padding: 0;
+  }
+}
