@@ -26,7 +26,7 @@ const calendarController = {
     }
     let month = parseInt(_.get(req, 'params.month'), 10);
     let year = parseInt(_.get(req, 'params.year'), 10);
-    if (!_.isNumber(month) || !_.isNumber(year)) {
+    if (!_.isFinite(month) || !_.isFinite(year)) {
       const date = new Date();
       month = parseInt(date.getMonth() + 1, 10);
       year = parseInt(date.getFullYear(), 10);
