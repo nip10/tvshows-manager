@@ -29,7 +29,7 @@
                         border: none;
                         padding: 0 8px;
                     }
-                    .twitter-typeahead {
+                    .twitter-typeahead, button {
                         display: none !important;
                     }
                 }
@@ -67,11 +67,14 @@
         form {
             width: 90%;
             @extend .mx-auto;
-            input {
+            input, button {
                 background-color: transparent;
-                border: none;
                 color: $white;
-
+                &[type="submit"] {
+                    color: $gray;
+                    border: 1px solid $gray-700;
+                    cursor: pointer;
+                }
             }
             span.input-group-prepend {
                 background-color: transparent;

@@ -39,5 +39,8 @@ span.twitter-typeahead {
         .tt-dataset {
             padding: 0 5px;
         }
+        @include media-breakpoint-down(md) {
+            display: none !important;
+        }
     }
 }
