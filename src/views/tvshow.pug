@@ -1,8 +1,9 @@
 extends layout/base
 include mixins/genre
 
-block content    
+block content
     include partials/sidebar
+    include partials/topbar
     #page-content-wrapper
         .main-container
             .row
@@ -20,40 +21,40 @@ block content
                 .col-md-11.mx-auto
                     if !isAuthenticated
                         .alert.alert-warning.text-center.w-100(role='alert')
-                            span 
-                                | You need to 
-                                a(href='#login-modal', data-toggle='modal') login 
+                            span
+                                | You need to
+                                a(href='#login-modal', data-toggle='modal') &#32;login&#32;
                                 | in order to follow a tvshow and mark episodes as watched.
-            .row.mb-5.justify-content-center
-                .col-md-6
+            .row.mb-5.justify-content-center.tvshow-info
+                .col-12.col-md-6
                     .border.bg-text.h-100
                         p.overview= overview
-                .col-md-5
+                .col-12.col-md-5
                     .row.bg-text.border.h-100
-                        .col-md-4.d-flex.align-items-center
+                        .col-12.col-md-4.d-flex.align-items-center
                             ul.list-unstyled.mx-auto
                                 li.py-2
-                                    span.d-block.text-center 
+                                    span.d-block.text-center
                                         strong Status
                                     span.d-block.text-center(class= (status === 'Running') ? 'green' : 'red')= status || '-'
                                 li.py-2
-                                    span.d-block.text-center 
+                                    span.d-block.text-center
                                         strong Premiered
                                     span.d-block.text-center= premiered || '-'
-                        .col-md-4.d-flex.align-items-center
+                        .col-12.col-md-4.d-flex.align-items-center
                             ul.list-unstyled.mx-auto
                                 li.py-2
-                                    span.d-block.text-center 
+                                    span.d-block.text-center
                                         strong Network
                                     span.d-block.text-center= network || '-'
                                 li.py-2
                                     span.d-block.text-center
                                         strong Airdate
                                     span.d-block.text-center= airdate || '-'
-                        .col-md-4.d-flex.align-items-center
+                        .col-12.col-md-4.d-flex.align-items-center
                             ul.list-unstyled.mx-auto
                                 li.py-2
-                                    span.d-block.text-center 
+                                    span.d-block.text-center
                                         strong Imdb
                                     span.d-block.text-center
                                         a(href=imdb)= imdbRating || '-'
@@ -74,10 +75,10 @@ block content
                                 option(value = i)= 'Season ' + i
                             - }
                         - }
-            .row.mb-5.justify-content-center
-                .col-md-3
+            .row.mb-5.justify-content-center.tvshow-episodes
+                .col-12.col-md-3
                     img#poster(src=poster, alt=name).img-fluid
-                .col-md-8
+                .col-12.col-md-8
                     if episodes
                         table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped
                             tbody
@@ -90,5 +91,5 @@ block content
                                             i(aria-hidden='true', class={'watched' : episode.watched}).fa.fa-eye
                     else
                         p Ooops. Something went wrong while fetching the episodes. Please try again later.
-            include modals/login
-            include modals/bug
+    include modals/login
+    include modals/bug

@@ -1,7 +1,8 @@
 extends layout/base
 
-block content    
+block content
     include partials/sidebar
+    include partials/topbar
     #page-content-wrapper
         .main-container
             .row
@@ -13,19 +14,31 @@ block content
                         if unwatchedEpisodesCount
                             p.counter
                                 span= unwatchedEpisodesCount
-                                | 
+                                |
                                 | unwatched episodes
-                    .my-5
+                    .watchlist-list.my-5
                         if watchlist
-                            ul.list-inline
+                            ul.list-inline.d-none.d-md-block
                                 each tvshow, i in watchlist
                                     li.list-inline-item.poster.mb-3(class={'highlight' : i === 0}, data-tvshowid=tvshow.tvshowId)
-                                        img(src=`https://www.thetvdb.com/banners/${(tvshow.images[1] || tvshow.images[0])}`, alt=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)                                            
+                                        img(src=`https://www.thetvdb.com/banners/${(tvshow.images[1] || tvshow.images[0])}`, alt=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)
                                         - var counter = 0;
                                         each subdata in tvshow.data
                                             if subdata.season !== '00'
                                                 - counter += subdata.episodes.length
-                                        span= counter                                
+                                        span= counter
+                            .d-md-none
+                                - var counter = 0;
+                                select.custom-select
+                                    each tvshow, i in watchlist
+                                        if i === 0
+                                            option(selected, value=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)= tvshow.tvshowName
+                                            each subdata in tvshow.data
+                                                if subdata.season !== '00'
+                                                    - counter += subdata.episodes.length
+                                        else
+                                            option(value=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)= tvshow.tvshowName
+                                span.pull-right= counter
             .row
                 .col-md-11.mx-auto
                     if watchlist && unwatchedEpisodesCount !== 0
@@ -46,7 +59,7 @@ block content
                                                         td.title
                                                             span.w-100.float-left= `S${episode.season}E${episode.epnum}`
                                                             span.w-100.float-left.font-weight-bold= episode.title || 'TBC'
-                                                        td.overview= episode.overview || 'This episode has no summary yet.'
+                                                        //- td.overview= episode.overview || 'This episode has no summary yet.'
                                                         td.airdate.fit= episode.airdate || 'TBC'
                                                         td.watched
                                                             i(aria-hidden='true').fa.fa-eye
