@@ -3,6 +3,7 @@ include mixins/index
 
 block content
     include partials/sidebar
+    include partials/topbar
     #page-content-wrapper
         .main-container
             .row
@@ -49,4 +50,4 @@ block content
                                                                     = `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
                                     - }
                             - }
-            include modals/bug.pug
+    include modals/bug.pug
