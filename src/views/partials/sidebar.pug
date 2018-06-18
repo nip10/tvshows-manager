@@ -7,12 +7,13 @@
             i(aria-hidden='true').fa.fa-television.fa-5x.d-flex.justify-content-center.my-3
         ul.nav.nav-pills.flex-column
             li.nav-item.my-2
-                form
-                    .form-group
-                        .input-group
-                            span.input-group-prepend
-                                i(aria-hidden='true').fa.fa-search.px-3
-                            input(type='text', placeholder='Search')#tvshow-search.form-control.typeahead
+                form#search-form
+                    .input-group
+                        span.input-group-prepend
+                            i(aria-hidden='true').fa.fa-search.px-3
+                        input(type='text', placeholder='Search')#tvshow-search.form-control.typeahead
+                        button(type='submit', value='GO')
+                            i(aria-hidden='true').fa.fa-arrow-right
             li.nav-item(class={'active': (sidebarIndex === 'calendar')})
                 a.nav-link(href='/tsm/calendar')
                     i(aria-hidden='true').fa.fa-calendar.fa-lg.mr-2

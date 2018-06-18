@@ -256,14 +256,14 @@ const authController = {
       try {
         const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
         if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
+        return req.logIn(user, err2 => {
+          if (err) return next(err2);
+          return res.sendStatus(200);
+        });
       } catch (e) {
         console.log(e);
         return res.status(500).json({ error: ERROR.SERVER });
       }
-      return req.logIn(user, err2 => {
-        if (err) return next(err2);
-        return res.sendStatus(200);
-      });
     })(req, res, next);
   },
   /**

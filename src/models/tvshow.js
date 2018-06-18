@@ -108,7 +108,7 @@ const Tvshow = {
     };
     try {
       const { data } = await rp(requestOptions);
-      const filteredData = _.map(data, tvshow => _.pick(tvshow, ['id', 'seriesName']));
+      const filteredData = _.map(data, tvshow => _.pick(tvshow, ['id', 'seriesName', 'banner', 'status']));
       return filteredData;
     } catch (e) {
       console.log(e);
@@ -136,6 +136,11 @@ const Tvshow = {
     };
     try {
       const { data } = await rp(requestOptions);
+      // Check if airdate is defined
+      let airdate = null;
+      if (_.isString(data.airsDayOfWeek) && _.isString(data.airsTime)) {
+        airdate = `${data.airsDayOfWeek} at ${data.airsTime}`;
+      }
       return {
         name: data.seriesName,
         overview: data.overview,
@@ -146,7 +151,7 @@ const Tvshow = {
         genre: data.genre,
         premiered: moment(data.firstAired).format('DD-MM-YYYY'),
         network: data.network,
-        airdate: `${data.airsDayOfWeek} at ${data.airsTime}`,
+        airdate,
         tvrating: data.rating,
         images: [data.banner],
       };
