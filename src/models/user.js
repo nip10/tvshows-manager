@@ -365,6 +365,7 @@ const User = {
         .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
         .where('usertv.user_id', userId)
         .where('episodes.airdate', '<=', knex.fn.now())
+        .whereNot('episodes.season', 0)
         .andWhere(function() {
           this.whereNotIn('episodes.id', function() {
             this.select('ep_id').from('usereps');
