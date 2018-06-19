@@ -1,19 +1,15 @@
-const config = require('./gulp-config.json');
-const runSequence = require('run-sequence');
-const gulp = require('gulp');
-const del = require('del');
+const config = require('./gulp-config');
+
 const browserSync = require('browser-sync');
-const watch = require('gulp-watch');
-const util = require('gulp-util');
+const del = require('del');
 const fs = require('fs');
+const gulp = require('gulp');
+const runSequence = require('run-sequence');
+const watch = require('gulp-watch');
 
 const cleanFolderList = [];
 const taskList = ['copyenv', 'copymailtemplates'];
 const watchTaskList = [];
-
-util.env.boilerplate = {
-  config,
-};
 
 Object.keys(config.tasks).forEach(taskName => {
   if (Object.prototype.hasOwnProperty.call(config.tasks, taskName)) {

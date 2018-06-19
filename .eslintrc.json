@@ -48,7 +48,6 @@
         {
             "files": [
                 "gulp-tasks/*.js",
-                "pipe/*.js",
                 "gulpfile.js"
             ],
             "rules": {
