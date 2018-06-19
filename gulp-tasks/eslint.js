@@ -1,9 +1,9 @@
 module.exports = function() {
-  const gulp = require('gulp');
-  const eslint = require('gulp-eslint');
-  const util = require('gulp-util');
+  const config = require('./../gulp-config');
 
-  const { config } = util.env.boilerplate;
+  const eslint = require('gulp-eslint');
+  const gulp = require('gulp');
+
   const eslintConfig = config.tasks.eslint;
 
   return gulp

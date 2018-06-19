@@ -1,10 +1,11 @@
 module.exports = function() {
+  const config = require('./../gulp-config');
+
   const gulp = require('gulp');
-  const plumber = require('gulp-plumber');
   const notify = require('gulp-notify');
+  const plumber = require('gulp-plumber');
   const sassLint = require('gulp-sass-lint');
-  const util = require('gulp-util');
-  const { config } = util.env.boilerplate;
+
   const sasslintConfig = config.tasks.sasslint;
 
   const options = {};

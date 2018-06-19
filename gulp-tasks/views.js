@@ -1,9 +1,9 @@
 module.exports = function() {
-  const gulp = require('gulp');
-  const util = require('gulp-util');
-  const browserSync = require('browser-sync');
+  const config = require('./../gulp-config');
 
-  const { config } = util.env.boilerplate;
+  const browserSync = require('browser-sync');
+  const gulp = require('gulp');
+
   const viewsConfig = config.tasks.views;
 
   const isWatching = ['serve', 'watch'].indexOf(process.argv[2]) >= 0;

@@ -1,7 +1,6 @@
-const browserSync = require('browser-sync');
-const util = require('gulp-util');
+const config = require('./../gulp-config');
 
-const { config } = util.env.boilerplate;
+const browserSync = require('browser-sync');
 
 let browserSyncConfig;
 
