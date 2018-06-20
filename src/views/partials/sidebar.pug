@@ -11,8 +11,8 @@
                     .input-group
                         span.input-group-prepend
                             i(aria-hidden='true').fa.fa-search.px-3
-                        input(type='text', placeholder='Search')#tvshow-search.form-control.typeahead
-                        button(type='submit', value='GO')
+                        input(type='text', autocomplete='off', placeholder='Search')#tvshow-search.form-control.typeahead
+                        button(type='submit')
                             i(aria-hidden='true').fa.fa-arrow-right
             li.nav-item(class={'active': (sidebarIndex === 'calendar')})
                 a.nav-link(href='/tsm/calendar')
