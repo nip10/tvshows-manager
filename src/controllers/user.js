@@ -174,6 +174,23 @@ const userController = {
     });
   },
   /**
+   * Get number of unwatched episodes
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   * @returns {undefined}
+   */
+  async getNumberOfUnwatchedEpisodes(req, res) {
+    const userId = parseInt(_.get(req, 'user'), 10);
+    try {
+      const unwatchedEpisodesCount = await User.getNumberOfUnwatchedEpisodes(userId);
+      return res.json({ unwatchedEpisodesCount });
+    } catch (e) {
+      console.log(e);
+      return res.status(500).json({ error: ERROR.SERVER });
+    }
+  },
+  /**
    * Set episode as watched/unwatched
    *
    * @param {Object} req - Express request object

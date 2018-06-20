@@ -107,11 +107,13 @@
                     }
                 }
                 &:not(.active):not(:first-child) {
-                    & a:hover {
-                        color: $gray;
-                    }
-                    & span:hover {
-                        color: $white;
+                    & a {
+                        &:hover {
+                            color: $gray;
+                        }
+                        &span:hover {
+                            color: $white;
+                        }
                     }
                 }
                 i {
@@ -153,3 +155,13 @@
     }
 }
 
+#sidebar-counter {
+    display: none;
+    color: $amber;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 1em;
+    padding: 4px;
+    background-color: $gray-800;
+}

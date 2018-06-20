@@ -18,10 +18,11 @@
                 a.nav-link(href='/tsm/calendar')
                     i(aria-hidden='true').fa.fa-calendar.fa-lg.mr-2
                     span Calendar
-            li.nav-item(class={'active': (sidebarIndex === 'watchlist')})
-                a.nav-link(href='/tsm/watchlist')
+            li.nav-item.position-relative(class={'active': (sidebarIndex === 'watchlist')})
+                a.nav-link.d-inline-block(href='/tsm/watchlist')
                     i(aria-hidden='true').fa.fa-list.fa-lg.mr-2
                     span Watchlist
+                span#sidebar-counter
         .beta
             span BETA
             button(type='button', data-toggle='modal', data-target='#bug-modal').btn.btn-secondary.btn-block Report a bug

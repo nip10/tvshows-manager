@@ -185,7 +185,7 @@ module.exports = {
     return false;
   },
   addOrRemoveTvshow(event) {
-    // disable button while we get the response from the server
+    // disable button while we wait for the response from the server
     $('#userTvShowState')
       .off('click')
       .prop('disabled', true);
@@ -215,6 +215,9 @@ module.exports = {
             .click(e => this.addOrRemoveTvshow(e))
             .prop('disabled', false);
         });
+      functions
+        .getNumberOfUnwatchedEpisodes()
+        .then(({ unwatchedEpisodesCount }) => functions.updateUnwatchedEpisodesCounter(unwatchedEpisodesCount));
       return false;
     }
     // User is following this show and wants to remove it
@@ -426,11 +429,14 @@ module.exports = {
             row.remove();
           }
           // update unwatched episodes counter (global)
-          let counterGlobal = $('.counter span').text();
-          $('.counter span').text((counterGlobal -= 1));
+          const counterGlobal = $('.counter span').text();
+          const updatedCounterGlobal = counterGlobal - 1;
+          $('.counter span').text(updatedCounterGlobal);
           // update unwatched episodes counter (poster)
           let counterPoster = $(`li[data-tvshowid=${tvshowId}] span`).text();
           $(`li[data-tvshowid=${tvshowId}] span`).text((counterPoster -= 1));
+          // update unwatched episides counter (sidebar)
+          functions.updateUnwatchedEpisodesCounter(updatedCounterGlobal);
         }
       })
       .fail(jqXHR => {
@@ -523,6 +529,8 @@ module.exports = {
         // update unwatched episodes counter (global)
         const globalCounter = Number.parseInt($('.counter span').text(), 10);
         $('.counter span').text(globalCounter - numEps);
+        // update unwatched episides counter (sidebar)
+        functions.updateUnwatchedEpisodesCounter(globalCounter - numEps);
         // update unwatched episodes counter (poster)
         const localCounter = Number.parseInt($(`li[data-tvshowid=${tvshowid}] span`).text(), 10);
         $(`li[data-tvshowid=${tvshowid}] span`).text(localCounter - numEps);

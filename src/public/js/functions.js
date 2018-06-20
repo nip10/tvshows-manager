@@ -16,4 +16,28 @@ module.exports = {
       );
     }, this);
   },
+  /**
+   * Fetch number of unwatched episodes
+   *
+   * @return {Promise} - returns the unwatched episodes count if resolved
+   */
+  getNumberOfUnwatchedEpisodes() {
+    return $.get(`/tsm/watchlist/count`).done((data, textStatus, jqXHR) => {
+      if (jqXHR.status === 200) return data.unwatchedEpisodesCount;
+      return 0;
+    });
+  },
+  /**
+   * Update unwatched episodes counter in the sidebar
+   *
+   * @param {Number} unwatchedEpisodesCount - unwatched episodes count
+   */
+  updateUnwatchedEpisodesCounter(unwatchedEpisodesCount) {
+    if (unwatchedEpisodesCount === 0) {
+      $('#sidebar-counter').hide();
+    } else {
+      $('#sidebar-counter').show();
+      $('#sidebar-counter').text(unwatchedEpisodesCount);
+    }
+  },
 };

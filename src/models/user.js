@@ -381,6 +381,35 @@ const User = {
     /* eslint-enable func-names */
   },
   /**
+   * Get number of unwatched episodes
+   *
+   * @param {Number} userId - user id
+   * @returns {Number} - number of unwatched episodes
+   */
+  async getNumberOfUnwatchedEpisodes(userId) {
+    /* eslint-disable func-names */
+    try {
+      const unwatchedEpisodes = await knex
+        .select('episodes.id')
+        .select(knex.raw('to_char(episodes.tvshow_id, \'FM99999999\') as "tvshowId"'))
+        .from('episodes')
+        .join('usertv', 'usertv.tvshow_id', 'episodes.tvshow_id')
+        .where('usertv.user_id', userId)
+        .where('episodes.airdate', '<=', knex.fn.now())
+        .whereNot('episodes.season', 0)
+        .andWhere(function() {
+          this.whereNotIn('episodes.id', function() {
+            this.select('ep_id').from('usereps');
+          });
+        });
+      return unwatchedEpisodes.length;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+    /* eslint-enable func-names */
+  },
+  /**
    * Reset user password
    *
    * @param {String} email - user email
