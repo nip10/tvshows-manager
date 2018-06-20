@@ -38,7 +38,7 @@ block content
                                                     - counter += subdata.episodes.length
                                         else
                                             option(value=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)= tvshow.tvshowName
-                                span.pull-right= counter
+                                span#mobile-counter.pull-right= counter
             .row
                 .col-md-11.mx-auto
                     if watchlist && unwatchedEpisodesCount !== 0
