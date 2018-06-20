@@ -3,6 +3,7 @@
 'use strict';
 
 const handlers = require('./handlers');
+const functions = require('./functions');
 const typeahead = require('./config/typeahead');
 const toastrOptions = require('./config/toastr');
 require('./cookies');
@@ -72,4 +73,8 @@ require('./cookies');
       $('#resetpw-modal').modal('show');
     }
   });
+
+  functions
+    .getNumberOfUnwatchedEpisodes()
+    .then(({ unwatchedEpisodesCount }) => functions.updateUnwatchedEpisodesCounter(unwatchedEpisodesCount));
 })(jQuery);
