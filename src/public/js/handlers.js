@@ -393,6 +393,9 @@ module.exports = {
     visibleWatchlist.addClass('d-none');
     // show new table
     $(`div[data-tvshowid=${tvshowId}]`).removeClass('d-none');
+    // update "local" counter
+    const newCounter = $(`div[data-tvshowid=${tvshowId}] tr`).length;
+    $('#mobile-counter').text(newCounter);
   },
   setEpisodeWatched(event) {
     const row = $(event.target)
