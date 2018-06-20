@@ -39,8 +39,12 @@ span.twitter-typeahead {
         .tt-dataset {
             padding: 0 5px;
         }
-        @include media-breakpoint-down(md) {
-            display: none !important;
-        }
     }
+}
+
+input.typeahead {
+    width: 100%;
+    background-color: $gray-900 !important;
+    border: 1px solid $gray-700;
+    color: $white;
 }

@@ -31,21 +31,24 @@ require('./cookies');
     $('#search-form').submit(e => handlers.search(e));
     $('.watchlist-list select').change(e => handlers.watchlistSelect(e));
 
-    // Initialize typeahead event handlers
-    $('.typeahead')
-      .typeahead(...typeahead)
-      .on('typeahead:asyncrequest', () => {
-        $('.tt-input').addClass('input-loading');
-      })
-      .on('typeahead:asynccancel typeahead:asyncreceive', () => {
-        $('.tt-input').removeClass('input-loading');
-      });
+    const isMobile = window.matchMedia('only screen and (max-width: 760px)');
+
+    // Initialize typeahead event handlers (desktop only)
+    if (!isMobile.matches) {
+      $('.typeahead')
+        .typeahead(...typeahead)
+        .on('typeahead:asyncrequest', () => {
+          $('.tt-input').addClass('input-loading');
+        })
+        .on('typeahead:asynccancel typeahead:asyncreceive', () => {
+          $('.tt-input').removeClass('input-loading');
+        });
+    }
 
     // Setup toastr options
     toastr.options = toastrOptions;
 
     // redirect when a tvshow is selected
-    // TODO: check if this can be moved to the "on" chain above
     $('#tvshow-search').bind('typeahead:select', (obj, datum) => {
       window.location.replace(`/tsm/tvshows/${datum.id}`);
     });
