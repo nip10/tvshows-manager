@@ -204,6 +204,9 @@ module.exports = {
               .removeClass('btn-primary')
               .addClass('btn-secondary')
               .html('Remove from my shows');
+            functions
+              .getNumberOfUnwatchedEpisodes()
+              .then(({ unwatchedEpisodesCount }) => functions.updateUnwatchedEpisodesCounter(unwatchedEpisodesCount));
           }
         })
         .fail(jqXHR => {
@@ -215,9 +218,7 @@ module.exports = {
             .click(e => this.addOrRemoveTvshow(e))
             .prop('disabled', false);
         });
-      functions
-        .getNumberOfUnwatchedEpisodes()
-        .then(({ unwatchedEpisodesCount }) => functions.updateUnwatchedEpisodesCounter(unwatchedEpisodesCount));
+
       return false;
     }
     // User is following this show and wants to remove it
@@ -230,6 +231,9 @@ module.exports = {
             .removeClass('btn-secondary')
             .addClass('btn-primary')
             .html('Add to my shows');
+          functions
+            .getNumberOfUnwatchedEpisodes()
+            .then(({ unwatchedEpisodesCount }) => functions.updateUnwatchedEpisodesCounter(unwatchedEpisodesCount));
         }
       })
       .fail(jqXHR => {
