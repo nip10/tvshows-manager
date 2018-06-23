@@ -17,8 +17,9 @@
     &.reduced {
         padding-left: 70px;
     }
-    @include media-breakpoint-down(md) {
+    @include media-breakpoint-down(sm) {
         padding-left: 0;
+        padding-top: 70px;
     }
 }
 
@@ -30,9 +31,6 @@
     width: 100%;
     position: absolute;
     z-index: 100;
-    @include media-breakpoint-down(md) {
-        margin-top: 70px;
-    }
 }
 
 .cardbox {
