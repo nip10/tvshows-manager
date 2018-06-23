@@ -39,18 +39,12 @@ const tvshowsController = {
    */
   async searchFull(req, res) {
     const tvshowName = _.get(req, 'params.tvshowName');
-    if (!_.isString(tvshowName)) {
+    if (!_.isString(tvshowName) || tvshowName.length < 4) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_NAME });
     }
     try {
       const tvshows = await Tvshow.search(tvshowName);
       return res.render('search', { tvshows });
-      /*
-        "id": 266189,
-        "seriesName": "The Blacklist",
-        "banner": "graphical/266189-g24.jpg",
-        "status": "Continuing"
-      */
     } catch (e) {
       console.log(e);
       return res.status(500).render('error');

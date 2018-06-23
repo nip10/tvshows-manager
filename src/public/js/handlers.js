@@ -599,6 +599,8 @@ module.exports = {
   search(event) {
     event.preventDefault();
     const tvshowName = $('#tvshow-search').val();
-    window.location.replace(`/tsm/tvshows/search_full/${tvshowName}`);
+    if (tvshowName && tvshowName.length > 3) {
+      window.location.replace(`/tsm/tvshows/search_full/${tvshowName}`);
+    }
   },
 };
