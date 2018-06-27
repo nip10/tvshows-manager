@@ -108,7 +108,14 @@ const Tvshow = {
     };
     try {
       const { data } = await rp(requestOptions);
-      const filteredData = _.map(data, tvshow => _.pick(tvshow, ['id', 'seriesName', 'banner', 'status']));
+      const filteredData = _.map(data, tvshow => {
+        if (_.isEmpty(tvshow.status)) {
+          tvshow.status = 'NA'; // eslint-disable-line no-param-reassign
+        } else if (tvshow.status === 'Continuing') {
+          tvshow.status = 'Running'; // eslint-disable-line no-param-reassign
+        }
+        return _.pick(tvshow, ['id', 'seriesName', 'banner', 'status']);
+      });
       return filteredData;
     } catch (e) {
       console.log(e);
