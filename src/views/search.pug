@@ -19,7 +19,7 @@ block content
                           else
                             img(src=`http://via.placeholder.com/218x40`)
                       a(href=`/tsm/tvshows/${tvshow.id}`).tvshow= tvshow.seriesName
-                      p= tvshow.status || 'NA'
+                      p= tvshow.status
               else
                 p No tvshows found.
     include modals/bug

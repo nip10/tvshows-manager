@@ -1,11 +1,9 @@
 #sidebar-wrapper {
     z-index: 1000;
     position: fixed;
-    // left: 200px;
     left: 0;
     width: 0;
     height: 100%;
-    // margin-left: -200px;
     overflow-y: auto;
     background: $black;
     nav {
@@ -33,6 +31,14 @@
                         display: none !important;
                     }
                 }
+            }
+            #sidebar-counter {
+                top: 10%;
+                right: -10%;
+                border-radius: 15px;
+                font-size: 0.8em;
+                font-weight: bold;
+                background-color: $gray-900;
             }
         }
         &.mobile {
