@@ -8,7 +8,7 @@ const runSequence = require('run-sequence');
 const watch = require('gulp-watch');
 
 const cleanFolderList = [];
-const taskList = ['copyenv', 'copymailtemplates'];
+const taskList = ['copyenv', 'copymailtemplates', 'copymanifest'];
 const watchTaskList = [];
 
 Object.keys(config.tasks).forEach(taskName => {
@@ -74,6 +74,11 @@ gulp.task('copymailtemplates', () => {
   gulp
     .src('mail/templates/**/*.*', { cwd: config.sourceRoot })
     .pipe(gulp.dest(`${config.destinationRoot}mail/templates`));
+});
+
+// Copy PWA manifest
+gulp.task('copymanifest', () => {
+  gulp.src('public/manifest.json', { cwd: config.sourceRoot }).pipe(gulp.dest(`${config.destinationRoot}public`));
 });
 
 gulp.task('serve', ['build', 'watch', 'browser-sync']);
