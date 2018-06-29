@@ -4,6 +4,19 @@ import app from './app';
 
 global.Promise = bluebird;
 
+Promise.config({
+  // Enables all warnings except forgotten return statements.
+  warnings: {
+    wForgottenReturn: false,
+  },
+  // Enable long stack traces
+  longStackTraces: true,
+  // Enable cancellation
+  cancellation: true,
+  // Enable monitoring
+  monitoring: true,
+});
+
 const { PORT, NODE_ENV } = process.env;
 
 function normalizePort(val) {
