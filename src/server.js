@@ -20,7 +20,7 @@ Promise.config({
 const { PORT, NODE_ENV } = process.env;
 
 function normalizePort(val) {
-  const p = parseInt(val, 10);
+  const p = Number.parseInt(val, 10);
   if (Number.isNaN(p)) {
     return val;
   }

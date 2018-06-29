@@ -18,18 +18,18 @@ const calendarController = {
    * @returns {undefined}
    */
   async getCalendar(req, res) {
-    const userId = parseInt(_.get(req, 'user'), 10);
+    const userId = Number.parseInt(_.get(req, 'user'), 10);
     if (!_.isNumber(userId)) {
       return res.status(500).render('error', {
         error: ERROR.AUTH.INVALID_ID,
       });
     }
-    let month = parseInt(_.get(req, 'params.month'), 10);
-    let year = parseInt(_.get(req, 'params.year'), 10);
+    let month = Number.parseInt(_.get(req, 'params.month'), 10);
+    let year = Number.parseInt(_.get(req, 'params.year'), 10);
     if (!_.isFinite(month) || !_.isFinite(year)) {
       const date = new Date();
-      month = parseInt(date.getMonth() + 1, 10);
-      year = parseInt(date.getFullYear(), 10);
+      month = Number.parseInt(date.getMonth() + 1, 10);
+      year = Number.parseInt(date.getFullYear(), 10);
     }
     const calendar = new Calendar(month, year);
     calendar.buildCalendar();

@@ -148,7 +148,7 @@ const User = {
    * @param {number} userId - user id
    * @param {date} startInterval - start interval to fetch
    * @param {date} endInterval - end interval to fetch
-   * @returns {{}[]} - episodes that a user if following, in the specified date interval
+   * @returns {{}[]} - episodes from the tvshows that a user if following, in the specified date interval
    */
   async getEpisodes(userId, startInterval, endInterval) {
     try {
