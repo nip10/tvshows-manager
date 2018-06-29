@@ -1,8 +1,8 @@
 export default class Calendar {
   /**
    * Creates an instance of Calendar.
-   * @param {integer} month - Month MM
-   * @param {integer} year - Year YYYY
+   * @param {integer} month Month MM
+   * @param {integer} year Year YYYY
    */
   constructor(month, year) {
     this.month = month;

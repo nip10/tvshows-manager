@@ -314,7 +314,7 @@ const authController = {
    * @returns {undefined}
    */
   async changePassword(req, res) {
-    const userId = parseInt(_.get(req, 'user'), 10);
+    const userId = Number.parseInt(_.get(req, 'user'), 10);
     if (!_.isNumber(userId)) {
       return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
     }
