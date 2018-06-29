@@ -524,9 +524,10 @@ module.exports = {
         const numEps = $(`table[data-tvshowid=${tvshowid}][data-season=${season}] tbody tr`).length;
         // update unwatched episodes counter (global)
         const globalCounter = Number.parseInt($('.counter span').text(), 10);
-        $('.counter span').text(globalCounter - numEps);
+        const updatedCounter = globalCounter - numEps;
+        $('.counter span').text(updatedCounter);
         // update unwatched episides counter (sidebar)
-        functions.updateUnwatchedEpisodesCounter(globalCounter - numEps);
+        functions.updateUnwatchedEpisodesCounter(updatedCounter);
         // update unwatched episodes counter (poster)
         const localCounter = Number.parseInt($(`li[data-tvshowid=${tvshowid}] span`).text(), 10);
         $(`li[data-tvshowid=${tvshowid}] span`).text(localCounter - numEps);
@@ -548,7 +549,7 @@ module.exports = {
             .first()
             .removeClass('d-none');
           // add message informing that there are no more unwatched episodes
-          if (globalCounter === 0) {
+          if (updatedCounter === 0) {
             $('#page-content-wrapper > div > div:nth-child(2) > div').append(
               "<p> You don't have any unwatched episodes. </p>"
             );
