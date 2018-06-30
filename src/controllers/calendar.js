@@ -1,6 +1,7 @@
 import moment from 'moment';
 import _ from 'lodash';
 import User from '../models/user';
+import Tvshow from '../models/tvshow';
 import Calendar from '../models/calendar';
 import { ERROR } from '../utils/constants';
 
@@ -37,7 +38,15 @@ const calendarController = {
     const endInterval = calendar.calendarData[calendar.calendarData.length - 1].day;
     try {
       const episodes = await User.getEpisodes(userId, startInterval, endInterval);
-      if (episodes) {
+      if (!_.isNil(episodes) && !_.isEmpty(episodes)) {
+        const episodeIds = _.map(episodes, episode => episode.id);
+        const seasonFinaleEpisodes = await Tvshow.getSeasonFinaleEpisodes(episodeIds);
+        for (const ep of seasonFinaleEpisodes) {
+          const epIndex = episodes.findIndex(element => element.id === ep.id);
+          if (epIndex !== -1) {
+            episodes[epIndex].isSeasonFinale = true;
+          }
+        }
         calendar.addEpisodesToCalendar(episodes);
       }
       return res.render('calendar', {
