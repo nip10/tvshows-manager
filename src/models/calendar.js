@@ -97,6 +97,7 @@ export default class Calendar {
     for (let i = 0; i < this.calendarData.length; i += 1) {
       for (let j = 0; j < eps.length; j += 1) {
         if (eps[j].airdate === this.calendarData[i].day) {
+          // TODO: Replace by spread operator ?
           this.calendarData[i].episodes.push({
             id: eps[j].id,
             title: eps[j].title,
@@ -105,6 +106,8 @@ export default class Calendar {
             epnum: eps[j].epnum,
             thetvdb: eps[j].thetvdb,
             watched: eps[j].watched,
+            isSeasonFinale: eps[j].isSeasonFinale,
+            isSeasonBegin: eps[j].epnum === '01',
           });
         }
       }

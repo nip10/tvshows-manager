@@ -514,6 +514,29 @@ const Tvshow = {
       return false;
     }
   },
+  /**
+   * Filter season finale episodes from a set of episodes
+   *
+   * @param {[{}]} episodeIds episode id's
+   * @returns {[{}]} season finale episode id's
+   */
+  async getSeasonFinaleEpisodes(episodeIds) {
+    try {
+      const seasonFinaleEpisodes = await knex('episodes')
+        .select('id')
+        .from(
+          knex.raw(
+            '(SELECT *, ROW_NUMBER() OVER (PARTITION BY tvshow_id, season ORDER BY epnum DESC) AS ranking FROM episodes)C'
+          )
+        )
+        .where({ ranking: 1 })
+        .whereIn('id', episodeIds);
+      return seasonFinaleEpisodes;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  },
 };
 
 Tvshow.init();
