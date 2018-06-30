@@ -9,6 +9,11 @@
             "windows"
         ],
         "no-console": "off",
+        "no-restricted-syntax": [
+            "error",
+            "LabeledStatement",
+            "WithStatement"
+        ],
         "prettier/prettier": [
             "error",
             {
