@@ -397,18 +397,14 @@ const Tvshow = {
       };
       try {
         const res = await rp(requestOptions);
-        const filteredEpisodes = _.map(res.data, episode => {
-          let airdate = _.get(episode, 'firstAired', null);
-          if (_.isEmpty(airdate)) airdate = null;
-          return {
-            tvshow_id: tvshowId,
-            season: episode.airedSeason,
-            epnum: episode.airedEpisodeNumber,
-            title: _.get(episode, 'episodeName', null),
-            overview: _.get(episode, 'overview', null),
-            airdate,
-          };
-        });
+        const filteredEpisodes = _.map(res.data, episode => ({
+          tvshow_id: tvshowId,
+          season: episode.airedSeason,
+          epnum: episode.airedEpisodeNumber,
+          title: !_.isEmpty(episode.episodeName) ? episode.episodeName : null,
+          overview: !_.isEmpty(episode.overview) ? episode.overview : null,
+          airdate: !_.isEmpty(episode.firstAired) ? episode.firstAired : null,
+        }));
         Array.prototype.push.apply(episodes, filteredEpisodes);
         if (res.links.next) return requestPaginated(apiToken, res.links.next);
         return true;
