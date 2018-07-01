@@ -604,4 +604,25 @@ module.exports = {
       window.location.replace(`/tsm/tvshows/search_full/${tvshowName}`);
     }
   },
+  selectCalendarDay(event) {
+    // Get the previous selected day
+    const previousSelectedDay = $('.calendar__day.highlight');
+    // Get the cellid from the previous selected day
+    const previousSelectedDayId = Number.parseInt(previousSelectedDay[0].dataset.cellid, 10);
+    // Remove highlight from the previous selected day
+    previousSelectedDay.removeClass('highlight');
+    // Add highlight to the selected day
+    const selectedDay = $(event.currentTarget);
+    selectedDay.addClass('highlight');
+    // Hide current episode list
+    // Note: The 'first()' call is needed for the first time that this function is called.
+    // For some unknown reason, the selector $(`#eplist :nth-child(2)`) returns an array
+    // of "p"'s instead of the 1st "p".
+    $(`#eplist :nth-child(${previousSelectedDayId + 2})`)
+      .first()
+      .addClass('d-none');
+    // Show new episode list
+    const selectedDayEpisodeList = Number.parseInt(event.currentTarget.dataset.cellid, 10);
+    $(`#eplist :nth-child(${selectedDayEpisodeList + 2})`).removeClass('d-none');
+  },
 };
