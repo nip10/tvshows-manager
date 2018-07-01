@@ -30,6 +30,7 @@ require('./cookies');
     $('#mobilemenu').click(e => handlers.toggleSidebarMobile(e));
     $('#search-form').submit(e => handlers.search(e));
     $('.watchlist-list select').change(e => handlers.watchlistSelect(e));
+    $('.calendar__day').on('touchstart', e => handlers.selectCalendarDay(e));
 
     const isMobile = window.matchMedia('only screen and (max-width: 760px)');
 

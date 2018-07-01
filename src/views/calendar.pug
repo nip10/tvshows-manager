@@ -29,18 +29,20 @@ block content
                                 th.calendar__weekday.center Sun
                         tbody
                             - const numRows = calendar.calendarData.length / 7;
+                            //- TODO: Check if there's a need for 'floor/ceil'
                             - for(let i = 0; i < numRows; i++) {
                                 tr
                                     - for(let j = 0; j < 7; j++) {
                                         - const k = i * 7;
-                                            +styleDaysFromOtherMonths(k, j)
-                                                .calendar__date
+                                            +styleDaysFromOtherMonths(k, j, i)
+                                                .calendar__date.d-none.d-md-block
                                                     strong= calendar.calendarData[k + j].day
                                                 .calendar__cell
+                                                    strong.d-md-none= calendar.calendarData[k + j].day.substring(0, 2)
                                                     - if (calendar.calendarData[k + j].episodes)
                                                         ul
                                                             each episode in calendar.calendarData[k + j].episodes
-                                                                li(class={'watched' : episode.watched})
+                                                                li(class={'watched' : episode.watched}).d-none.d-md-block
                                                                     .calendar__cell--checkbox
                                                                         input(type='checkbox', id=`episode-${episode.id}`, data-tvshowid=episode.thetvdb, data-episodeid=episode.id, checked=(episode.watched) ? true : false)
                                                                         label(for=`episode-${episode.id}`)
@@ -48,6 +50,22 @@ block content
                                                                     span.calendar__cell--episode
                                                                         br
                                                                     = `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
+                                                                li.d-md-none
+                                                                    span.calendar__cell--dot(class={'watched' : episode.watched}, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin})
                                     - }
                             - }
+                    div#eplist.d-md-none.mt-3
+                        h4 10 December
+                        - for(let i = 0; i < calendar.calendarData.length; i++) {
+                            if (calendar.calendarData[i].episodes.length > 0)
+                                ul(class={'d-none' : i !== 0}).calendar__eplist
+                                    each episode in calendar.calendarData[i].episodes
+                                        li
+                                            strong= episode.name
+                                            p
+                                                span= `S${episode.season}E${episode.epnum}`
+                                                | &#32; #{episode.title}
+                            else
+                                p(class={'d-none' : i !== 0}) No episodes
+                        - }
     include modals/bug.pug
