@@ -5,6 +5,7 @@ export default class Calendar {
    * @param {integer} year Year YYYY
    */
   constructor(month, year) {
+    this.day = new Date().getDate();
     this.month = month;
     this.year = year;
     this.daysInMonth = [31, this.evaluateLeapYear(), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];

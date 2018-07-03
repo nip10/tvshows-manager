@@ -1,7 +1,7 @@
 mixin styleDaysFromOtherMonths(k, j, i)
     - if (calendar.daysFromPreviousMonth > k + j || calendar.daysFromNextMonth >= calendar.calendarData.length - (k + j))
-        td(class={'highlight' : i === 0 && j === 0}, data-cellid= j+k).calendar__day.calendar__day-othermonth
+        td(data-cellid= j+k).calendar__day.calendar__day-othermonth
             block
     - else
-        td(class={'highlight' : i === 0 && j === 0}, data-cellid= j+k).calendar__day
+        td(class={'highlight' : (j + k === calendar.daysFromPreviousMonth + calendar.day - 1)}, data-cellid= j+k).calendar__day
             block

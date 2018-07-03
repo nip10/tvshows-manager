@@ -55,10 +55,10 @@ block content
                                     - }
                             - }
                     div#eplist.d-md-none.mt-3
-                        h4 10 December
+                        h4= `${calendar.calendarData[calendar.daysFromPreviousMonth + 2].day.substring(0, 2)} ${monthNavigation.month}`
                         - for(let i = 0; i < calendar.calendarData.length; i++) {
                             if (calendar.calendarData[i].episodes.length > 0)
-                                ul(class={'d-none' : i !== 0}).calendar__eplist
+                                ul(class={'d-none' : i !== calendar.daysFromPreviousMonth + 2}).calendar__eplist
                                     each episode in calendar.calendarData[i].episodes
                                         li
                                             strong= episode.name
@@ -66,6 +66,6 @@ block content
                                                 span= `S${episode.season}E${episode.epnum}`
                                                 | &#32; #{episode.title}
                             else
-                                p(class={'d-none' : i !== 0}) No episodes
+                                p(class={'d-none' : i !== calendar.daysFromPreviousMonth + 2}) No episodes
                         - }
     include modals/bug.pug
