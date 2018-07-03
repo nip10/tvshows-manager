@@ -50,7 +50,7 @@ const calendarController = {
         calendar.addEpisodesToCalendar(episodes);
       }
       return res.render('calendar', {
-        calendar: _.pick(calendar, ['daysFromPreviousMonth', 'daysFromNextMonth', 'calendarData']),
+        calendar: _.pick(calendar, ['day', 'daysFromPreviousMonth', 'daysFromNextMonth', 'calendarData']),
         monthNavigation: {
           previousYear: month === 1 ? year - 1 : year,
           nextYear: month === 12 ? year + 1 : year,
