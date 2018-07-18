@@ -565,14 +565,19 @@ module.exports = {
     const { tvshowid, episodeid } = event.target.dataset;
     $.post(`/tsm/tvshows/${tvshowid}/ep`, { setWatched, episodeid })
       .done(() => {
+        const oldCount = Number.parseInt($('#sidebar-counter').text(), 10);
         if (setWatched) {
           $(`#episode-${episodeid}`)
             .closest('li')
             .addClass('watched');
+          // update global counter
+          functions.updateUnwatchedEpisodesCounter(oldCount - 1);
         } else {
           $(`#episode-${episodeid}`)
             .closest('li')
             .removeClass('watched');
+          // update global counter
+          functions.updateUnwatchedEpisodesCounter(oldCount + 1);
         }
       })
       .fail(jqXHR => {
