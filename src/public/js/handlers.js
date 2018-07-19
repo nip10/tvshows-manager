@@ -630,4 +630,10 @@ module.exports = {
     const selectedDayEpisodeList = Number.parseInt(event.currentTarget.dataset.cellid, 10);
     $(`#eplist :nth-child(${selectedDayEpisodeList + 2})`).removeClass('d-none');
   },
+  showFullText(event) {
+    $(event.target)
+      .next()
+      .removeClass('d-none');
+    $(event.target).remove();
+  },
 };

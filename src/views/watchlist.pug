@@ -59,7 +59,14 @@ block content
                                                         td.title
                                                             span.w-100.float-left= `S${episode.season}E${episode.epnum}`
                                                             span.w-100.float-left.font-weight-bold= episode.title || 'TBC'
-                                                        td.overview.d-none.d-md-block= episode.overview || 'This episode has no summary yet.'
+                                                        td.overview.d-none.d-md-block
+                                                            - if (episode.overview.length > 180) {
+                                                                p= episode.overview.substr(0, episode.overview.lastIndexOf(' ', 180))
+                                                                span [show more]
+                                                                p.d-none= episode.overview.substr(episode.overview.lastIndexOf(' ', 180))
+                                                            - } else {
+                                                                p= episode.overview || 'This episode has no summary yet.'
+                                                            - }
                                                         td.airdate.fit= episode.airdate || 'TBC'
                                                         td.watched
                                                             i(aria-hidden='true').fa.fa-eye

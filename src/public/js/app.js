@@ -31,6 +31,7 @@ require('./cookies');
     $('#search-form').submit(e => handlers.search(e));
     $('.watchlist-list select').change(e => handlers.watchlistSelect(e));
     $('.calendar__day').on('touchstart', e => handlers.selectCalendarDay(e));
+    $('td.overview span').click(e => handlers.showFullText(e));
 
     const isMobile = window.matchMedia('only screen and (max-width: 760px)');
 
