@@ -45,7 +45,7 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
         height: 28px;
     }
     &__day {
-        &-othermonth {
+        &-pastmonth, &-nextmonth {
             opacity: 0.5;
         }
     }
@@ -74,6 +74,7 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
         }
         &--episode {
             font-size: 0.8em;
+            display: block;
         }
         &--tvshow {
             font-weight: bold;
@@ -92,7 +93,7 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
                 background-color: green;
             }
             &.watched {
-                opacity: 0.4;
+                opacity: 0.5;
             }
         }
     }

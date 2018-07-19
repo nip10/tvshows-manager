@@ -10,10 +10,10 @@ block content
                 .col-md-11.py-2.my-2.mx-auto.text-center.cardbox
                     span.month-nav-header
                         - const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                        h6.d-inline-block.px-2.my-0.text-right.month-nav
+                        h6#previousmonth.d-inline-block.px-2.my-0.text-right.month-nav
                             a(href='/tsm/calendar/' + monthNavigation.previousYear + '/' + monthNavigation.previousMonth)= '« ' + monthsOfYear[monthNavigation.previousMonth - 1]
-                        h4.d-inline-block.px-2.my-0= monthNavigation.month
-                        h6.d-inline-block.px-2.my-0.text-left.month-nav
+                        h4#currentmonth.d-inline-block.px-2.my-0= monthNavigation.month
+                        h6#nextmonth.d-inline-block.px-2.my-0.text-left.month-nav
                             a(href='/tsm/calendar/' + monthNavigation.nextYear + '/' + monthNavigation.nextMonth)= monthsOfYear[monthNavigation.nextMonth - 1] + ' »'
             .row
                 .col-md-11.py-3.my-2.mx-auto
@@ -49,18 +49,18 @@ block content
                                                                             label(for=`episode-${episode.id}`)
                                                                     - }
                                                                     a(href='/tsm/tvshows/' + episode.thetvdb, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin}).calendar__cell--tvshow= episode.name
-                                                                    span.calendar__cell--episode
-                                                                        br
-                                                                    = `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
+                                                                    span.calendar__cell--episode= `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
                                                                 li.d-md-none
                                                                     span.calendar__cell--dot(class={'watched' : episode.watched}, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin})
                                     - }
                             - }
                     div#eplist.d-md-none.mt-3
-                        h4= `${calendar.calendarData[calendar.daysFromPreviousMonth + 2].day.substring(0, 2)} ${monthNavigation.month}`
+                        - const dt = new Date();
+                        - const locale = 'en-us';
+                        h4#selectedday= `${dt.getDate()} ${dt.toLocaleString(locale, { month: 'long' })}`
                         - for(let i = 0; i < calendar.calendarData.length; i++) {
                             if (calendar.calendarData[i].episodes.length > 0)
-                                ul(class={'d-none' : i !== calendar.daysFromPreviousMonth + 2}).calendar__eplist
+                                ul(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}).calendar__eplist
                                     each episode in calendar.calendarData[i].episodes
                                         li
                                             strong= episode.name
@@ -68,6 +68,6 @@ block content
                                                 span= `S${episode.season}E${episode.epnum}`
                                                 | &#32; #{episode.title}
                             else
-                                p(class={'d-none' : i !== calendar.daysFromPreviousMonth + 2}) No episodes
+                                p(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}) No episodes
                         - }
     include modals/bug.pug
