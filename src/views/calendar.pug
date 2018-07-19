@@ -63,7 +63,7 @@ block content
                                 ul(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}).calendar__eplist
                                     each episode in calendar.calendarData[i].episodes
                                         li
-                                            strong= episode.name
+                                            strong(class={'watched' : episode.watched}, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin})= episode.name
                                             p
                                                 span= `S${episode.season}E${episode.epnum}`
                                                 | &#32; #{episode.title}
