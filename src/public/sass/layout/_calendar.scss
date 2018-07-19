@@ -9,6 +9,7 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
             & td {
                 height: 130px;
                 vertical-align: top;
+                font-size: 14px;
                 &:not(:last-child) {
                     border-right: 1px solid $black;
                 }
@@ -18,7 +19,9 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
                         background-color: $amber;
                     }
                 }
-                font-size: 14px;
+                &.highlight {
+                    background-color: rgba($amber, 0.5);
+                }
             }
             @include media-breakpoint-down(md) {
                 border-bottom: 1px solid $black;
@@ -67,12 +70,13 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
         }
         &--checkbox {
             display: inline-block;
-        }
-        &--tvshow {
-            padding-left: 0.3em;
+            padding-right: 0.3em;
         }
         &--episode {
             font-size: 0.8em;
+        }
+        &--tvshow {
+            font-weight: bold;
         }
         &--dot {
             display: inline-block;

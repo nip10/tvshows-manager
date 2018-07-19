@@ -42,7 +42,7 @@
 }
 
 p.overview {
-    @extend .text-muted;
+    color: $gray-900;
     font-size: 14px;
     text-align: justify;
     text-indent: 2em;
