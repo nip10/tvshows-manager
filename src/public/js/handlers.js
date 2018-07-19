@@ -617,8 +617,8 @@ module.exports = {
     // Remove highlight from the previous selected day
     previousSelectedDay.removeClass('highlight');
     // Add highlight to the selected day
-    const selectedDay = $(event.currentTarget);
-    selectedDay.addClass('highlight');
+    const selectedDayEl = $(event.currentTarget);
+    selectedDayEl.addClass('highlight');
     // Hide current episode list
     // Note: The 'first()' call is needed for the first time that this function is called.
     // For some unknown reason, the selector $(`#eplist :nth-child(2)`) returns an array
@@ -626,6 +626,22 @@ module.exports = {
     $(`#eplist :nth-child(${previousSelectedDayId + 2})`)
       .first()
       .addClass('d-none');
+    // Update h4 text to the selected day
+    const selectedDayCellId = Number.parseInt(event.currentTarget.dataset.cellid, 10);
+    const previousMonthDays = Number.parseInt($('.calendar__day-pastmonth').length, 10);
+    const nextMonthDays = Number.parseInt($('.calendar__day-nextmonth').length, 10);
+    const totalDays = Number.parseInt($('.calendar__day').length, 10);
+    const currentMonthDays = totalDays - previousMonthDays - nextMonthDays;
+    const selectedDay = event.currentTarget.children[1].children[0].textContent;
+    let selectedMonth = $('#currentmonth').text();
+    if (selectedDayCellId < previousMonthDays) {
+      const selectedMonthStr = $('#previousmonth').text();
+      selectedMonth = selectedMonthStr.substr(selectedMonthStr.indexOf(' '));
+    } else if (selectedDayCellId >= currentMonthDays + previousMonthDays) {
+      const selectedMonthStr = $('#nextmonth').text();
+      selectedMonth = selectedMonthStr.substr(0, selectedMonthStr.indexOf(' '));
+    }
+    $('#selectedday').text(`${selectedDay} ${selectedMonth}`);
     // Show new episode list
     const selectedDayEpisodeList = Number.parseInt(event.currentTarget.dataset.cellid, 10);
     $(`#eplist :nth-child(${selectedDayEpisodeList + 2})`).removeClass('d-none');
