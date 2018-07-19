@@ -51,7 +51,7 @@ block content
                                                                     a(href='/tsm/tvshows/' + episode.thetvdb, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin}).calendar__cell--tvshow= episode.name
                                                                     span.calendar__cell--episode= `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
                                                                 li.d-md-none
-                                                                    span.calendar__cell--dot(class={'watched' : episode.watched}, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin})
+                                                                    span.calendar__cell--dot(class={'watched' : episode.watched}, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin}, data-episodeid=episode.id)
                                     - }
                             - }
                     div#eplist.d-md-none.mt-3
@@ -62,11 +62,14 @@ block content
                             if (calendar.calendarData[i].episodes.length > 0)
                                 ul(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}).calendar__eplist
                                     each episode in calendar.calendarData[i].episodes
-                                        li
-                                            strong(class={'watched' : episode.watched}, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin})= episode.name
-                                            p
-                                                span= `S${episode.season}E${episode.epnum}`
-                                                | &#32; #{episode.title}
+                                        li(data-episodeid=episode.id, data-tvshowid=episode.thetvdb)
+                                            div.d-inline-block
+                                                strong(class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin})= episode.name
+                                                p
+                                                    span= `S${episode.season}E${episode.epnum}`
+                                                    | &#32; #{episode.title}
+                                            div.d-inline-block.pull-right(class={'watched' : episode.watched})
+                                                i(aria-hidden='true').fa.fa-eye
                             else
                                 p(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}) No episodes
                         - }

@@ -32,6 +32,7 @@ require('./cookies');
     $('.watchlist-list select').change(e => handlers.watchlistSelect(e));
     $('.calendar__day').on('touchstart', e => handlers.selectCalendarDay(e));
     $('td.overview span').click(e => handlers.showFullText(e));
+    $('#eplist i').click(e => handlers.changeEpisodeWatchedStatusCalendarMobile(e));
 
     const isMobile = window.matchMedia('only screen and (max-width: 760px)');
 
