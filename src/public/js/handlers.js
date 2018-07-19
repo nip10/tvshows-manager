@@ -652,4 +652,32 @@ module.exports = {
       .removeClass('d-none');
     $(event.target).remove();
   },
+  changeEpisodeWatchedStatusCalendarMobile(event) {
+    const episodeIdEl = $(event.currentTarget).closest('li');
+    const { tvshowid, episodeid } = episodeIdEl[0].dataset;
+    const watchStatusEl = $(event.currentTarget).closest('div');
+    const setWatched = !$(watchStatusEl).hasClass('watched');
+    $.post(`/tsm/tvshows/${tvshowid}/ep`, { setWatched, episodeid })
+      .done(() => {
+        const oldCount = Number.parseInt($('#sidebar-counter').text(), 10);
+        if (setWatched) {
+          // Add watched class to the icon
+          $(watchStatusEl).addClass('watched');
+          // Add watched class to the dot
+          $(`span.calendar__cell--dot[data-episodeid=${episodeid}]`).addClass('watched');
+          // update sidebar counter
+          $('#sidebar-counter').text(oldCount - 1);
+        } else {
+          // Remove watched class from the icon
+          $(watchStatusEl).removeClass('watched');
+          // Remove watched class to the dot
+          $(`span.calendar__cell--dot[data-episodeid=${episodeid}]`).removeClass('watched');
+          // update sidebar counter
+          $('#sidebar-counter').text(oldCount + 1);
+        }
+      })
+      .fail(jqXHR => {
+        toastr.error(jqXHR.responseJSON.error);
+      });
+  },
 };
