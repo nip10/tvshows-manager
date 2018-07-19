@@ -55,7 +55,7 @@ block content
                                         table(cellspacing=0, cellpadding=0, data-tvshowid=tvshow.tvshowId, data-season=subdata.season).table.table-striped
                                             tbody
                                                 each episode in subdata.episodes
-                                                    tr(data-epid=episode.id)
+                                                    tr(data-epid=episode.id, data-toggle='collapse', data-target=`#${episode.id}`).accordion-toggle
                                                         td.title
                                                             span.w-100.float-left= `S${episode.season}E${episode.epnum}`
                                                             span.w-100.float-left.font-weight-bold= episode.title || 'TBC'
@@ -70,6 +70,10 @@ block content
                                                         td.airdate.fit= episode.airdate || 'TBC'
                                                         td.watched
                                                             i(aria-hidden='true').fa.fa-eye
+                                                    tr
+                                                        td(colspan="6" class="hiddenRow")
+                                                            div(id= episode.id).accordian-body.collapse= episode.overview
+
                     else if watchlist && unwatchedEpisodesCount === 0
                         p You don't have any unwatched episodes.
                     else
