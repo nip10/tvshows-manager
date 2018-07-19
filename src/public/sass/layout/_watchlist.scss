@@ -92,5 +92,14 @@ table {
         i {
             cursor: pointer;
         }
+        &.hiddenRow {
+            padding: 0 4px !important;
+            font-size: 0.8rem;
+            text-align: justify;
+            text-indent: 2em;
+            @include media-breakpoint-up(md) {
+                display: none;
+            }
+        }
     }
 }
