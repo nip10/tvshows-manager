@@ -6,5 +6,8 @@ mixin styleDaysFromOtherMonths(k, j, i)
         td(data-cellid= j+k).calendar__day.calendar__day-nextmonth
             block
     - else
-        td(class={'highlight' : (j + k === calendar.daysFromPreviousMonth + calendar.day - 1)}, data-cellid= j+k).calendar__day
+        - const dt = new Date();
+        - const locale = 'en-us';
+        - const currentMonth = dt.toLocaleString(locale, { month: 'long' });
+        td(class={'highlight' : ((j + k === calendar.daysFromPreviousMonth + calendar.day - 1) && (currentMonth === monthNavigation.month))}, data-cellid= j+k).calendar__day
             block
