@@ -38,7 +38,7 @@ block content
                                                     - counter += subdata.episodes.length
                                         else
                                             option(value=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)= tvshow.tvshowName
-                                span#mobile-counter.pull-right= counter
+                                span#mobile-counter.float-right= counter
             .row
                 .col-md-11.mx-auto
                     if watchlist && unwatchedEpisodesCount !== 0
@@ -51,7 +51,7 @@ block content
                                             h3.d-inline-block Special
                                         else
                                             h3.d-inline-block= `Season ${subdata.season}`
-                                        a.mark-watched(href='#', data-tvshowid=tvshow.tvshowId, data-season=subdata.season).pull-right mark season as watched
+                                        a.mark-watched(href='#', data-tvshowid=tvshow.tvshowId, data-season=subdata.season).float-right mark season as watched
                                         table(cellspacing=0, cellpadding=0, data-tvshowid=tvshow.tvshowId, data-season=subdata.season).table.table-striped
                                             tbody
                                                 each episode in subdata.episodes
