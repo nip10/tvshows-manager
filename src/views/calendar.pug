@@ -67,7 +67,7 @@ block content
                                                 p
                                                     span= `S${episode.season}E${episode.epnum}`
                                                     | &#32; #{episode.title}
-                                            div.d-inline-block.pull-right(class={'watched' : episode.watched})
+                                            div.d-inline-block.float-right(class={'watched' : episode.watched})
                                                 i(aria-hidden='true').fa.fa-eye
                             else
                                 p(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}) No episodes

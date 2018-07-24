@@ -67,7 +67,7 @@ block content
                     h3.d-inline-block
                         i(aria-hidden='true').fa.fa-list.mr-1
                         | Episodes
-                    select#season-select.custom-select.pull-right
+                    select#season-select.custom-select.float-right
                         - for (i = 1; i <= season; i++) {
                             - if (i === season) {
                                 option(selected, value = i)= 'Season ' + i
