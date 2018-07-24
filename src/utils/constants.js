@@ -36,6 +36,7 @@ export const ERROR = {
     NOT_FOUND: 'Episode not found.',
     INVALID_ID: 'Invalid episode id.',
     INVALID_ACTION: 'Invalid action',
+    EMPTY_ARRAY: "No episode id's provided.",
   },
 };
 
