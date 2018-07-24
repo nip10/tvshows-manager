@@ -29,7 +29,6 @@ block content
                                 th.calendar__weekday.center Sun
                         tbody
                             - const numRows = calendar.calendarData.length / 7;
-                            //- TODO: Check if there's a need for 'floor/ceil'
                             - for(let i = 0; i < numRows; i++) {
                                 tr
                                     - for(let j = 0; j < 7; j++) {

@@ -22,13 +22,13 @@ block content
                                 each tvshow, i in watchlist
                                     li.list-inline-item.poster.mb-3(class={'highlight' : i === 0}, data-tvshowid=tvshow.tvshowId)
                                         img(src=`https://www.thetvdb.com/banners/${(tvshow.images[1] || tvshow.images[0])}`, alt=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)
-                                        - var counter = 0;
+                                        - let counter = 0;
                                         each subdata in tvshow.data
                                             if subdata.season !== '00'
                                                 - counter += subdata.episodes.length
                                         span= counter
                             .d-md-none
-                                - var counter = 0;
+                                - let counter = 0;
                                 select.custom-select
                                     each tvshow, i in watchlist
                                         if i === 0
@@ -45,7 +45,7 @@ block content
                         each tvshow, i in watchlist
                             div(data-tvshowid=tvshow.tvshowId, class={'d-none': i !== 0})
                                 each subdata in tvshow.data
-                                    - var special = (subdata.season === '00');
+                                    - const special = (subdata.season === '00');
                                     div(data-season=subdata.season, class={'d-none' : special})
                                         if special
                                             h3.d-inline-block Special
@@ -55,7 +55,7 @@ block content
                                         table(cellspacing=0, cellpadding=0, data-tvshowid=tvshow.tvshowId, data-season=subdata.season).table.table-striped
                                             tbody
                                                 each episode in subdata.episodes
-                                                    tr(data-epid=episode.id, data-toggle='collapse', data-target=`#${episode.id}`).accordion-toggle
+                                                    tr(data-epid=episode.id, data-toggle='collapse', data-target=`#${episode.id}`)
                                                         td.title
                                                             span.w-100.float-left= `S${episode.season}E${episode.epnum}`
                                                             span.w-100.float-left.font-weight-bold= episode.title || 'TBC'
