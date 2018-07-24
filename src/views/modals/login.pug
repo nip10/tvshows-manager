@@ -8,10 +8,10 @@
             .modal-body
                     .form-group
                         label(for='login-email').form-control-label Email address:
-                        input(type='email', placeholder='Email address')#login-email.form-control
+                        input(type='email', placeholder='Email address', required)#login-email.form-control
                     .form-group
                         label(for='login-password').form-control-label Password:
-                        input(type='password', placeholder='Password')#login-password.form-control
+                        input(type='password', placeholder='Password', required)#login-password.form-control
                         small#login-password-forgot.form-text.text-muted Forgot password ?
             .modal-footer
                 button(type='button', data-dismiss='modal').btn.btn-secondary Close

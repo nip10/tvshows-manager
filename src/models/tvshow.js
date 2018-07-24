@@ -31,9 +31,6 @@ const Tvshow = {
         }
       })
       .catch(e => console.log(e));
-    // TODO: This should make the app unusable ie: in a suspended state.
-    // The ideal solution would be alert the user that service is degraded but they can
-    // still use the "non external api" dependencies.
   },
   /**
    * Start child process that renews the TheTVDB api token
