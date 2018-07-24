@@ -71,9 +71,13 @@ require('./cookies');
       $('#bug-email').focus();
     });
 
+    // remove validation errors on modal close
+    $('#login-modal, #signup-modal, #bug-modal').on('hidden.bs.modal', () => {
+      $('.alert').remove();
+    });
+
     // handle reset form modal
     // 'resetPw' comes from pug template which comes from express
-    // TODO: Create a view for reset password and remove this
     // eslint-disable-next-line no-undef
     if (typeof resetPw !== 'undefined' && resetPw) {
       $('#resetpw-modal').modal('show');
