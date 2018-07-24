@@ -244,8 +244,9 @@ const userController = {
       return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
     } else if (!_.isNumber(tvshowId)) {
       return res.status(500).json({ error: ERROR.TVSHOW.INVALID_ID });
+    } else if (_.isEmpty(episodes)) {
+      return res.status(500).json({ error: ERROR.EPISODE.EMPTY_ARRAY });
     }
-    // TODO: Add validation for "episodes". I dont remember whats the type.. array ?
     try {
       const setSeasonWatched = await Tvshow.setSeasonWatched(userId, tvshowId, episodes);
       if (setSeasonWatched) return res.sendStatus(200);
