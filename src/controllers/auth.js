@@ -136,7 +136,7 @@ const authController = {
     }
     const normalizedEmail = validator.normalizeEmail(email);
     try {
-      const userExists = await User.existsByEmail(normalizedEmail);
+      const userExists = await User.getUserIdByEmail(normalizedEmail);
       if (!userExists) {
         return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
       }
@@ -254,10 +254,41 @@ const authController = {
       if (err) return next(err);
       if (!user) return res.status(422).json({ error: info.message });
       try {
+        // TODO: Move this to the local auth strategy implementation
         const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
         if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
         return req.logIn(user, err2 => {
-          if (err) return next(err2);
+          if (err2) return next(err2);
+          return res.sendStatus(200);
+        });
+      } catch (e) {
+        console.log(e);
+        return res.status(500).json({ error: ERROR.SERVER });
+      }
+    })(req, res, next);
+  },
+  /**
+   * Login with facebook
+   *
+   * @param {Object} req - Express request object
+   * @param {Object} res - Express response object
+   * @param {Function} next - Express next middleware function
+   * @returns {undefined}
+   */
+  async loginFb(req, res, next) {
+    if (req.isAuthenticated()) {
+      res.cookie('message_error', ERROR.AUTH.ALREADY_AUTHENTICATED);
+      return res.redirect('/tsm');
+    }
+    return passport.authenticate('facebook', async (err, user, info) => {
+      if (err) return next(err);
+      if (!user) return res.status(422).json({ error: info.message });
+      try {
+        // TODO: Move this to the local auth strategy implementation
+        // const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
+        // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
+        return req.logIn(user, err2 => {
+          if (err2) return next(err2);
           return res.sendStatus(200);
         });
       } catch (e) {
@@ -364,8 +395,8 @@ const authController = {
   async resendActivateAccount(req, res) {
     const { email } = req.body;
     try {
-      const validateUser = await Promise.all([User.existsByEmail(email), User.isActive(email)]);
-      if (validateUser[0] && !validateUser[1]) {
+      const validateUser = await Promise.all([User.getUserIdByEmail(email), User.isActive(email)]);
+      if (validateUser[0].id && !validateUser[1]) {
         const activationToken = uuidv4();
         const addedToken = await User.addActivationTokenToUser(email, activationToken);
         if (!addedToken) throw new Error();

@@ -1,8 +1,14 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
-import { comparePassword } from '../models/user';
+import { Strategy as FacebookStrategy } from 'passport-facebook';
+import validator from 'validator';
+import uuidv4 from 'uuid/v4';
+import _ from 'lodash';
 import knex from '../db/connection';
 import { ERROR } from '../utils/constants';
+import User from '../models/user';
+
+const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env;
 
 // Configure Passport authenticated session persistence.
 //
@@ -32,24 +38,71 @@ passport.deserializeUser(async (id, done) => {
 // that the password is correct and then invoke 'cb' with a user object, which
 // will be set at 'req.user' in route handlers after authentication.
 
-const options = {
+const localOptions = {
   usernameField: 'email',
   passwordField: 'password',
 };
 
 passport.use(
-  new LocalStrategy(options, async (email, password, done) => {
+  new LocalStrategy(localOptions, async (email, password, done) => {
     try {
       const user = await knex('users')
         .where({ email })
         .first();
-      // If the user doesnt exist, we dont want to send that information to the client
+      // If the user doesnt exist, we dont want to send that information to the client,
+      // just send angeneric error message
       if (!user) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
-      const result = await comparePassword(password, user.password);
+      const result = await User.comparePassword(password, user.password);
       if (!result) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
       return done(null, user);
     } catch (e) {
       return done(e);
+    }
+  })
+);
+
+// Configure the Facebook strategy for use by Passport.
+//
+// OAuth 2.0-based strategies require a `verify` function which receives the
+// credential (`accessToken`) for accessing the Facebook API on the user's
+// behalf, along with the user's profile.  The function must invoke `cb`
+// with a user object, which will be set at `req.user` in route handlers after
+// authentication.
+
+const fbOptions = {
+  clientID: FACEBOOK_APP_ID,
+  clientSecret: FACEBOOK_APP_SECRET,
+  callbackURL: 'https://1de4f13b.ngrok.io/tsm/auth/login/fb/cb',
+  enableProof: true,
+  profileFields: ['id', 'displayName', 'email'],
+};
+
+passport.use(
+  new FacebookStrategy(fbOptions, async (accessToken, refreshToken, profile, done) => {
+    const fbId = Number.parseInt(profile.id, 10);
+    if (!_.isFinite(fbId)) return done(null, false, 'Invalid facebook id'); // TODO: Test this
+    try {
+      const hasEmail = _.get(profile, 'emails');
+      let email = null;
+      if (hasEmail) {
+        email = _.head(hasEmail).value;
+      } else {
+        return done(null, false, "Your facebook account doesn't have a valid email address"); // TODO: Test this, Create new error in constants
+      }
+      if (!validator.isEmail(email)) {
+        return done(null, false, ERROR.AUTH.INVALID_EMAIL);
+      }
+      const normalizedEmail = validator.normalizeEmail(email);
+      const userExists = await User.getUserIdByEmail(normalizedEmail);
+      if (!userExists) {
+        const username = profile.displayName.split(' ')[0];
+        const activateAccountToken = uuidv4();
+        const newUser = await User.createFbUser(username, normalizedEmail, fbId, activateAccountToken);
+        return done(null, newUser);
+      }
+      return done(null, userExists); // TODO: Consider changing to a more explicit name
+    } catch (e) {
+      return done(e); // TODO: Test this
     }
   })
 );
