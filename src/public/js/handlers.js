@@ -516,12 +516,15 @@ module.exports = {
   setSeasonWatched(event) {
     const { tvshowid, season } = event.target.dataset;
     const episodes = [];
-    $(`div[data-tvshowid=${tvshowid}] div[data-season=${season}] table tr`).each((i, el) =>
-      episodes.push($(el).data('epid'))
-    );
+    // Get episode id's for the selected season
+    $(`div[data-tvshowid=${tvshowid}] div[data-season=${season}] table tr`).each((i, el) => {
+      const epId = $(el).data('epid');
+      if (epId) episodes.push(epId);
+    });
+    console.log('episodes array: ', episodes);
     $.post(`/tsm/tvshows/${tvshowid}/s`, { episodes })
       .done(() => {
-        const numEps = $(`table[data-tvshowid=${tvshowid}][data-season=${season}] tbody tr`).length;
+        const numEps = episodes.length;
         // update unwatched episodes counter (global)
         const globalCounter = Number.parseInt($('.counter span').text(), 10);
         const updatedCounter = globalCounter - numEps;
