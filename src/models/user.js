@@ -32,6 +32,31 @@ const User = {
     }
   },
   /**
+   * Create a new 'facebook' user
+   *
+   * @param {string} username - username
+   * @param {string} email - user email
+   * @param {string} fbId - facebook id
+   * @param {string} token - account activation token
+   * @returns {boolean} - if the user was created
+   */
+  async createFbUser(username, email, fbId, token) {
+    try {
+      const createUser = await knex('users')
+        .insert({
+          username,
+          email,
+          activationtoken: token,
+          facebook_id: fbId,
+        })
+        .returning('id');
+      return { id: createUser[0] };
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  },
+  /**
    * Check if the user password is correct
    *
    * @param {string} userPassword - password input on login
@@ -62,24 +87,22 @@ const User = {
     }
   },
   /**
-   * Check if a email is registred
+   * Get user id by email
+   * Returns false if the email is not registred
    *
    * @param {string} email - user email
-   * @returns {boolean} - email is registred
+   * @returns {id || boolean} - user id or false
    */
-  async existsByEmail(email) {
-    const inner = knex
-      .select(1)
-      .from('users')
-      .where('email', email)
-      .limit(1)
-      .first();
+  async getUserIdByEmail(email) {
     try {
-      const emailExistsOnDb = await knex.raw(inner).wrap('select exists (', ')');
-      return emailExistsOnDb.rows[0].exists || false;
+      const emailExistsOnDb = await knex('users')
+        .select('id')
+        .where('email', email)
+        .first();
+      return emailExistsOnDb || false;
     } catch (e) {
       console.log(e);
-      return false;
+      return true; // TODO: This is not a good idea
     }
   },
   /**

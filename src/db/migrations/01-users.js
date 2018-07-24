@@ -8,7 +8,10 @@ exports.up = (knex, Promise) =>
           .string('email')
           .unique()
           .notNullable();
-        table.string('password').notNullable();
+        table.string('password');
+        // Facebook logins dont use a 'password' so this column can be null. In the future,
+        // user will be asked for a password in order to be able to login with email+pw
+        table.bigint('facebook_id').unique();
         table.string('activationtoken');
         table.boolean('admin').defaultTo(false);
         table.boolean('active').defaultTo(false);
