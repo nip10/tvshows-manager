@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import compression from 'compression';
 import path from 'path';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
@@ -84,7 +85,8 @@ app.use(passport.session());
 // Static files/favicon handlers
 // In prod, static files are handled by Nginx
 if (isDev) {
-  app.use(express.static(path.join(__dirname, '..', 'dist', 'public')));
+  app.use(compression());
+  app.use('/tsm', express.static(path.join(__dirname, '..', 'dist', 'public')));
 }
 app.use(favicon(path.join(__dirname, 'public', 'img', 'favicon.ico')));
 
