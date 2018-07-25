@@ -1,3 +1,16 @@
 .btn {
     cursor: pointer;
+    &-facebook {
+        background-color: #3C5B9B;
+        border-color: #3C5B9B;
+        color: $white;
+        &:focus {
+            box-shadow: 0 0 0 0.2rem rgba(60, 91, 155, 0.25);
+        }
+        &:hover {
+            color: $white;
+            background-color: darken(#3C5B9B, 7.5%);
+            border-color: darken(#3C5B9B, 10%);
+        }
+    }
 }
