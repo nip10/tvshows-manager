@@ -517,7 +517,8 @@ module.exports = {
     const { tvshowid, season } = event.target.dataset;
     const episodes = [];
     // Get episode id's for the selected season
-    $(`div[data-tvshowid=${tvshowid}] div[data-season=${season}] table tr`).each((i, el) => {
+    const seasonTable = $(`div[data-tvshowid=${tvshowid}] div[data-season=${season}] table tr`);
+    Array.prototype.forEach.call(seasonTable, el => {
       const epId = $(el).data('epid');
       if (epId) episodes.push(epId);
     });
