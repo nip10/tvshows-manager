@@ -17,6 +17,7 @@ exports.up = (knex, Promise) =>
         table.boolean('active').defaultTo(false);
         table.string('resetpwtoken');
         table.timestamp('resetpwexp');
+        table.timestamp('last_login').defaultTo('2000-01-01 12:00:00');
         table.timestamp('createdAt').defaultTo(knex.fn.now());
         table.timestamp('updatedAt').defaultTo(knex.fn.now());
       });

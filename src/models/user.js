@@ -453,6 +453,22 @@ const User = {
       return false;
     }
   },
+  /**
+   * Update last login timestamp
+   *
+   * @param {Number} userId - user id
+   */
+  async updateLastLogin(userId) {
+    try {
+      await knex('users')
+        .update('last_login', knex.fn.now())
+        .where('id', userId);
+      return null;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  },
 };
 
 module.exports = User;

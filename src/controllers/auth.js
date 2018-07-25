@@ -257,6 +257,7 @@ const authController = {
         // TODO: Move this to the local auth strategy implementation
         const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
         if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
+        await User.updateLastLogin(user.id);
         return req.logIn(user, err2 => {
           if (err2) return next(err2);
           return res.sendStatus(200);
@@ -287,6 +288,7 @@ const authController = {
         // TODO: Move this to the local auth strategy implementation
         // const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
         // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
+        await User.updateLastLogin(user.id); // TODO: Test this
         return req.logIn(user, err2 => {
           if (err2) return next(err2);
           return res.sendStatus(200);
