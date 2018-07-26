@@ -25,7 +25,7 @@ require('./cookies');
     $('div[data-tvshowid] table > tbody > tr > td > i').click(e => handlers.setEpisodeWatched(e));
     $('.mark-watched').click(e => handlers.setSeasonWatched(e));
     $('.calendar__table input[type=checkbox]').change(e => handlers.changeEpisodeWatchedStatusCalendar(e));
-    $('#episodes-table i.fa.fa-eye').click(e => handlers.changeEpisodeWatchedStatusTvshow(e));
+    $('#episodes-table span.icon-eye').click(e => handlers.changeEpisodeWatchedStatusTvshow(e));
     $('#resend-activation').click(e => handlers.resendActivation(e));
     $('#mobilemenu').click(e => handlers.toggleSidebarMobile(e));
     $('#search-form').submit(e => handlers.search(e));

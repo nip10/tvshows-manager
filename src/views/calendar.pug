@@ -7,13 +7,13 @@ block content
     #page-content-wrapper
         .main-container
             .row
-                .col-md-11.py-2.my-2.mx-auto.text-center.cardbox
-                    span.month-nav-header
+                .col-md-11.py-2.my-2.mx-auto.text-center.calendar__header
+                    span.calendar__nav
                         - const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-                        h6#previousmonth.d-inline-block.px-2.my-0.text-right.month-nav
+                        h6#previousmonth.d-inline-block.px-2.my-0.text-right.calendar__nav-item
                             a(href='/tsm/calendar/' + monthNavigation.previousYear + '/' + monthNavigation.previousMonth)= '« ' + monthsOfYear[monthNavigation.previousMonth - 1]
                         h4#currentmonth.d-inline-block.px-2.my-0= monthNavigation.month
-                        h6#nextmonth.d-inline-block.px-2.my-0.text-left.month-nav
+                        h6#nextmonth.d-inline-block.px-2.my-0.text-left.calendar__nav-item
                             a(href='/tsm/calendar/' + monthNavigation.nextYear + '/' + monthNavigation.nextMonth)= monthsOfYear[monthNavigation.nextMonth - 1] + ' »'
             .row
                 .col-md-11.py-3.my-2.mx-auto
@@ -68,7 +68,7 @@ block content
                                                     span= `S${episode.season}E${episode.epnum}`
                                                     | &#32; #{episode.title}
                                             div.d-inline-block.float-right(class={'watched' : episode.watched})
-                                                i(aria-hidden='true').fa.fa-eye
+                                                span.icon-eye
                             else
                                 p(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}) No episodes
                         - }

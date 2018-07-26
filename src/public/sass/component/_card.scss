@@ -1,0 +1,5 @@
+.card {
+  @include media-breakpoint-down(md) {
+      margin: 1em 0;
+  }
+}

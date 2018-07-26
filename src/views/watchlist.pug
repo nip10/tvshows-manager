@@ -9,18 +9,18 @@ block content
                 .col-md-11.mx-auto
                     .mt-3.position-relative
                         h3.d-inline-block.mb-0
-                            i(aria-hidden='true').fa.fa-list.mr-1
+                            span.icon-th-list.mr-1
                             | Watchlist
                         if unwatchedEpisodesCount
-                            p.counter
+                            p.watchlist__counter
                                 span= unwatchedEpisodesCount
                                 |
                                 | unwatched episodes
-                    .watchlist-list.my-5
+                    .watchlist__list.my-5
                         if watchlist
                             ul.list-inline.d-none.d-md-block
                                 each tvshow, i in watchlist
-                                    li.list-inline-item.poster.mb-3(class={'highlight' : i === 0}, data-tvshowid=tvshow.tvshowId)
+                                    li.list-inline-item.watchlist__list-poster.mb-3(class={'highlight' : i === 0}, data-tvshowid=tvshow.tvshowId)
                                         img(src=`https://www.thetvdb.com/banners/${(tvshow.images[1] || tvshow.images[0])}`, alt=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)
                                         - let counter = 0;
                                         each subdata in tvshow.data
@@ -52,7 +52,7 @@ block content
                                         else
                                             h3.d-inline-block= `Season ${subdata.season}`
                                         a.mark-watched(href='#', data-tvshowid=tvshow.tvshowId, data-season=subdata.season).float-right mark season as watched
-                                        table(cellspacing=0, cellpadding=0, data-tvshowid=tvshow.tvshowId, data-season=subdata.season).table.table-striped
+                                        table(cellspacing=0, cellpadding=0, data-tvshowid=tvshow.tvshowId, data-season=subdata.season).table.table-striped.watchlist__table
                                             tbody
                                                 each episode in subdata.episodes
                                                     tr(data-epid=episode.id, data-toggle='collapse', data-target=`#${episode.id}`)
@@ -69,7 +69,7 @@ block content
                                                             - }
                                                         td.airdate.fit= episode.airdate || 'TBC'
                                                         td.watched
-                                                            i(aria-hidden='true').fa.fa-eye
+                                                            span.icon-eye
                                                     tr
                                                         td(colspan="6" class="hiddenRow")
                                                             div(id= episode.id).accordian-body.collapse= episode.overview
