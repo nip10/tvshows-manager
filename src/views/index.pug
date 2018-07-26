@@ -46,10 +46,6 @@ block content
     include modals/forgot
     include modals/reset
 block scripts
-    script(src='https://www.google.com/recaptcha/api.js?onload=captchaCb&render=explicit', async, defer)
+    script(src='https://www.google.com/recaptcha/api.js?render=explicit', async, defer)
     script.
         const resetPw = !{JSON.stringify((resetPassword ? resetPassword : false)).replace(/<\//g, "<\\/")};
-        function captchaCb() {
-            grecaptcha.render('id1', {'sitekey' : '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg'});
-            grecaptcha.render('id2', {'sitekey' : '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg'});
-        };
