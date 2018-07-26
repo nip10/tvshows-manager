@@ -21,7 +21,7 @@ block content
                             ul.list-inline.d-none.d-md-block
                                 each tvshow, i in watchlist
                                     li.list-inline-item.watchlist__list-poster.mb-3(class={'highlight' : i === 0}, data-tvshowid=tvshow.tvshowId)
-                                        img(src=`https://www.thetvdb.com/banners/${(tvshow.images[1] || tvshow.images[0])}`, alt=tvshow.tvshowName, data-tvshowid=tvshow.tvshowId)
+                                        img(src=`https://www.thetvdb.com/banners/${(tvshow.images[1] || tvshow.images[0])}`, alt=`${tvshow.tvshowName} banner`, data-tvshowid=tvshow.tvshowId)
                                         - let counter = 0;
                                         each subdata in tvshow.data
                                             if subdata.season !== '00'

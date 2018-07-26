@@ -14,10 +14,10 @@ block content
                     .card-body
                       div.poster-container
                         a(href=`/tsm/tvshows/${tvshow.id}`)
-                          if tvshow.banner
-                            img(src=`https://www.thetvdb.com/banners/${tvshow.banner}`)
-                          else
-                            img(src=`http://via.placeholder.com/218x40`)
+                          - if tvshow.banner
+                            img(src=`https://www.thetvdb.com/banners/${tvshow.banner}`, alt=`${tvshow.seriesName} banner`)
+                          - else
+                            img(src=`http://via.placeholder.com/218x40`, alt=`${tvshow.seriesName} banner`)
                       a(href=`/tsm/tvshows/${tvshow.id}`).tvshow= tvshow.seriesName
                       p= tvshow.status
               else
