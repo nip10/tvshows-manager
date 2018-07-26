@@ -72,8 +72,28 @@ require('./cookies');
     });
 
     // remove validation errors on modal close
-    $('#login-modal, #signup-modal, #bug-modal').on('hidden.bs.modal', () => {
+    $('#login-modal, #signup-modal, #bug-modal, #resetpw-modal').on('hidden.bs.modal', () => {
       $('.alert').remove();
+    });
+
+    // Render recaptcha on signup modal open
+    $('#signup-modal').on('shown.bs.modal', () => {
+      grecaptcha.render('id1', { sitekey: '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg' });
+    });
+
+    // Remove recaptcha on signup modal close
+    $('#signup-modal').on('hidden.bs.modal', () => {
+      $('.alert').empty();
+    });
+
+    // Render recaptcha on reset password modal open
+    $('#resetpw-modal').on('shown.bs.modal', () => {
+      grecaptcha.render('id2', { sitekey: '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg' });
+    });
+
+    // Remove recaptcha on signup modal close
+    $('#resetpw-modal').on('hidden.bs.modal', () => {
+      $('.alert').empty();
     });
 
     // handle reset form modal
