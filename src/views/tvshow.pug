@@ -9,7 +9,7 @@ block content
             .row
                 .col-md-11.mx-auto.my-3
                     .tvshow__banner
-                        img(src=banner, alt=name).img-fluid.mx-auto
+                        img(src=banner, alt=`${name} banner`).img-fluid.mx-auto
                         .overlay
                             span#tvshow-name= name
                             if isAuthenticated
@@ -77,7 +77,7 @@ block content
                         - }
             .row.mb-5.justify-content-center.tvshow__episodes
                 .col-12.col-md-3
-                    img(src=poster, alt=name).img-fluid.tvshow__episodes-poster
+                    img(src=poster, alt=`${name} banner`).img-fluid.tvshow__episodes-poster
                 .col-12.col-md-8
                     if episodes
                         table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped.tvshow__table
