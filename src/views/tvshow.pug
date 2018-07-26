@@ -8,7 +8,7 @@ block content
         .main-container
             .row
                 .col-md-11.mx-auto.my-3
-                    .banner
+                    .tvshow__banner
                         img(src=banner, alt=name).img-fluid.mx-auto
                         .overlay
                             span#tvshow-name= name
@@ -25,10 +25,10 @@ block content
                                 | You need to
                                 a(href='#login-modal', data-toggle='modal') &#32;login&#32;
                                 | in order to follow a tvshow and mark episodes as watched.
-            .row.mb-5.justify-content-center.tvshow-info
+            .row.mb-5.justify-content-center.tvshow__info
                 .col-12.col-md-6
                     .border.bg-text.h-100
-                        p.overview= overview
+                        p.tvshow__info-overview= overview
                 .col-12.col-md-5
                     .row.bg-text.border.h-100
                         .col-12.col-md-4.d-flex.align-items-center
@@ -65,7 +65,7 @@ block content
             .row.mb-3
                 .col-md-11.mx-auto
                     h3.d-inline-block
-                        i(aria-hidden='true').fa.fa-list.mr-1
+                        span.icon-th-list.mr-1
                         | Episodes
                     select#season-select.custom-select.float-right
                         - for (i = 1; i <= season; i++) {
@@ -75,12 +75,12 @@ block content
                                 option(value = i)= 'Season ' + i
                             - }
                         - }
-            .row.mb-5.justify-content-center.tvshow-episodes
+            .row.mb-5.justify-content-center.tvshow__episodes
                 .col-12.col-md-3
-                    img#poster(src=poster, alt=name).img-fluid
+                    img(src=poster, alt=name).img-fluid.tvshow__episodes-poster
                 .col-12.col-md-8
                     if episodes
-                        table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped
+                        table#episodes-table(cellspacing=0, cellpadding=0).table.table-striped.tvshow__table
                             tbody
                                 each episode in episodes
                                     tr(data-episodeid= episode.id)
@@ -88,7 +88,7 @@ block content
                                         td.title= episode.name || 'TBC'
                                         td.airdate= episode.airdate || 'TBC'
                                         td.markwatched
-                                            i(aria-hidden='true', class={'watched' : episode.watched}).fa.fa-eye
+                                            span(class={'watched' : episode.watched}).icon-eye
                     else
                         p Ooops. Something went wrong while fetching the episodes. Please try again later.
     include modals/login

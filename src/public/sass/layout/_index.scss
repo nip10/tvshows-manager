@@ -1,5 +1,5 @@
 h1.title {
-    font-size: 52px;
+    font-size: 3rem;
 }
 
 .center-vh {
@@ -9,24 +9,9 @@ h1.title {
     flex-direction: column;
 }
 
-.g-recaptcha > div {
-    margin: auto !important;
-    margin-top: 2rem !important;
-    margin-bottom: 1rem !important;
-    text-align: center;
-    width: auto !important;
-    height: auto !important;
-}
-
 .action {
     @include media-breakpoint-down(md) {
         height: calc(100vh - 70px);
         padding: 0 !important;
-    }
-}
-
-.card {
-    @include media-breakpoint-down(md) {
-        margin: 1em 0;
     }
 }

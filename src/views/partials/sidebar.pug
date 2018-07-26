@@ -1,26 +1,26 @@
 #sidebar-wrapper.d-none.d-md-block
-    nav.mmh-100
+    nav
         span
-            i#toggle-sidebar(aria-hidden='true').fa.fa-caret-left.fa-2x
-            i#close-sidebar(aria-hidden='true').fa.fa-times.fa-2x.d-none
+            span#toggle-sidebar.icon-caret-left
+            span#close-sidebar.icon-close.d-none
         a.logo(href='/tsm', class={'home' : homepage})
-            i(aria-hidden='true').fa.fa-tv.fa-5x.d-flex.justify-content-center.my-3
+            span.icon-television.d-flex.justify-content-center.my-3
         ul.nav.nav-pills.flex-column
             li.nav-item.my-2
                 form#search-form
                     .input-group
                         span.input-group-prepend
-                            i(aria-hidden='true').fa.fa-search.px-3
+                            span.icon-search.px-3
                         input(type='text', autocomplete='off', placeholder='Search')#tvshow-search.form-control.typeahead
                         button(type='submit')
-                            i(aria-hidden='true').fa.fa-arrow-right
+                            span.icon-arrow-right
             li.nav-item(class={'active': (sidebarIndex === 'calendar')})
                 a.nav-link(href='/tsm/calendar')
-                    i(aria-hidden='true').fa.fa-calendar.fa-lg.mr-2
+                    span.icon-calendar.mr-2
                     span Calendar
             li.nav-item.position-relative(class={'active': (sidebarIndex === 'watchlist')})
                 a.nav-link.d-inline-block(href='/tsm/watchlist')
-                    i(aria-hidden='true').fa.fa-list.fa-lg.mr-2
+                    span.icon-th-list.mr-2
                     span Watchlist
                 span#sidebar-counter
         .beta

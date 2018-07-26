@@ -1,4 +1,4 @@
-$shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
+$shadow: rgba($black, 0.1) 0 2px 4px, rgba($black, 0.1) 0 0 3px;
 
 .calendar {
     &__table {
@@ -85,12 +85,12 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
             width: 6px;
             border-radius: 6px;
             margin: 1px;
-            background-color: black;
+            background-color: $black;
             &.red {
-                background-color: red;
+                background-color: $red;
             }
             &.green {
-                background-color: green;
+                background-color: $green;
             }
             &.watched {
                 opacity: 0.5;
@@ -110,14 +110,17 @@ $shadow: rgba(0, 0, 0, 0.1) 0 2px 4px, rgba(0, 0, 0, 0.1) 0 0 3px;
             opacity: 0.5;
         }
     }
-}
-
-.month-nav-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.month-nav {
-    width: 40%;
+    &__nav {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        &-item {
+            width: 40%;
+        }
+    }
+    &__header {
+        transition: box-shadow .25s;
+        box-shadow: 0 2px 5px 0 rgba($black, .16), 0 2px 10px 0 rgba($black, .12);
+        border-radius: 2px;
+    }
 }

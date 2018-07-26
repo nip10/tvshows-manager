@@ -7,6 +7,7 @@
     overflow-y: auto;
     background: $black;
     nav {
+        min-height: 100vh;
         transition: width .3s ease-in-out;
         width: 200px;
         position: fixed;
@@ -52,7 +53,7 @@
             position: absolute;
             right: -15px;
             color: $gray-400;
-            i.fa-times {
+            span.icon-close {
                 color: $gray-900;
             }
         }
@@ -133,7 +134,7 @@
     .input-loading {
         @include media-breakpoint-up(md) {
             background-color: $gray-900 !important;
-            background-image: url("http://loadinggif.com/images/image-selection/3.gif") !important;
+            background-image: url("../img/loading.gif") !important;
             background-size: 15px 15px !important;
             background-position: right 10px center !important;
             background-repeat: no-repeat !important;

@@ -456,9 +456,9 @@ module.exports = {
       $('nav').removeClass('reduced');
       $('.main-container').removeClass('reduced');
       // switch caret orientation
-      $('i.fa-caret-right')
-        .removeClass('fa-caret-right')
-        .addClass('fa-caret-left');
+      $('span.icon-caret-right')
+        .removeClass('icon-caret-right')
+        .addClass('icon-caret-left');
       // show 'report a bug' button
       $('.beta button').show();
       // re-add transitions
@@ -470,9 +470,9 @@ module.exports = {
       $('nav').addClass('reduced');
       $('.main-container').addClass('reduced');
       // switch caret orientation
-      $('i.fa-caret-left')
-        .removeClass('fa-caret-left')
-        .addClass('fa-caret-right');
+      $('span.icon-caret-left')
+        .removeClass('icon-caret-left')
+        .addClass('icon-caret-right');
       // hide 'report a bug' button
       $('.beta button').hide(100);
       // remove transitions after 'reducing' the sidebar
@@ -488,7 +488,7 @@ module.exports = {
     $('#sidebar-wrapper').removeClass('d-none');
     $('#sidebar-wrapper > nav').addClass('mobile');
     $('#topbar-wrapper, #page-content-wrapper')
-      .addClass('opacity20')
+      .css('opacity', '0.2')
       .css('pointer-events', 'none');
     $('#toggle-sidebar').addClass('d-none');
     $('#close-sidebar').removeClass('d-none');
@@ -498,7 +498,7 @@ module.exports = {
     $('#sidebar-wrapper').addClass('d-none');
     $('#sidebar-wrapper > nav').removeClass('mobile');
     $('#topbar-wrapper, #page-content-wrapper')
-      .removeClass('opacity20')
+      .css('opacity', '1')
       .css('pointer-events', 'auto');
     $('#toggle-sidebar').removeClass('d-none');
     $('#close-sidebar').addClass('d-none');
