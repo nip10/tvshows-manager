@@ -1,5 +1,11 @@
 .card {
-  @include media-breakpoint-down(md) {
-      margin: 1em 0;
-  }
+    @include media-breakpoint-down(md) {
+        margin: 1em 0;
+    }
+    &-body {
+        span[class^='icon-'],
+        span[class*=' icon-'] {
+            font-size: 3rem;
+        }
+    }
 }

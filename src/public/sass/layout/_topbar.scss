@@ -12,14 +12,14 @@
       text-decoration: none;
       &.logo {
         padding-left: 1em;
-        i {
+        > span.icon-television {
           font-size: 4em;
           color: $gray-400;
         }
       }
       &.menu {
         padding-right: 1em;
-        i {
+        > span.icon-bars {
           font-size: 3em;
           color: $gray-400;
           line-height: inherit;

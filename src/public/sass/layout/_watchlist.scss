@@ -76,9 +76,9 @@
             }
             &.watched {
                 width: 2%;
-            }
-            i {
-                cursor: pointer;
+                > span.icon-eye {
+                    cursor: pointer;
+                }
             }
             &.hiddenRow {
                 padding: 0 4px !important;

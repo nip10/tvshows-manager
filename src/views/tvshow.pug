@@ -10,7 +10,7 @@ block content
                 .col-md-11.mx-auto.my-3
                     .tvshow__banner
                         img(src=banner, alt=`${name} banner`).img-fluid.mx-auto
-                        .overlay
+                        .tvshow__banner-overlay
                             span#tvshow-name= name
                             if isAuthenticated
                                 if !isUserFollowingTvshow
