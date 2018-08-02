@@ -7,30 +7,36 @@ const gulp = require('gulp');
 const runSequence = require('run-sequence');
 const watch = require('gulp-watch');
 
-const cleanFolderList = [];
-const taskList = ['copyenv', 'copymailtemplates', 'copymanifest'];
+const buildProdTaskList = [];
+const buildDevTaskList = [];
 const watchTaskList = [];
 
+// Exit if the config file is not present
+if (!config) {
+  console.error('No config file provided. Make sure you have gulp-config.js in the root of your project.');
+  // TODO: Exit on error
+}
+
+// Get all tasks from the config file
 Object.keys(config.tasks).forEach(taskName => {
+  // Check if the task has a name
   if (Object.prototype.hasOwnProperty.call(config.tasks, taskName)) {
+    // Check if the task file exists
     if (fs.existsSync(`./gulp-tasks/${taskName}.js`)) {
+      // Import the task file
       gulp.task(taskName, require(`./gulp-tasks/${taskName}`));
     }
     const task = config.tasks[taskName];
-    taskList.push(taskName);
-    if (
-      Object.prototype.hasOwnProperty.call(task, 'destination') &&
-      (!Object.prototype.hasOwnProperty.call(task, 'clean') || task.clean)
-    ) {
-      cleanFolderList.push(config.tasks[taskName].destination);
-    }
+    buildProdTaskList.push(taskName);
+    // Check whether the task is to 'watch', 'buildPord', or 'buildDev'
     if (Object.prototype.hasOwnProperty.call(task, 'watch')) {
-      watchTaskList.push({ task: taskName, fileList: task.watch });
-    } else if (Object.prototype.hasOwnProperty.call(task, 'source')) {
-      // 'scripts' task is bundled with babel, watch is managed in 'scripts' task
+      // The 'watching' of scripts is done inside the scripts task
       if (taskName !== 'scripts') {
         watchTaskList.push({ task: taskName, fileList: task.source });
       }
+    }
+    if (Object.prototype.hasOwnProperty.call(task, 'buildDev')) {
+      buildDevTaskList.push(taskName);
     }
   }
 });
@@ -38,18 +44,25 @@ Object.keys(config.tasks).forEach(taskName => {
 // Clean build directory
 gulp.task('clean', () => del('./dist'));
 
-// Build app from sources
-gulp.task('build', ['clean'], () => runSequence(taskList));
+// Build app from sources for dev
+// Waits for the 'clean' task to finish before starting
+gulp.task('buildDev', ['clean'], cb => runSequence(buildDevTaskList, cb));
+
+// Build app from sources for prod
+// Waits for the 'clean' task to finish before starting
+gulp.task('buildProd', ['clean'], cb => runSequence(buildProdTaskList, cb));
 
 // BrowserSync
-gulp.task('browser-sync', () => {
+// Waits for the 'build' task to finish before starting
+gulp.task('browser-sync', ['buildDev'], () => {
   browserSync.init({
     proxy: config.vhost,
   });
 });
 
 // Watch task for development
-gulp.task('watch', ['build'], () => {
+// Waits for the 'build' task to finish before starting
+gulp.task('watch', ['buildDev'], () => {
   Object.keys(watchTaskList).forEach(index => {
     const watchTask = watchTaskList[index];
     watch(
@@ -64,22 +77,13 @@ gulp.task('watch', ['build'], () => {
   });
 });
 
-// Copy env file
-gulp.task('copyenv', () => {
-  gulp.src('.env', { base: '.' }).pipe(gulp.dest('dist/'));
-});
+gulp.task('serve', () => runSequence(['watch', 'browser-sync']));
+gulp.task('default', ['buildProd']);
 
-// Copy mail/templates folder
-gulp.task('copymailtemplates', () => {
-  gulp
-    .src('mail/templates/**/*.*', { cwd: config.sourceRoot })
-    .pipe(gulp.dest(`${config.destinationRoot}mail/templates`));
-});
-
-// Copy PWA manifest
-gulp.task('copymanifest', () => {
-  gulp.src('public/manifest.json', { cwd: config.sourceRoot }).pipe(gulp.dest(`${config.destinationRoot}public`));
-});
-
-gulp.task('serve', ['build', 'watch', 'browser-sync']);
-gulp.task('default', ['build']);
+console.log('-----------------------------------------------------');
+console.log('buildDevTaskList: ', buildDevTaskList);
+console.log('-----------------------------------------------------');
+console.log('buildProdTaskList: ', buildProdTaskList);
+console.log('-----------------------------------------------------');
+console.log('watchTaskList: ', watchTaskList);
+console.log('-----------------------------------------------------');

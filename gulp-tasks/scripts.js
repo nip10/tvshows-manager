@@ -54,8 +54,7 @@ module.exports = function() {
         )
       )
       .pipe(gulp.dest(config.destinationRoot + scriptConfig.destination))
-      .pipe(gulpif(isWatching, browserSync.stream({ once: true })))
-      .pipe(notify({ message: 'Successfully compiled JS', onLast: true }));
+      .pipe(gulpif(isWatching, browserSync.stream({ once: true })));
   };
 
   if (isWatching) {
