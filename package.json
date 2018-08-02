@@ -4,19 +4,19 @@
   "description": "Tvshow Manager",
   "main": "./dist/server.js",
   "scripts": {
-    "build": "npm run build:client&&npm run build:server",
+    "build": "cross-env NODE_ENV=production npm run build:client && cross-env NODE_ENV=production npm run build:server",
     "build:server": "cross-env NODE_ENV=production babel src -d dist --ignore src/public,src/views",
-    "build:client": "cross-env NODE_ENV=production gulp --production",
+    "build:client": "cross-env NODE_ENV=production gulp",
     "lint": "eslint .",
     "start": "cross-env NODE_ENV=production node ./dist/server.js",
-    "start:dev": "cross-env NODE_ENV=development node ./dist/server.js",
+    "start:dev": "cross-env NODE_ENV=development node ./src/server.js",
     "watch:assets": "cross-env NODE_ENV=development gulp serve",
     "watch:server": "cross-env NODE_ENV=development nodemon ./src/server.js --exec babel-node",
     "watch:debug": "cross-env NODE_ENV=development nodemon ./src/server.js --exec babel-node --inspect",
-    "migrate": "knex migrate:rollback --knexfile ./src/db/knexfile.js --env development && knex migrate:latest --knexfile ./src/db/knexfile.js --env development",
-    "migrate:prod": "knex migrate:rollback --knexfile ./dist/db/knexfile.js --env production && knex migrate:latest --knexfile ./dist/db/knexfile.js --env production",
-    "seed": "knex seed:run --knexfile ./src/db/knexfile.js --env development",
-    "seed:prod": "knex seed:run --knexfile ./dist/db/knexfile.js --env production"
+    "migrate": "cross-env NODE_ENV=development knex migrate:rollback --knexfile ./src/db/knexfile.js --env development && knex migrate:latest --knexfile ./src/db/knexfile.js --env development",
+    "migrate:prod": "cross-env NODE_ENV=production knex migrate:rollback --knexfile ./dist/db/knexfile.js --env production && knex migrate:latest --knexfile ./dist/db/knexfile.js --env production",
+    "seed": "cross-env NODE_ENV=development knex seed:run --knexfile ./src/db/knexfile.js --env development",
+    "seed:prod": "cross-env NODE_ENV=production knex seed:run --knexfile ./dist/db/knexfile.js --env production"
   },
   "repository": {
     "type": "git",
