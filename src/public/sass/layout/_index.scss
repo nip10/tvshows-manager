@@ -15,3 +15,13 @@ h1.title {
         padding: 0 !important;
     }
 }
+
+a.btn-facebook {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    span.icon-facebook-official {
+        font-size: 1.5em;
+        margin-right: 0.5em;
+    }
+}

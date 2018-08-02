@@ -17,12 +17,12 @@
             &.markwatched {
                 width: 7%;
                 text-align: center;
-                & i.watched {
-                    opacity: .5;
+                > span.icon-eye {
+                    cursor: pointer;
+                    &.watched {
+                        opacity: .5;
+                    }
                 }
-            }
-            i {
-                cursor: pointer;
             }
         }
     }
@@ -31,12 +31,12 @@
         position: relative;
         display: flex;
         flex-wrap: wrap;
-        img {
+        > img {
             object-fit: cover;
             border-radius: 3px;
             min-width: 100%;
         }
-        .overlay {
+        &-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -44,8 +44,10 @@
             height: 100%;
             background-color: rgba($black, 0.4);
             flex-direction: column;
-            @extend .d-flex, .align-items-center, .justify-content-center;
-            span {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            > span {
                 font-size: 3rem;
                 color: $white;
                 text-shadow: 0 2px 1px rgba($black, 0.3);

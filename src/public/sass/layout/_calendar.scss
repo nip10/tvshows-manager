@@ -6,7 +6,7 @@ $shadow: rgba($black, 0.1) 0 2px 4px, rgba($black, 0.1) 0 0 3px;
         table-layout: fixed;
         box-shadow: $shadow;
         tr {
-            & td {
+            td {
                 height: 130px;
                 vertical-align: top;
                 font-size: 14px;

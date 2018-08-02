@@ -6,7 +6,7 @@
     height: 100%;
     overflow-y: auto;
     background: $black;
-    nav {
+    > nav {
         min-height: 100vh;
         transition: width .3s ease-in-out;
         width: 200px;
@@ -14,8 +14,10 @@
         background-color: $gray-900;
         &.reduced {
             width: 70px;
-            .logo i {
-                font-size: 3em;
+            a.logo {
+                > img {
+                    max-width: 50px;
+                }
             }
             ul {
                 padding: 0 8px;
@@ -54,27 +56,22 @@
             position: absolute;
             right: -15px;
             color: $gray-400;
-            span.icon-close {
+            span.icon-close,
+            span.icon-caret-left {
                 color: $gray-900;
+                font-size: 2em;
             }
         }
-        .logo {
-            text-decoration: none;
-            i {
-                color: $gray-400;
-                transition: font-size .3s ease-in-out;
-                font-size: 5em;
-                &.home {
-                    color: $amber;
-                }
-                &:hover {
-                    color: $amber;
-                }
+        a.logo {
+            > img {
+                max-width: 150px;
+                margin: 0 auto;
             }
         }
         form {
             width: 90%;
-            @extend .mx-auto;
+            margin-left: auto;
+            margin-right: auto;
             input,
             button {
                 background-color: transparent;
@@ -89,7 +86,7 @@
                 background-color: transparent;
                 border: 1px solid $gray-700;
                 border-right: 0;
-                & i {
+                > span.icon-search {
                     color: $gray;
                     display: flex;
                     justify-content: center;
@@ -98,8 +95,8 @@
             }
         }
         ul {
-            li {
-                a {
+            li.nav-item {
+                a.nav-link {
                     color: $gray;
                 }
                 &.active:not(:first-child),
@@ -111,12 +108,13 @@
                             color: $white;
                         }
                     }
-                    i {
+                    span[class^='icon-'],
+                    span[class*=' icon-'] {
                         color: $amber;
                     }
                 }
                 &:not(.active):not(:first-child) {
-                    & a {
+                    a {
                         &:hover {
                             color: $gray;
                         }
@@ -125,7 +123,8 @@
                         }
                     }
                 }
-                i {
+                span[class^='icon-'],
+                span[class*=' icon-'] {
                     width: 21px;
                     text-align: center;
                 }
@@ -151,11 +150,11 @@
         text-align: center;
         font-weight: bold;
         padding: 1em 0;
-        & span {
+        span {
             color: $white;
             font-size: 1.5em;
         }
-        & button {
+        button {
             width: 80%;
             text-align: center;
             margin: 0.5em auto;
