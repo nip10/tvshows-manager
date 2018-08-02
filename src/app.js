@@ -25,9 +25,6 @@ const isDev = NODE_ENV === 'development';
 
 // Create Express server
 const app = express();
-// Global variable that is passed to all renders,
-// so that pug selects the right assets path
-app.locals.dev = isDev;
 
 /* *********************
   Express configuration
@@ -46,7 +43,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Session store
-// In prod, session store is Redis
 if (isDev) {
   app.use(
     session({
