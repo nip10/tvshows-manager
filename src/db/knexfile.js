@@ -1,7 +1,7 @@
 const dotenv = require('dotenv');
+const path = require('path');
 
-// dotenv.config({ path: '../../.env' });
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const {
   DATABASE_HOST,
