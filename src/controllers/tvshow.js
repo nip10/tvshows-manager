@@ -60,10 +60,9 @@ const tvshowsController = {
   async getEpisodes(req, res) {
     const tvshowId = Number.parseInt(_.get(req, 'params.tvshowId'), 10);
     const season = Number.parseInt(_.get(req, 'query.season'), 10);
-    if (!_.isNumber(tvshowId)) {
+    if (!_.isFinite(tvshowId)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    }
-    if (!_.isNumber(season)) {
+    } else if (!_.isFinite(season)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_SEASON });
     }
     try {
