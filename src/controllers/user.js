@@ -20,9 +20,9 @@ const userController = {
   async addTvshowToUser(req, res) {
     const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
     const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isNumber(tvshowId)) {
+    if (!_.isFinite(tvshowId)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isNumber(userId)) {
+    } else if (!_.isFinite(userId)) {
       return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
     }
     try {
@@ -50,9 +50,9 @@ const userController = {
   async removeTvshowFromUser(req, res) {
     const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
     const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isNumber(tvshowId)) {
+    if (!_.isFinite(tvshowId)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isNumber(userId)) {
+    } else if (!_.isFinite(userId)) {
       return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
     }
     try {
@@ -81,9 +81,9 @@ const userController = {
     const action = _.get(req, 'body.action');
     const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
     const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isNumber(tvshowId)) {
+    if (!_.isFinite(tvshowId)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isNumber(userId)) {
+    } else if (!_.isFinite(userId)) {
       return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
     } else if (!_.isString(action) || (action !== 'add' && action !== 'remove')) {
       // TODO: Check if lodash has something like "isEnum"
@@ -124,7 +124,7 @@ const userController = {
    */
   async getWatchlist(req, res) {
     const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isNumber(userId)) {
+    if (!_.isFinite(userId)) {
       return res.render('watchlist', {
         sidebarIndex: 'watchlist',
       });
@@ -197,16 +197,17 @@ const userController = {
    * @param {Object} res - Express response object
    * @returns {undefined}
    */
-  async setEpisodeWatchedStatus(req, res) {
-    const userId = parseInt(_.get(req, 'user'), 10);
-    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
-    const episodeid = parseInt(_.get(req, 'body.episodeid'), 10);
+  async setEpisodeWatchedStatus(req, res, next) {
+    const userId = Number.parseInt(req.user, 10);
+    const tvshowId = Number.parseInt(req.params.tvshowId, 10);
+    const episodeid = Number.parseInt(req.body.episodeid, 10);
     const setWatched = _.get(req, 'body.setWatched');
-    if (!_.isNumber(userId)) {
+    // const setWatched = 'false';
+    if (!_.isFinite(userId)) {
       return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
-    } else if (!_.isNumber(tvshowId)) {
+    } else if (!_.isFinite(tvshowId)) {
       return res.status(500).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isNumber(episodeid)) {
+    } else if (!_.isFinite(episodeid)) {
       return res.status(500).json({ error: ERROR.EPISODE.INVALID_ID });
     } else if (!_.isString(setWatched) || (setWatched !== 'true' && setWatched !== 'false')) {
       return res.status(500).json({ error: ERROR.EPISODE.INVALID_ACTION });
@@ -240,9 +241,9 @@ const userController = {
     const userId = parseInt(_.get(req, 'user'), 10);
     const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
     const episodes = _.get(req, 'body.episodes');
-    if (!_.isNumber(userId)) {
+    if (!_.isFinite(userId)) {
       return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
-    } else if (!_.isNumber(tvshowId)) {
+    } else if (!_.isFinite(tvshowId)) {
       return res.status(500).json({ error: ERROR.TVSHOW.INVALID_ID });
     } else if (_.isEmpty(episodes)) {
       return res.status(500).json({ error: ERROR.EPISODE.EMPTY_ARRAY });
@@ -265,7 +266,7 @@ const userController = {
    */
   getProfile(req, res) {
     const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isNumber(userId)) {
+    if (!_.isFinite(userId)) {
       return res.status(400).render('error', {
         error: ERROR.AUTH.INVALID_ID,
       });

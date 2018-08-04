@@ -20,7 +20,7 @@ const calendarController = {
    */
   async getCalendar(req, res) {
     const userId = Number.parseInt(_.get(req, 'user'), 10);
-    if (!_.isNumber(userId)) {
+    if (!_.isFinite(userId)) {
       return res.status(500).render('error', {
         error: ERROR.AUTH.INVALID_ID,
       });
