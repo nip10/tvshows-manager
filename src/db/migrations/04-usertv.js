@@ -5,6 +5,7 @@ exports.up = (knex, Promise) =>
         table.increments('id');
         table.integer('user_id').references('users.id');
         table.integer('tvshow_id').references('tvshows.thetvdb');
+        table.unique(['user_id', 'tvshow_id']);
         table.timestamp('createdAt').defaultTo(knex.fn.now());
       });
     }
