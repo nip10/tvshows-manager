@@ -254,8 +254,8 @@ const authController = {
       if (!user) return res.status(422).json({ error: info.message });
       try {
         // TODO: Move this to the local auth strategy implementation ?
-        const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
-        if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
+        // const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
+        // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
         await User.updateLastLogin(user.id);
         return req.logIn(user, err2 => {
           if (err2) return next(err2);
@@ -312,25 +312,26 @@ const authController = {
     if (!_.isNil(validateSignup.error)) {
       return res.status(422).json({ error: validateSignup.error });
     }
-    const activateAccountToken = uuidv4();
+    // const activateAccountToken = uuidv4();
     try {
       await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
+      return res.sendStatus(201);
     } catch (e) {
       return res.status(422).json({ error: ERROR.AUTH.EMAIL_EXISTS });
     }
-    try {
-      const sentEmail = await Mail.sendEmail(email, 'welcome', { token: activateAccountToken });
-      if (!sentEmail) {
-        return res.status(400).json({
-          error: `Couldn't send email to ${email}.
-          Please check if the email address is correct and try again. `,
-        });
-      }
-      return res.sendStatus(201);
-    } catch (e) {
-      console.log(e);
-      return res.status(500).json({ error: ERROR.SERVER });
-    }
+    // try {
+    //   const sentEmail = await Mail.sendEmail(email, 'welcome', { token: activateAccountToken });
+    //   if (!sentEmail) {
+    //     return res.status(400).json({
+    //       error: `Couldn't send email to ${email}.
+    //       Please check if the email address is correct and try again. `,
+    //     });
+    //   }
+    //   return res.sendStatus(201);
+    // } catch (e) {
+    //   console.log(e);
+    //   return res.status(500).json({ error: ERROR.SERVER });
+    // }
   },
   /**
    * Change password
