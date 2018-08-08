@@ -168,10 +168,10 @@ const User = {
   /**
    * Get episodes from all tvshows that a user is following, in a given date interval
    *
-   * @param {number} userId - user id
-   * @param {date} startInterval - start interval to fetch
-   * @param {date} endInterval - end interval to fetch
    * @returns {{}[]} - episodes from the tvshows that a user if following, in the specified date interval
+   * @param {Number} userId - user id
+   * @param {Date} startInterval - start interval to fetch
+   * @param {Date} endInterval - end interval to fetch
    */
   async getEpisodes(userId, startInterval, endInterval) {
     try {
@@ -197,9 +197,9 @@ const User = {
   /**
    * Add tvshow to user
    *
-   * @param {number} userId - user id
-   * @param {number} tvshowId - tvshow id
    * @returns {boolean} - added tvshow to user
+   * @param {Number} userId - user id
+   * @param {Number} tvshowId - tvshow id
    */
   async addTvshow(userId, tvshowId) {
     try {
@@ -213,9 +213,9 @@ const User = {
   /**
    * Remove tvshow from user
    *
-   * @param {number} userId user id
-   * @param {number} tvshowId tvshow id
    * @returns {boolean} - removed tvshow from user
+   * @param {Number} userId user id
+   * @param {Number} tvshowId tvshow id
    */
   async removeTvshow(userId, tvshowId) {
     try {
@@ -231,9 +231,9 @@ const User = {
   /**
    * Check if a user is following a tvshow
    *
-   * @param {number} userId - user id
-   * @param {number} tvshowId - tvshow id
    * @returns {boolean} - the user is following the tvshow
+   * @param {Number} userId - user id
+   * @param {Number} tvshowId - tvshow id
    */
   async isFollowingTvshow(userId, tvshowId) {
     const innerQuery = knex
@@ -253,17 +253,17 @@ const User = {
   /**
    * Validate signup inputs
    *
-   * @param {string} email - user email
-   * @param {string} password - user password
-   * @param {string} passwordDuplicate - user duplicate password
-   * @returns {{ normalizedEmail: string, password: string }} - normalized email and password
+   * @param {String} email - user email
+   * @param {String} password - user password
+   * @param {String} passwordDuplicate - user duplicate password
+   * @returns {{ normalizedEmail: String, password: String }} - normalized email and password
    */
   validateSignup(email, password, passwordDuplicate) {
-    if (!email || !validator.isEmail(email)) {
+    if (!_.isString(email) || !validator.isEmail(email)) {
       return { error: ERROR.AUTH.INVALID_EMAIL };
-    } else if (!password || password.length < 8 || password.length > 30) {
+    } else if (!_.isString(password) || password.length < 8 || password.length > 30) {
       return { error: ERROR.AUTH.PASSWORD_LEN };
-    } else if (!password || password !== passwordDuplicate) {
+    } else if (!_.isString(passwordDuplicate) || password !== passwordDuplicate) {
       return { error: ERROR.AUTH.PASSWORD_MATCH };
     }
     return {
@@ -279,9 +279,9 @@ const User = {
    * @returns {{ normalizedEmail: String, password: String }} - normalized email and password
    */
   validateLogin(email, password) {
-    if (!email || !validator.isEmail(email)) {
+    if (!_.isString(email) || !validator.isEmail(email)) {
       return { error: ERROR.AUTH.INVALID_EMAIL };
-    } else if (!password || password.length < 8 || password.length > 30) {
+    } else if (!_.isString(password) || password.length < 8 || password.length > 30) {
       return { error: ERROR.AUTH.PASSWORD_LEN };
     }
     return {

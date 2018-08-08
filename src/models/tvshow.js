@@ -18,7 +18,7 @@ const Tvshow = {
     console.log('Requesting token from TheTvDb API');
     return this.getToken()
       .then(newToken => {
-        if (!_.isString(newToken)) {
+        if (!_.isString(newToken) || _.isEmpty(newToken)) {
           throw new Error('Token received is invalid.');
         }
         this.apiToken = newToken;
@@ -65,7 +65,7 @@ const Tvshow = {
   /**
    * Get TheTVDb api token
    *
-   * @returns {string} - TheTVDb api token
+   * @returns {String} - TheTVDb api token
    */
   async getToken() {
     const requestOptions = {
@@ -87,7 +87,7 @@ const Tvshow = {
   /**
    * Search for a tvshow
    *
-   * @param {string} tvshowName - tvshow name
+   * @param {String} tvshowName - tvshow name
    * @returns {{id: Number, seriesName: String}[]} - array of tvshow objects
    */
   async search(tvshowName) {
@@ -122,7 +122,7 @@ const Tvshow = {
   /**
    * Get information about a tvshow from the external api
    *
-   * @param {number} tvshowId - tvshow id
+   * @param {Number} tvshowId - tvshow id
    * @returns {{name: string, overview: string, status: string, imdb: string, thetvdb: number, genre: string[], premiered: string, imdbRating: number, network: string, airdate: string, tvrating: string, images: string[]}} Information about the show
    */
   async getInfoFromApi(tvshowId) {
@@ -142,7 +142,12 @@ const Tvshow = {
       const { data } = await rp(requestOptions);
       // Check if airdate is defined
       let airdate = null;
-      if (_.isString(data.airsDayOfWeek) && _.isString(data.airsTime)) {
+      if (
+        _.isString(data.airsDayOfWeek) &&
+        !_.isEmpty(data.airsDayOfWeek) &&
+        _.isString(data.airsTime) &&
+        !_.isEmpty(data.airsTime)
+      ) {
         airdate = `${data.airsDayOfWeek} at ${data.airsTime}`;
       }
       return {
@@ -167,7 +172,7 @@ const Tvshow = {
   /**
    * Get tvshow information from the database
    *
-   * @param {number} tvshowId - tvshow id
+   * @param {Number} tvshowId - tvshow id
    * @returns {{thetvdb: number, name: string, overview: string, premiered: string, network: string, imdbRating: number, status: string, airdate: string, images: string[], imdb: string, genre: string[], tvrating: string}} Tvshow information
    */
   async getInfoFromDb(tvshowId) {
@@ -198,9 +203,9 @@ const Tvshow = {
   /**
    * Get artwork of a tvshow
    *
-   * @param {number} tvshowId - tvshow id
-   * @param {string} imageType - artwork type (poster, banner)
-   * @returns {string} - url for the first artwork of specified type
+   * @param {Number} tvshowId - tvshow id
+   * @param {String} imageType - artwork type (poster, banner)
+   * @returns {String} - url for the first artwork of specified type
    */
   async getArtworkFromApi(tvshowId, imageType) {
     const requestOptions = {
@@ -229,8 +234,8 @@ const Tvshow = {
    * The api has an array of "airedSeasons" that contains all the seasons for a tvshow.
    * This array MAY contain a season 0, which is where the special episodes are placed.
    *
-   * @param {number} tvshowId - tvshow id
-   * @returns {number} - number of seasons
+   * @param {Number} tvshowId - tvshow id
+   * @returns {Number} - number of seasons
    */
   async getLatestSeasonFromApi(tvshowId) {
     const requestOptions = {
@@ -256,8 +261,8 @@ const Tvshow = {
   /**
    * Get tvshow episodes from a particular season from the api
    *
-   * @param {number} tvshowId - tvshow id
-   * @param {number} season - season
+   * @param {Number} tvshowId - tvshow id
+   * @param {Number} season - season
    * @returns {{num: number, name: string, airdate: date, overview: string}[]} - tvshow episodes from a particular season
    */
   async getEpisodesFromSeasonFromApi(tvshowId, season) {
@@ -290,8 +295,8 @@ const Tvshow = {
   /**
    * Get tvshow episodes from a specific season from the db
    *
-   * @param {number} tvshowId - tvshow id
-   * @param {number} season - season
+   * @param {Number} tvshowId - tvshow id
+   * @param {Number} season - season
    * @returns {{}[]} - episodes from the specified season
    */
   async getEpisodesFromSeasonFromDb(tvshowId, season) {
@@ -316,8 +321,8 @@ const Tvshow = {
   /**
    * Get the latest season of a tvshow
    *
-   * @param {number} tvshowId - tvshow id
-   * @returns {number} - latest season
+   * @param {Number} tvshowId - tvshow id
+   * @returns {Number} - latest season
    */
   async getLatestSeasonFromDb(tvshowId) {
     try {
@@ -325,7 +330,7 @@ const Tvshow = {
         .select(knex.raw('max(??)', ['season']))
         .where('tvshow_id', tvshowId)
         .first();
-      if (!_.isNumber(latestSeason.max)) throw new Error();
+      if (!_.isFinite(latestSeason.max)) throw new Error();
       return latestSeason.max;
     } catch (e) {
       console.log(e);
@@ -335,8 +340,8 @@ const Tvshow = {
   /**
    * Check if a tvshow is on the database
    *
-   * @param {number} tvshowId - tvshow id
-   * @returns {boolean} - tvshow is on the database
+   * @param {Number} tvshowId - tvshow id
+   * @returns {Boolean} - tvshow is on the database
    */
   async isOnDb(tvshowId) {
     const innerQuery = knex
@@ -375,9 +380,9 @@ const Tvshow = {
     /**
      * Make requests to paginated api endpoints.
      *
-     * @param {string} apiToken - TheTVDb apiToken
-     * @param {number} [page=1] - Page to fetch (defaults to 1)
-     * @returns {boolean} - request successful
+     * @param {String} apiToken - TheTVDb apiToken
+     * @param {Number} [page=1] - Page to fetch (defaults to 1)
+     * @returns {Boolean} - request successful
      */
     async function requestPaginated(apiToken, page = 1) {
       const requestOptions = {
@@ -434,7 +439,7 @@ const Tvshow = {
     try {
       const { imdbRating } = await rp(requestOptions);
       const imdbRatingParsed = Number.parseInt(imdbRating, 10);
-      if (!_.isNumber(imdbRatingParsed)) throw new Error();
+      if (!_.isFinite(imdbRatingParsed)) throw new Error();
       return imdbRatingParsed;
     } catch (e) {
       console.log(e);
@@ -490,8 +495,8 @@ const Tvshow = {
    *
    * @param {Number} userId - user id
    * @param {Number} tvshowId - tvshow id
-   * @param {Number[]} episodesId - all episodes' id's from a season
-   * @returns  {Boolean} - season was set as watched
+   * @param {Number[]} episodesId - all episode id's from a season
+   * @returns {Promise}
    */
   async setSeasonWatched(userId, tvshowId, episodesId) {
     const queryData = _.map(episodesId, episodeId => ({
@@ -529,6 +534,17 @@ const Tvshow = {
       console.log(e);
       return null;
     }
+  /**
+   * Get posters for tvshows
+   *
+   * @param {Number[]} tvshowIds Array of tvshowids
+   * @returns Array of objects containing posters and tvshowids
+   */
+  getPosters(tvshowIds) {
+    return knex('tvshows')
+      .select('images', 'name as tvshowName')
+      .select(knex.raw('to_char(thetvdb, \'FM99999999\') as "tvshowId"'))
+      .whereRaw('thetvdb = ANY(?)', [tvshowIds]);
   },
 };
 

@@ -16,19 +16,15 @@ const tvshowsController = {
    * @param {Object} res - Express response object
    */
   async search(req, res) {
-    const tvshowName = _.get(req, 'params.tvshowName');
-    if (!_.isString(tvshowName)) {
+    const tvshowName = _.get(req.params, 'tvshowName');
+    if (!_.isString(tvshowName) || tvshowName.length < 4) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_NAME });
     }
     try {
-      const data = await Tvshow.search(tvshowName);
-      if (_.isNil(data)) {
-        return res.json({ error: ERROR.TVSHOW.NOT_FOUND });
-      }
-      return res.json(data);
+      const tvshows = await Tvshow.search(tvshowName);
+      return res.json(tvshows);
     } catch (e) {
-      console.log(e);
-      return res.status(500).json({ error: ERROR.SERVER });
+      return res.status(400).json({ error: ERROR.TVSHOW.NOT_FOUND });
     }
   },
   /**
@@ -38,7 +34,7 @@ const tvshowsController = {
    * @param {Object} res - Express response object
    */
   async searchFull(req, res) {
-    const tvshowName = _.get(req, 'params.tvshowName');
+    const tvshowName = _.get(req.params, 'tvshowName');
     if (!_.isString(tvshowName) || tvshowName.length < 4) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_NAME });
     }
@@ -46,7 +42,7 @@ const tvshowsController = {
       const tvshows = await Tvshow.search(tvshowName);
       return res.render('search', { tvshows });
     } catch (e) {
-      console.log(e);
+      // TODO: This should render the search page with an error msg informing 'no tvshows found'
       return res.status(500).render('error');
     }
   },
@@ -58,22 +54,19 @@ const tvshowsController = {
    * @returns {undefined}
    */
   async getEpisodes(req, res) {
-    const tvshowId = Number.parseInt(_.get(req, 'params.tvshowId'), 10);
-    const season = Number.parseInt(_.get(req, 'query.season'), 10);
+    const tvshowId = Number.parseInt(req.params.tvshowId, 10);
+    const season = Number.parseInt(req.query.season, 10);
     if (!_.isFinite(tvshowId)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isFinite(season)) {
+    }
+    if (!_.isFinite(season)) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_SEASON });
     }
     try {
       const episodes = await Tvshow.getEpisodesFromSeasonFromDb(tvshowId, season);
-      if (_.isNil(episodes)) {
-        return res.json({ error: ERROR.EPISODE.NOT_FOUND });
-      }
       return res.json({ episodes });
     } catch (e) {
-      console.log(e);
-      return res.status(500).json({ error: ERROR.SERVER });
+      return res.status(400).json({ error: ERROR.EPISODE.NOT_FOUND });
     }
   },
   /**
@@ -98,10 +91,10 @@ const tvshowsController = {
     try {
       isTvshowOnDb = await Tvshow.isOnDb(tvshowId);
       if (_.isNil(isTvshowOnDb)) {
+        // TODO: Test throwing here
         isTvshowOnDb = false;
       }
     } catch (e) {
-      console.log(e);
       // If the DB is offline, we allow this to continue and fetch the data from the external API
       isTvshowOnDb = false;
     }
@@ -203,9 +196,12 @@ const tvshowsController = {
     // Check if there are images for the tvshow
     let banner = null;
     let poster = null;
-    if (_.isString(tvshowData.images[0])) banner = MISC.THETVDB.GRAPHICS({ id: tvshowData.images[0] });
-    if (_.isString(tvshowData.images[1])) poster = MISC.THETVDB.GRAPHICS({ id: tvshowData.images[1] });
-    // Render tvshow view
+    if (_.isString(tvshowData.images[0]) && !_.isEmpty(tvshowData.images[0])) {
+      banner = MISC.THETVDB.GRAPHICS({ id: tvshowData.images[0] });
+    }
+    if (_.isString(tvshowData.images[1]) && !_.isEmpty(tvshowData.images[1])) {
+      poster = MISC.THETVDB.GRAPHICS({ id: tvshowData.images[1] });
+    }
     return res.render('tvshow', {
       name: tvshowData.name,
       id: tvshowId,
