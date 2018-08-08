@@ -38,6 +38,10 @@ export const ERROR = {
     INVALID_ACTION: 'Invalid action',
     EMPTY_ARRAY: "No episode id's provided.",
   },
+  SEASON: {
+    ALREADY_WATCHED: 'You already set this season as watched.',
+    ALREADY_UNWATCHED: 'You already set this season as unwatched.',
+  },
 };
 
 export const API = {
