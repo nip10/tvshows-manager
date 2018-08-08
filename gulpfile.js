@@ -79,11 +79,3 @@ gulp.task('watch', ['buildDev'], () => {
 
 gulp.task('serve', () => runSequence(['watch', 'browser-sync']));
 gulp.task('default', ['buildProd']);
-
-console.log('-----------------------------------------------------');
-console.log('buildDevTaskList: ', buildDevTaskList);
-console.log('-----------------------------------------------------');
-console.log('buildProdTaskList: ', buildProdTaskList);
-console.log('-----------------------------------------------------');
-console.log('watchTaskList: ', watchTaskList);
-console.log('-----------------------------------------------------');
