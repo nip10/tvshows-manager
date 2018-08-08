@@ -28,14 +28,17 @@ Check it live [here](https://www.p.dcdev.pt/tsm).
 
 # About
 
-The structure chosen for this project is based on the MVC architecture, where there's a distinction between logic and data. This project is a way to test different tech and npm packages: from using gulp to build client and server code, to store sessions in redis.
+The structure chosen for this project is based on the MVC architecture, where there's a distinction between logic and data. I went through the SSR aproach to make load times faster and because I felt it was more flexible at the time I started using Pug. This project is a way to test different tech and npm packages: from using gulp to build client and server code, to store sessions in redis and query a postgres db with knex.
 
 # Todo
 
-Since this was a "first approach" to some new concepts and tech (as mentioned above), there will be only a limited amount of features/corrections added in the future:
-- User profile (basic)
-- Social authentication (Facebook)
-- Fix all the front-end CSS to match BEM rules
+At the moment, I'll be working on this project on a limited time.
+
+This is what I'll work on when I pick this project again:
+- Routes schema/naming
+- External email provider service
+- User profile (very basic)
+- CSS BEM rules
 
 # What's missing
 
@@ -45,6 +48,6 @@ Since this was a "first approach" to some new concepts and tech (as mentioned ab
 - Email newsletters
 - Testing
 - Fix the way tvshowdb api token is fetched and updated
-
+-
 
 MIT Licence
