@@ -195,7 +195,7 @@ module.exports = {
     const add = $('#userTvShowState').hasClass('btn-primary');
     if (add) {
       // User is not following this show and wants to add it
-      $.post(`/tsm/tvshows/${tvshowId}`, { action: 'add' })
+      $.post(`/tsm/tvshows/${tvshowId}/add`)
         .done((data, textStatus, jqXHR) => {
           if (jqXHR.status === 200) {
             const tvshowName = $('#tvshow-name')[0].innerText;
@@ -222,7 +222,7 @@ module.exports = {
       return false;
     }
     // User is following this show and wants to remove it
-    $.post(`/tsm/tvshows/${tvshowId}`, { action: 'remove' })
+    $.post(`/tsm/tvshows/${tvshowId}/remove`)
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           const tvshowName = $('#tvshow-name')[0].innerText;
