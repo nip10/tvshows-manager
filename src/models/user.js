@@ -89,7 +89,6 @@ const User = {
    *
    * @param {String} email
    * @returns {User} user object with all details
-   * // TODO: Create a User object type
    */
   async getUserByEmail(email) {
     try {
