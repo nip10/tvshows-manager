@@ -80,21 +80,21 @@ const fbOptions = {
 passport.use(
   new FacebookStrategy(fbOptions, async (accessToken, refreshToken, profile, done) => {
     const fbId = Number.parseInt(profile.id, 10);
-    if (!_.isFinite(fbId)) return done(null, false, 'Invalid facebook id'); // TODO: Test this
+    if (!_.isFinite(fbId)) return done(null, false, 'Invalid facebook id');
     try {
       const hasEmail = _.get(profile, 'emails');
       let email = null;
       if (hasEmail) {
         email = _.head(hasEmail).value;
       } else {
-        return done(null, false, "Your facebook account doesn't have a valid email address"); // TODO: Test this, Create new error in constants
+        return done(null, false, "Your facebook account doesn't have a valid email address");
       }
       if (!validator.isEmail(email)) {
         return done(null, false, ERROR.AUTH.INVALID_EMAIL);
       }
       const normalizedEmail = validator.normalizeEmail(email);
-      const userExists = await User.getUserIdByEmail(normalizedEmail);
-      if (!userExists) {
+      const userId = await User.getUserIdByEmail(normalizedEmail);
+      if (!_.isFinite(userId)) {
         const username = profile.displayName.split(' ')[0];
         const activateAccountToken = uuidv4();
         const newUser = await User.createFbUser(username, normalizedEmail, fbId, activateAccountToken);
@@ -103,6 +103,7 @@ passport.use(
       return done(null, userExists); // TODO: Consider changing to a more explicit name
     } catch (e) {
       return done(e); // TODO: Test this
+      return done(e);
     }
   })
 );

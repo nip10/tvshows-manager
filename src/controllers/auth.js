@@ -6,7 +6,7 @@ import _ from 'lodash';
 import passport from '../auth/local';
 import User from '../models/user';
 import { ERROR } from '../utils/constants';
-import mail from '../mail/mail';
+import Mail from '../mail/mail';
 
 const { RECAPTCHA_SECRET, NODE_ENV, RECAPTCHA_VERIFY_URL, RESET_PASSWORD_TOKEN_EXPIRATION } = process.env;
 const isDev = NODE_ENV === 'development';
@@ -74,8 +74,8 @@ const authController = {
   async validateRecaptcha(req, res, next) {
     // Skip recaptcha if we are in development env
     if (isDev) return next();
-    const recaptcha = _.get(req, 'body.recaptcha');
-    if (_.isNill(recaptcha)) {
+    const recaptcha = _.get(req.body, 'recaptcha');
+    if (_.isNil(recaptcha)) {
       return res.status(401).json({ error: ERROR.AUTH.RECAPTCHA });
     }
     const clientIp = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -91,9 +91,7 @@ const authController = {
     };
     try {
       const data = await rp(requestOptions);
-      if (!data.success) {
-        throw new Error();
-      }
+      if (!data.success) throw new Error();
       return next();
     } catch (e) {
       return res.status(500).json({ error: ERROR.SERVER });
@@ -122,8 +120,9 @@ const authController = {
    * @returns {undefined}
    */
   async resetPasswordRequest(req, res) {
-    const email = _.get(req, 'body.email');
-    const emailDuplicate = _.get(req, 'body.emailDuplicate');
+    const email = _.get(req.body, 'email');
+    const emailDuplicate = _.get(req.body, 'emailDuplicate');
+    // isString is needed because validator only accepts strings
     if (
       !_.isString(email) ||
       !_.isString(emailDuplicate) ||
@@ -140,13 +139,13 @@ const authController = {
       if (!userExists) {
         return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
       }
-      const reset = {
+      const resetParams = {
         token: uuidv4(),
         expiration: moment()
           .add(RESET_PASSWORD_TOKEN_EXPIRATION, 'minutes')
           .toISOString(),
       };
-      const addedToken = await User.addResetTokenToUser(normalizedEmail, reset);
+      const addedToken = await User.addResetTokenToUser(normalizedEmail, resetParams);
       if (!addedToken) throw new Error();
       const sentEmail = await mail.sendEmail(normalizedEmail, 'reset', { email: normalizedEmail, token: reset.token });
       if (!sentEmail) {
@@ -168,15 +167,15 @@ const authController = {
    * @returns {undefined}
    */
   async resetPasswordWithToken(req, res) {
-    const email = _.get(req, 'params.email');
-    const token = _.get(req, 'params.token');
+    const email = _.get(req.params, 'email');
+    const token = _.get(req.params, 'token');
     if (!_.isString(email) || !validator.isEmail(email)) {
       return res.status(422).render('error', {
         error: ERROR.AUTH.INVALID_EMAIL,
       });
     }
     const normalizedEmail = validator.normalizeEmail(email);
-    if (!_.isString(token)) {
+    if (!_.isString(token) || _.isEmpty(token)) {
       return res.status(422).render('error', {
         error: ERROR.AUTH.INVALID_TOKEN,
       });
@@ -192,7 +191,6 @@ const authController = {
         resetPassword: true,
       });
     } catch (e) {
-      console.log(e);
       return res.status(500).render('error', {
         error: ERROR.SERVER,
       });
@@ -206,18 +204,18 @@ const authController = {
    * @returns {undefined}
    */
   async resetPassword(req, res) {
-    const password = _.get(req, 'body.password');
-    const passwordDuplicate = _.get(req, 'body.passwordDuplicate');
-    const email = _.get(req, 'params.email');
-    const token = _.get(req, 'params.token');
+    const password = _.get(req.body, 'password');
+    const passwordDuplicate = _.get(req.body, 'passwordDuplicate');
+    const email = _.get(req.params, 'email');
+    const token = _.get(req.params, 'token');
     if (!_.isString(email) || !validator.isEmail(email)) {
       return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
     }
     const normalizedEmail = validator.normalizeEmail(email);
-    if (!token) {
+    if (!_.isString(token) || _.isEmpty(token)) {
       return res.status(422).json({ error: ERROR.AUTH.INVALID_TOKEN });
     }
-    if (!password || password.length < 8 || password.length > 30) {
+    if (!_.isString(password) || password.length < 8 || password.length > 30) {
       return res.status(422).json({ error: ERROR.AUTH.PASSWORD_LEN });
     }
     if (password !== passwordDuplicate) {
@@ -245,7 +243,8 @@ const authController = {
     if (req.isAuthenticated()) {
       return res.status(400).json({ error: ERROR.AUTH.ALREADY_AUTHENTICATED });
     }
-    const { email, password } = req.body;
+    const email = _.get(req.body, 'email');
+    const password = _.get(req.body, 'password');
     const validateLogin = User.validateLogin(email, password);
     if (!_.isNil(validateLogin.error)) {
       return res.status(422).json({ error: validateLogin.error });
@@ -311,7 +310,9 @@ const authController = {
     if (req.isAuthenticated()) {
       return res.status(400).json({ error: ERROR.AUTH.ALREADY_AUTHENTICATED });
     }
-    const { email, password, passwordDuplicate } = req.body;
+    const email = _.get(req.body, 'email');
+    const password = _.get(req.body, 'password');
+    const passwordDuplicate = _.get(req.body, 'passwordDuplicate');
     const validateSignup = User.validateSignup(email, password, passwordDuplicate);
     if (!_.isNil(validateSignup.error)) {
       return res.status(422).json({ error: validateSignup.error });
@@ -347,11 +348,9 @@ const authController = {
    * @returns {undefined}
    */
   async changePassword(req, res) {
-    const userId = Number.parseInt(_.get(req, 'user'), 10);
-    if (!_.isFinite(userId)) {
-      return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
-    }
-    const { newPassword, currentPassword } = req.body;
+    const userId = Number.parseInt(req.user, 10);
+    const newPassword = _.get(req.body, 'newPassword');
+    const currentPassword = _.get(req.body, 'currentPassword');
     try {
       const changedPassword = await User.changePassword(userId, currentPassword, newPassword);
       if (changedPassword && !changedPassword.error) {
@@ -373,7 +372,7 @@ const authController = {
    * @returns {undefined}
    */
   async activateAccount(req, res) {
-    const { token } = req.params;
+    const token = _.get(req.params, 'token');
     try {
       const activatedAccount = await User.activateAccount(token);
       if (!activatedAccount) {
@@ -395,7 +394,11 @@ const authController = {
    * @returns {undefined}
    */
   async resendActivateAccount(req, res) {
-    const { email } = req.body;
+    const email = _.get(req.body, 'email');
+    if (!_.isString(email) || !validator.isEmail(email)) {
+      return res.status(400).json({ error: ERROR.AUTH.INVALID_EMAIL });
+    }
+    const normalizedEmail = validator.normalizeEmail(email);
     try {
       const validateUser = await Promise.all([User.getUserIdByEmail(email), User.isActive(email)]);
       if (validateUser[0].id && !validateUser[1]) {
