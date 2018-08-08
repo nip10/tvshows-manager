@@ -38,13 +38,8 @@ const tvshowsController = {
     if (!_.isString(tvshowName) || tvshowName.length < 4) {
       return res.status(400).json({ error: ERROR.TVSHOW.INVALID_NAME });
     }
-    try {
-      const tvshows = await Tvshow.search(tvshowName);
-      return res.render('search', { tvshows });
-    } catch (e) {
-      // TODO: add error msg 'no tvshows found'
-      return res.status(500).render('error');
-    }
+    const tvshows = await Tvshow.search(tvshowName);
+    return res.render('search', { tvshows });
   },
   /**
    * Get episodes from the db
@@ -91,7 +86,6 @@ const tvshowsController = {
     try {
       isTvshowOnDb = await Tvshow.isOnDb(tvshowId);
       if (_.isNil(isTvshowOnDb)) {
-        // TODO: Test throwing here
         isTvshowOnDb = false;
       }
     } catch (e) {
