@@ -8,13 +8,14 @@ const User = {
   /**
    * Create a new user
    *
-   * @param {string} email - user email
-   * @param {string} password - user password
-   * @param {string} token - account activation token
-   * @returns {boolean} - if the user was created
+   * @param {String} email - user email
+   * @param {String} password - user password
+   * @param {String} token - account activation token
+   * @returns {Boolean} - if the user was created
    */
   async createUser(email, password, token) {
     const hashedPassword = await this.genHashPassword(password);
+    if (!hashedPassword) throw new Error();
     const username = email.split('@')[0];
     try {
       const createUser = await knex('users')
@@ -34,11 +35,11 @@ const User = {
   /**
    * Create a new 'facebook' user
    *
-   * @param {string} username - username
-   * @param {string} email - user email
-   * @param {string} fbId - facebook id
-   * @param {string} token - account activation token
-   * @returns {boolean} - if the user was created
+   * @param {String} username - username
+   * @param {String} email - user email
+   * @param {String} fbId - facebook id
+   * @param {String} token - account activation token
+   * @returns {Boolean} - if the user was created
    */
   async createFbUser(username, email, fbId, token) {
     try {
@@ -59,39 +60,28 @@ const User = {
   /**
    * Check if the user password is correct
    *
-   * @param {string} userPassword - password input on login
-   * @param {string} dbPassword - password fetched from the db
-   * @returns {boolean} - if the passwords match
+   * @param {String} userPassword - password input on login
+   * @param {String} dbPassword - password fetched from the db
+   * @returns {Promise}
    */
-  async comparePassword(userPassword, dbPassword) {
-    try {
-      const result = await bcrypt.compare(userPassword, dbPassword);
-      return result;
-    } catch (e) {
-      return false;
-    }
+  comparePassword(userPassword, dbPassword) {
+    return bcrypt.compare(userPassword, dbPassword);
   },
   /**
    * Generate hashed password
    *
-   * @param {string} password - user password
-   * @returns {string} - hashed password
+   * @param {String} password - user password
+   * @returns {Promise} - hashed password
    */
-  async genHashPassword(password) {
-    try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      return hashedPassword;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
+  genHashPassword(password) {
+    return bcrypt.hash(password, 10);
   },
   /**
    * Get user id by email
    * Returns false if the email is not registred
    *
-   * @param {string} email - user email
-   * @returns {id || boolean} - user id or false
+   * @param {String} email - user email
+   * @returns {id || Boolean} - user id or false
    */
   async getUserIdByEmail(email) {
     try {
@@ -110,7 +100,7 @@ const User = {
    *
    * @param {string} email - user email
    * @param {{ token: string, expiration: date }} reset - reset password token and expiration date
-   * @returns {boolean} - if the token was added
+   * @returns {Boolean} - if the token was added
    */
   async addResetTokenToUser(email, reset) {
     try {
@@ -128,7 +118,7 @@ const User = {
    *
    * @param {string} email - user email
    * @param {{ token: string, expiration: date }} reset - reset password token and expiration date
-   * @returns {boolean} - if the token was added
+   * @returns {Boolean} - if the token was added
    */
   async addActivationTokenToUser(email, token) {
     try {
@@ -146,7 +136,7 @@ const User = {
    *
    * @param {string} email - user email
    * @param {{ token: string, expiration: date }} reset - reset password token and expiration date
-   * @returns {boolean} - if the token is valid
+   * @returns {Boolean} - if the token is valid
    */
   async checkIfTokenIsValid(email, token) {
     const inner = knex

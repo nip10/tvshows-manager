@@ -52,8 +52,8 @@ passport.use(
       // If the user doesnt exist, we dont want to send that information to the client,
       // just send angeneric error message
       if (!user) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
-      const result = await User.comparePassword(password, user.password);
-      if (!result) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
+      const passwordsMatch = await User.comparePassword(password, user.password);
+      if (!passwordsMatch) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
       return done(null, user);
     } catch (e) {
       return done(e);
