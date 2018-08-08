@@ -14,7 +14,7 @@ exports.up = (knex, Promise) =>
         table.bigint('facebook_id').unique();
         table.string('activationtoken');
         table.boolean('admin').defaultTo(false);
-        table.boolean('active').defaultTo(false);
+        table.boolean('active').defaultTo(true);
         table.string('resetpwtoken');
         table.timestamp('resetpwexp');
         table.timestamp('last_login').defaultTo('2000-01-01 12:00:00');
