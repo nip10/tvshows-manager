@@ -81,7 +81,7 @@ export default class Calendar {
    * Evaluates the number of days from the next month that
    * we need to push to the calendar
    *
-   * @returns {Number} - Number of days of the next month
+   * @returns {Number} Number of days of the next month
    * @memberof Calendar
    */
   daysFromNextMonth() {
@@ -91,7 +91,7 @@ export default class Calendar {
   /**
    * Add user episodes to the calendar
    *
-   * @param {{}[]} eps - Array of episode objects
+   * @param {{}[]} eps Array of episode objects
    * @memberof Calendar
    */
   addEpisodesToCalendar(eps) {

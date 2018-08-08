@@ -65,7 +65,7 @@ const Tvshow = {
   /**
    * Get TheTVDb api token
    *
-   * @returns {String} - TheTVDb api token
+   * @returns {String} TheTVDb api token
    */
   async getToken() {
     const requestOptions = {
@@ -88,7 +88,7 @@ const Tvshow = {
    * Search for a tvshow
    *
    * @param {String} tvshowName - tvshow name
-   * @returns {{id: Number, seriesName: String}[]} - array of tvshow objects
+   * @returns {{id: Number, seriesName: String}[]} array of tvshow objects
    */
   async search(tvshowName) {
     const requestOptions = {
@@ -202,7 +202,7 @@ const Tvshow = {
    *
    * @param {Number} tvshowId - tvshow id
    * @param {String} imageType - artwork type (poster, banner)
-   * @returns {String} - url for the first artwork of specified type
+   * @returns {String} url for the first artwork of specified type
    */
   async getArtworkFromApi(tvshowId, imageType) {
     const requestOptions = {
@@ -232,7 +232,7 @@ const Tvshow = {
    * This array MAY contain a season 0, which is where the special episodes are placed.
    *
    * @param {Number} tvshowId - tvshow id
-   * @returns {Number} - number of seasons
+   * @returns {Number} number of seasons
    */
   async getLatestSeasonFromApi(tvshowId) {
     const requestOptions = {
@@ -260,7 +260,7 @@ const Tvshow = {
    *
    * @param {Number} tvshowId - tvshow id
    * @param {Number} season - season
-   * @returns {{num: number, name: string, airdate: date, overview: string}[]} - tvshow episodes from a particular season
+   * @returns {{num: number, name: string, airdate: date, overview: string}[]} tvshow episodes from a particular season
    */
   async getEpisodesFromSeasonFromApi(tvshowId, season) {
     const requestOptions = {
@@ -294,7 +294,7 @@ const Tvshow = {
    *
    * @param {Number} tvshowId - tvshow id
    * @param {Number} season - season
-   * @returns {{}[]} - episodes from the specified season
+   * @returns {{}[]} episodes from the specified season
    */
   getEpisodesFromSeasonFromDb(tvshowId, season) {
     return knex('episodes')
@@ -315,7 +315,7 @@ const Tvshow = {
    * Get the latest season of a tvshow
    *
    * @param {Number} tvshowId - tvshow id
-   * @returns {Number} - latest season
+   * @returns {Number} latest season
    */
   async getLatestSeasonFromDb(tvshowId) {
     try {
@@ -334,7 +334,7 @@ const Tvshow = {
    * Check if a tvshow is on the database
    *
    * @param {Number} tvshowId - tvshow id
-   * @returns {Boolean} - tvshow is on the database
+   * @returns {Boolean} tvshow is on the database
    */
   async isOnDb(tvshowId) {
     const innerQuery = knex
@@ -375,7 +375,7 @@ const Tvshow = {
      *
      * @param {String} apiToken - TheTVDb apiToken
      * @param {Number} [page=1] - Page to fetch (defaults to 1)
-     * @returns {Boolean} - request successful
+     * @returns {Boolean} request successful
      */
     async function requestPaginated(apiToken, page = 1) {
       const requestOptions = {
@@ -421,7 +421,7 @@ const Tvshow = {
    * Get imdb rating
    *
    * @param {Number} imdbId - tvshow imdb id
-   * @returns {String} - imdb rating
+   * @returns {String} imdb rating
    */
   async getImdbRating(imdbId) {
     const requestOptions = {
@@ -445,7 +445,7 @@ const Tvshow = {
    * @param {Number} userId - user id
    * @param {Number} tvshowId - tvshow id
    * @param {Number} episodeId - episode id
-   * @returns {Boolean} - episode was set as watched
+   * @returns {Boolean} episode was set as watched
    */
   setEpisodeWatched(userId, tvshowId, episodeId) {
     return knex('usereps').insert({
@@ -460,7 +460,7 @@ const Tvshow = {
    * @param {Number} userId - user id
    * @param {Number} tvshowId - tvshow id
    * @param {Number} episodeId - episode id
-   * @returns {Boolean} - episode was set as unwatched
+   * @returns {Boolean} episode was set as unwatched
    */
   setEpisodeUnwatched(userId, tvshowId, episodeId) {
     return knex('usereps')

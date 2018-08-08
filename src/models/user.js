@@ -76,9 +76,27 @@ const User = {
     try {
       const emailExistsOnDb = await knex('users')
         .select('id')
-        .where('email', email)
-        .first();
+        .where({ email });
       return _.defaultTo(emailExistsOnDb.id, null);
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  },
+  /**
+   * Get user details by email.
+   * Returns null if the email does not exist.
+   *
+   * @param {String} email
+   * @returns {User} user object with all details
+   * // TODO: Create a User object type
+   */
+  async getUserByEmail(email) {
+    try {
+      const user = await knex('users')
+        .select('*')
+        .where({ email });
+      return _.defaultTo(user, null);
     } catch (e) {
       console.log(e);
       return null;
@@ -105,9 +123,9 @@ const User = {
   /**
    * Add reset password token to the user
    *
-   * @param {String} email - user email
-   * @param {{ token: String, expiration: date }} reset - reset password token and expiration date
-   * @returns {Boolean} - if the token was added
+   * @param {String} email user email
+   * @param {{ token: String, expiration: date }} reset reset password token and expiration date
+   * @returns {Boolean} if the token was added
    */
   async addActivationTokenToUser(email, token) {
     try {
@@ -144,7 +162,7 @@ const User = {
   /**
    * Check if the activation token is valid
    *
-   * @param {String} reset - activation token
+   * @param {String} reset activation token
    * @returns {Promise}
    */
   isActivationTokenValid(token) {
@@ -307,7 +325,7 @@ const User = {
   /**
    * Check if user account active by token
    *
-   * @param {String} token - user token
+   * @param {String} token user token
    * @returns {Promise}
    */
   isAccountActiveByToken(token) {
@@ -321,7 +339,7 @@ const User = {
   /**
    * Activate user account
    *
-   * @param {String} token - activation token
+   * @param {String} token activation token
    * @returns {Promise}
    */
   activateAccount(token) {
@@ -334,7 +352,7 @@ const User = {
   /**
    * Get watched episodes from an episode id list
    *
-   * @param {Number[]} episodeIds - list of episode ids
+   * @param {Number[]} episodeIds list of episode ids
    * @returns {Promise}
    */
   getWatchedEpisodesById(episodeIds, userId) {
@@ -347,7 +365,7 @@ const User = {
   /**
    * Get unwatched episodes
    *
-   * @param {Number} userId - user id
+   * @param {Number} userId user id
    * @returns {Promise}
    */
   getWatchlist(userId) {
@@ -375,7 +393,7 @@ const User = {
   /**
    * Get number of unwatched episodes
    *
-   * @param {Number} userId - user id
+   * @param {Number} userId user id
    * @returns {Promise}
    */
   getNumberOfUnwatchedEpisodes(userId) {
@@ -399,8 +417,8 @@ const User = {
   /**
    * Reset user password
    *
-   * @param {String} email - user email
-   * @param {String} newPassword - new password
+   * @param {String} email user email
+   * @param {String} newPassword new password
    * @returns {Promise}
    */
   async resetPassword(email, newPassword) {
@@ -418,7 +436,7 @@ const User = {
    * Note: There's no need to break the login flow if this fails. The log will alert for any errors
    * and I should take action on that.
    *
-   * @param {Number} userId - user id
+   * @param {Number} userId user id
    */
   updateLastLogin(userId) {
     return knex('users')

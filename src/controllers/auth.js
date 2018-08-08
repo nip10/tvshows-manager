@@ -20,9 +20,9 @@ const authController = {
   /**
    * Check if a user is logged-in
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
+   * @param {Function} next Express next middleware function
    * @returns {undefined}
    */
   isLoggedIn(req, res, next) {
@@ -35,9 +35,9 @@ const authController = {
    * Check if a user is logged-in
    * If not, set error message in a cookie and redirect to the homepage
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
+   * @param {Function} next Express next middleware function
    * @returns {undefined}
    */
   isLoggedInWithMessage(req, res, next) {
@@ -52,9 +52,9 @@ const authController = {
    * Check if a user is logged-in
    * If true, redirect to /calender
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
+   * @param {Function} next Express next middleware function
    * @returns {undefined}
    */
   isLoggedInWithRedirect(req, res, next) {
@@ -66,9 +66,9 @@ const authController = {
   /**
    * Validate recaptcha
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
+   * @param {Function} next Express next middleware function
    * @returns {undefined}
    */
   async validateRecaptcha(req, res, next) {
@@ -100,8 +100,8 @@ const authController = {
   /**
    * Logout
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   logout(req, res) {
@@ -115,8 +115,8 @@ const authController = {
   /**
    * Request password reset
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async resetPasswordRequest(req, res) {
@@ -162,8 +162,8 @@ const authController = {
   /**
    * Request password reset with token
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async resetPasswordWithToken(req, res) {
@@ -199,8 +199,8 @@ const authController = {
   /**
    * Reset password
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async resetPassword(req, res) {
@@ -234,9 +234,9 @@ const authController = {
   /**
    * Login
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
+   * @param {Function} next Express next middleware function
    * @returns {undefined}
    */
   async login(req, res, next) {
@@ -270,9 +270,9 @@ const authController = {
   /**
    * Login with facebook
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
+   * @param {Function} next Express next middleware function
    * @returns {undefined}
    */
   async loginFb(req, res, next) {
@@ -296,9 +296,9 @@ const authController = {
   /**
    * Signup
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @param {Function} next - Express next middleware function
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
+   * @param {Function} next Express next middleware function
    * @returns {undefined}
    */
   async signup(req, res) {
@@ -336,8 +336,8 @@ const authController = {
   /**
    * Change password
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async changePassword(req, res) {
@@ -360,8 +360,8 @@ const authController = {
   /**
    * Activate user account
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async activateAccount(req, res) {
@@ -386,8 +386,8 @@ const authController = {
   /**
    * Resend activation email
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async resendActivateAccount(req, res) {

@@ -12,8 +12,8 @@ const userController = {
   /**
    * Add tvshow to user
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async addTvshow(req, res) {
@@ -35,8 +35,8 @@ const userController = {
   /**
    * Remove tvshow from user
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async removeTvshow(req, res) {
@@ -60,8 +60,8 @@ const userController = {
   /**
    * Get watchlist page
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async getWatchlist(req, res) {
@@ -111,8 +111,8 @@ const userController = {
   /**
    * Get number of unwatched episodes
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async getNumberOfUnwatchedEpisodes(req, res) {
@@ -127,8 +127,8 @@ const userController = {
   /**
    * Set episode as watched/unwatched
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async setEpisodeWatchedStatus(req, res) {
@@ -163,8 +163,8 @@ const userController = {
   /**
    * Set season as watched
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async setSeasonWatched(req, res) {
@@ -189,8 +189,8 @@ const userController = {
   /**
    * Render user profile
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   getProfile(req, res) {

@@ -36,10 +36,10 @@ async function getLastUpdateFromApi(tvshowId) {
  * This endpoint is paginated, so this function call itself when
  * there are multiple pages available.
  *
- * @param {Number} apiToken - TheTVDb apiToken
- * @param {Number} [page=1] - Page to fetch (defaults to 1)
- * @param {{}[]} [episodes=[]] - Array of episodes (default to empty array)
- * @returns {{}[]} - Array of episodes
+ * @param {Number} apiToken TheTVDb apiToken
+ * @param {Number} [page=1] Page to fetch (defaults to 1)
+ * @param {{}[]} [episodes=[]] Array of episodes (default to empty array)
+ * @returns {{}[]} Array of episodes
  */
 async function getEpisodes(tvshowId, page = 1, episodes = []) {
   const requestOptions = {

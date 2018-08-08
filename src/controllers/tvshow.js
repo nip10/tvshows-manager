@@ -12,8 +12,8 @@ const tvshowsController = {
   /**
    * Search for a tvshow (calls external api)
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    */
   async search(req, res) {
     const tvshowName = _.get(req.params, 'tvshowName');
@@ -30,8 +30,8 @@ const tvshowsController = {
   /**
    * Search for a tvshow and render the search results view.
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    */
   async searchFull(req, res) {
     const tvshowName = _.get(req.params, 'tvshowName');
@@ -49,8 +49,8 @@ const tvshowsController = {
   /**
    * Get episodes from the db
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async getEpisodes(req, res) {
@@ -80,8 +80,8 @@ const tvshowsController = {
    *
    * tvshowdata is the tvshow info + episodes
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async getData(req, res) {
