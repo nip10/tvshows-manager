@@ -5,6 +5,7 @@
         "gulpfile.js",
         "dist/",
         "src/db/migrations/",
+        "src/db/seeds/",
         "src/public/js/**/*.js"
     ]
 }
