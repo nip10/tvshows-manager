@@ -222,7 +222,10 @@ module.exports = {
       return false;
     }
     // User is following this show and wants to remove it
-    $.post(`/tsm/tvshows/${tvshowId}/remove`)
+    $.ajax({
+      url: `/tsm/tvshows/${tvshowId}/remove`,
+      type: 'DELETE',
+    })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status === 200) {
           const tvshowName = $('#tvshow-name')[0].innerText;
@@ -411,7 +414,7 @@ module.exports = {
     const tvshowId = $('div[data-tvshowId]:not(.d-none)').data('tvshowid');
     const episodeid = row.data('epid');
     const setWatched = true;
-    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeid })
+    $.post(`/tsm/tvshows/${tvshowId}/episode/${episodeid}`, { setWatched })
       .done((data, textStatus, jqXHR) => {
         if (jqXHR.status !== 200) {
           toastr.error('Server error. Please try again later.');
@@ -522,8 +525,7 @@ module.exports = {
       const epId = $(el).data('epid');
       if (epId) episodes.push(epId);
     });
-    console.log('episodes array: ', episodes);
-    $.post(`/tsm/tvshows/${tvshowid}/s`, { episodes })
+    $.post(`/tsm/tvshows/${tvshowid}/season/${season}`)
       .done(() => {
         const numEps = episodes.length;
         // update unwatched episodes counter (global)

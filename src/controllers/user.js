@@ -134,25 +134,25 @@ const userController = {
   async setEpisodeWatchedStatus(req, res) {
     const userId = Number.parseInt(req.user, 10);
     const tvshowId = Number.parseInt(req.params.tvshowId, 10);
-    const episodeid = Number.parseInt(req.body.episodeid, 10);
+    const episodeId = Number.parseInt(req.params.episodeId, 10);
     const setWatched = _.get(req.body, 'setWatched');
     if (!_.isFinite(userId)) {
       return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
     } else if (!_.isFinite(tvshowId)) {
       return res.status(500).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isFinite(episodeid)) {
+    } else if (!_.isFinite(episodeId)) {
       return res.status(500).json({ error: ERROR.EPISODE.INVALID_ID });
     } else if (!_.isString(setWatched) || (setWatched !== 'true' && setWatched !== 'false')) {
       return res.status(500).json({ error: ERROR.EPISODE.INVALID_ACTION });
     }
     if (setWatched === 'true') {
       try {
-        await Tvshow.setEpisodeWatched(userId, tvshowId, episodeid);
+        await Tvshow.setEpisodeWatched(userId, tvshowId, episodeId);
       } catch (e) {
         return res.status(400).json({ error: ERROR.EPISODE.ALREADY_WATCHED });
       }
     } else if (setWatched === 'false') {
-      const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeid);
+      const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeId);
       if (setEpisodeUnwatched !== 1) {
         return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
       }
@@ -170,16 +170,20 @@ const userController = {
   async setSeasonWatched(req, res) {
     const userId = Number.parseInt(req.user, 10);
     const tvshowId = Number.parseInt(req.params.tvshowId, 10);
-    const episodes = _.get(req.body, 'episodes');
+    const seasonNum = Number.parseInt(req.params.seasonNum, 10);
     if (!_.isFinite(userId)) {
       return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
-    } else if (!_.isFinite(tvshowId)) {
+    }
+    if (!_.isFinite(tvshowId)) {
       return res.status(500).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (_.isEmpty(episodes)) {
-      return res.status(500).json({ error: ERROR.EPISODE.EMPTY_ARRAY });
     }
     try {
-      await Tvshow.setSeasonWatched(userId, tvshowId, episodes);
+      // Get all episodes from selected season
+      const episodesIds = await Tvshow.getEpisodesFromSeasonFromDb(tvshowId, seasonNum).then(episodes =>
+        _.map(episodes, episode => episode.id)
+      );
+      // Mark them as watched
+      await Tvshow.setSeasonWatched(userId, tvshowId, episodesIds);
       return res.sendStatus(200);
     } catch (e) {
       console.log(e);
