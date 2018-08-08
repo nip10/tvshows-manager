@@ -5,7 +5,7 @@ Check it live [here](https://www.p.dcdev.pt/tsm).
 
 # Tech
 
-- NodeJS (ES6 Javascript)
+- NodeJS (ES6 JavaScript)
 - Web framework: Express
 - Render engine: Pug
 - Database: Postgres (w/ knex)
@@ -28,26 +28,56 @@ Check it live [here](https://www.p.dcdev.pt/tsm).
 
 # About
 
-The structure chosen for this project is based on the MVC architecture, where there's a distinction between logic and data. I went through the SSR aproach to make load times faster and because I felt it was more flexible at the time I started using Pug. This project is a way to test different tech and npm packages: from using gulp to build client and server code, to store sessions in redis and query a postgres db with knex.
+This project structure is based on the MVC architecture, where there's a distinction between logic, data and views. I'm using pug to do server-side rendering which makes load times faster and because I felt it was more flexible at the time I started this project. This project is not supposed to be a production ready webapp (far from it) and was the first "big" project I've worked on. It allowed me to get familiar with the several different parts of building a Node/JS project: use a task runner and build tools (Gulp), design an API (Express), use Redis for session storing, authentication (Passport), database query-builder (knex), etc.. I'll probably write something more detailed on my blog, and remove this wall of text later.
 
-# Todo
+# More details
+- Authentication
+    - Local (email + password)
+    - Social (Facebook)
+    - Misc:
+        - Activation email with token
+        - Recover password
+        - Change password
+        - Persistant login
+- Tvshows + Episodes
+    - If the info is not in the db, it will reach into THETVDB API. Then it'll add it to the db.
+    - Features:
+        - Follow a tvshow
+        - Set episode(s)/season(s) as watched
+- Watchlist
+    - Keep track of all unwatched episodes of all the tvshows that you're following
+- Calendar
+    - Calendar view of all episodes of all tvshows that you're following
+- External APIs used
+    - THETVDB
+        - Used to get tvshows info including episodes and art
+    - OMDBAPI
+        - Used to get IMDB's tvshows ratings
 
-At the moment, I'll be working on this project on a limited time.
-
-This is what I'll work on when I pick this project again:
-- Routes schema/naming
-- External email provider service
-- User profile (very basic)
-- CSS BEM rules
+# Scripts
+- tvdb-api-cron.js
+    - Ran as a child-process to refresh the THETVDB API authentication token. This token is only valid
+for 24h so there's a cronjob that refreshes the token in that interval. The token is then sent to the
+parent process. An alternative would be to store it in the database, but I took the oportunity to test
+new stuff like child-process' and cronjobs.
+- updatetvshows.js
+    - This script queries the THETVDB API to know whether we should update the data on our db or not.
+I took advantage of the previous cronjob to call this script after the token refresh (every 24h)
 
 # What's missing
+aka stuff I'd like to add/do but probably won't (at least in the near future)
 
 - Explore (random tvshows, sorted by genre/favourited/imdb rating/..)
 - More social authentication
-- Public user profile (share what you are watching)
-- Email newsletters
+- User profile
+    -  Social features (sharing lists, episodes, etc)
+    -  Ability to have a public profile
+    -  Stats
+- Email newsletters/updates (all unwatched episodes for last week, month, eth; stats)
 - Testing
-- Fix the way tvshowdb api token is fetched and updated
--
+- Improve the THETVDB token refresh flow
+- Logger
+- Rate limiting
+- Remove jQuery
 
 MIT Licence
