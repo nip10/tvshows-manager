@@ -135,9 +135,9 @@ const authController = {
     }
     const normalizedEmail = validator.normalizeEmail(email);
     try {
-      const userExists = await User.getUserIdByEmail(normalizedEmail);
-      if (!userExists) {
-        return res.status(422).json({ error: ERROR.AUTH.INVALID_EMAIL });
+      const userId = await User.getUserIdByEmail(normalizedEmail);
+      if (!_.isFinite(userId)) {
+        throw new Error();
       }
       const resetParams = {
         token: uuidv4(),
@@ -147,16 +147,16 @@ const authController = {
       };
       const addedToken = await User.addResetTokenToUser(normalizedEmail, resetParams);
       if (!addedToken) throw new Error();
-      const sentEmail = await mail.sendEmail(normalizedEmail, 'reset', { email: normalizedEmail, token: reset.token });
-      if (!sentEmail) {
-        return res.status(400).json({
-          error: `Couldn't send email to ${normalizedEmail}.
-              Please check if the email address is correct and try again. `,
-        });
-      }
+      await Mail.sendEmail(normalizedEmail, 'reset', {
+        email: normalizedEmail,
+        token: resetParams.token,
+      });
       return res.json({ message: 'An email has been sent to your email address.' });
     } catch (e) {
-      return res.status(500).json({ error: ERROR.SERVER });
+      return res.status(400).json({
+        error: `Couldn't send email to ${normalizedEmail}.
+            Please check if the email address is correct and try again. `,
+      });
     }
   },
   /**
@@ -181,7 +181,7 @@ const authController = {
       });
     }
     try {
-      const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
+      const isTokenValid = await User.isResetTokenValid(normalizedEmail, token);
       if (!isTokenValid) {
         return res.status(422).render('error', {
           error: ERROR.AUTH.INVALID_TOKEN,
@@ -222,7 +222,7 @@ const authController = {
       return res.status(422).json({ error: ERROR.AUTH.PASSWORD_MATCH });
     }
     try {
-      const isTokenValid = await User.checkIfTokenIsValid(normalizedEmail, token);
+      const isTokenValid = await User.isResetTokenValid(normalizedEmail, token);
       if (!isTokenValid) return res.status(422).json({ error: ERROR.AUTH.INVALID_TOKEN });
       const resetdPassword = await User.resetPassword(normalizedEmail, password);
       if (!resetdPassword) throw new Error();
@@ -253,8 +253,8 @@ const authController = {
       if (err) return next(err);
       if (!user) return res.status(422).json({ error: info.message });
       try {
-        // TODO: Move this to the local auth strategy implementation
-        const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
+        // TODO: Move this to the local auth strategy implementation ?
+        const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
         if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
         await User.updateLastLogin(user.id);
         return req.logIn(user, err2 => {
@@ -283,19 +283,14 @@ const authController = {
     return passport.authenticate('facebook', async (err, user, info) => {
       if (err) return next(err);
       if (!user) return res.status(422).json({ error: info.message });
-      try {
-        // TODO: Move this to the local auth strategy implementation
-        // const isUserAccountActive = await User.isActive(validateLogin.normalizedEmail);
-        // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
-        await User.updateLastLogin(user.id); // TODO: Test this
-        return req.logIn(user, err2 => {
-          if (err2) return next(err2);
-          return res.sendStatus(200);
-        });
-      } catch (e) {
-        console.log(e);
-        return res.status(500).json({ error: ERROR.SERVER });
-      }
+      // TODO: Move this to the local auth strategy implementation ?
+      // const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
+      // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
+      await User.updateLastLogin(user.id);
+      return req.logIn(user, err2 => {
+        if (err2) return next(err2);
+        return res.sendStatus(200);
+      });
     })(req, res, next);
   },
   /**
@@ -317,24 +312,21 @@ const authController = {
     if (!_.isNil(validateSignup.error)) {
       return res.status(422).json({ error: validateSignup.error });
     }
+    const activateAccountToken = uuidv4();
     try {
-      const activateAccountToken = uuidv4();
-      const user = await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
-      if (user.id) {
-        try {
-          const sentEmail = await mail.sendEmail(email, 'welcome', { token: activateAccountToken });
-          if (!sentEmail) {
-            return res.status(400).json({
-              error: `Couldn't send email to ${email}.
-              Please check if the email address is correct and try again. `,
-            });
-          }
-          return res.sendStatus(201);
-        } catch (e) {
-          return res.status(500).json({ error: ERROR.SERVER });
-        }
-      }
+      await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
+    } catch (e) {
       return res.status(422).json({ error: ERROR.AUTH.EMAIL_EXISTS });
+    }
+    try {
+      const sentEmail = await Mail.sendEmail(email, 'welcome', { token: activateAccountToken });
+      if (!sentEmail) {
+        return res.status(400).json({
+          error: `Couldn't send email to ${email}.
+          Please check if the email address is correct and try again. `,
+        });
+      }
+      return res.sendStatus(201);
     } catch (e) {
       console.log(e);
       return res.status(500).json({ error: ERROR.SERVER });
@@ -353,7 +345,7 @@ const authController = {
     const currentPassword = _.get(req.body, 'currentPassword');
     try {
       const changedPassword = await User.changePassword(userId, currentPassword, newPassword);
-      if (changedPassword && !changedPassword.error) {
+      if (changedPassword === 1 && !changedPassword.error) {
         return res.sendStatus(200);
       } else if (changedPassword.error) {
         return res.status(400).json({ error: changedPassword.error });
@@ -374,14 +366,18 @@ const authController = {
   async activateAccount(req, res) {
     const token = _.get(req.params, 'token');
     try {
-      const activatedAccount = await User.activateAccount(token);
-      if (!activatedAccount) {
+      const isAccountActiveByToken = await User.isAccountActiveByToken(token);
+      if (isAccountActiveByToken) {
         res.cookie('message_error', 'Your account is already activated.');
       } else {
-        res.cookie('message_success', 'Your account has been activated. You can now login.');
+        const activatedAccount = await User.activateAccount(token);
+        if (!activatedAccount) {
+          res.cookie('message_error', 'Invalid activation token.');
+        } else {
+          res.cookie('message_success', 'Your account has been activated. You can now login.');
+        }
       }
     } catch (e) {
-      console.log(e);
       res.cookie('message_error', ERROR.SERVER);
     }
     return res.redirect('/tsm');
@@ -400,23 +396,30 @@ const authController = {
     }
     const normalizedEmail = validator.normalizeEmail(email);
     try {
-      const validateUser = await Promise.all([User.getUserIdByEmail(email), User.isActive(email)]);
-      if (validateUser[0].id && !validateUser[1]) {
+      const validateUser = await Promise.all([
+        User.getUserIdByEmail(normalizedEmail),
+        User.isAccountActiveByEmail(normalizedEmail),
+      ]);
+      if (!_.isFinite(validateUser[0])) {
+        // User account doesn't exist. I don't want to inform the user that the email doesn't
+        // exist, so I just throw a generic server error
+        throw new Error();
+      }
+      if (_.isFinite(validateUser[0]) && !validateUser[1]) {
+        // User account exists and is not activated
         const activationToken = uuidv4();
-        const addedToken = await User.addActivationTokenToUser(email, activationToken);
+        const addedToken = await User.addActivationTokenToUser(normalizedEmail, activationToken);
         if (!addedToken) throw new Error();
-        const sentEmail = await mail.sendEmail(email, 'welcome', { token: activationToken });
+        const sentEmail = await Mail.sendEmail(normalizedEmail, 'welcome', { token: activationToken });
         if (!sentEmail) {
           return res.status(400).json({
-            error: `Couldn't send email to ${email}.
+            error: `Couldn't send email to ${normalizedEmail}.
                 Please check if the email address is correct and try again. `,
           });
         }
-        return res.json({ message: `Activation email sent to ${email}` });
-      } else if (validateUser[0] && validateUser[1]) {
-        return res.status(400).json({ error: 'Your account is already activated.' });
+        return res.json({ message: `Activation email sent to ${normalizedEmail}` });
       }
-      throw new Error();
+      return res.status(400).json({ error: 'Your account is already activated.' });
     } catch (e) {
       console.log(e);
       return res.status(500).json({ error: ERROR.SERVER });

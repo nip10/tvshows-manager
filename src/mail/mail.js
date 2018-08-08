@@ -7,8 +7,8 @@ dotenv.config();
 const { NODE_ENV, EMAIL_HOST, EMAIL_PORT, EMAIL_AUTH_USER, EMAIL_AUTH_PASSWORD, EMAIL_REPLYTO, HOSTNAME } = process.env;
 const isDev = NODE_ENV === 'development';
 
-  async sendEmail(to, template, locals) {
 const Mail = {
+  sendEmail(to, template, locals) {
     const email = new Email({
       message: {
         from: `${EMAIL_AUTH_USER}@${HOSTNAME}`,
@@ -36,17 +36,11 @@ const Mail = {
         },
       },
     });
-    try {
-      await email.send({
-        template,
-        message: { to },
-        locals,
-      });
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
+    return email.send({
+      template,
+      message: { to },
+      locals,
+    });
   },
 };
 

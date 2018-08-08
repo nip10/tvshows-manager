@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import knex from '../db/connection';
 import User from './../models/user';
 import Tvshow from './../models/tvshow';
 import { ERROR } from '../utils/constants';
@@ -17,27 +16,20 @@ const userController = {
    * @param {Object} res - Express response object
    * @returns {undefined}
    */
-  async addTvshowToUser(req, res) {
-    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
-    const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isFinite(tvshowId)) {
-      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isFinite(userId)) {
+  async addTvshow(req, res) {
+    const tvshowId = Number.parseInt(req.params.tvshowId, 10);
+    const userId = Number.parseInt(req.user, 10);
+    if (!_.isFinite(userId)) {
       return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
+    } else if (!_.isFinite(tvshowId)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
     }
     try {
-      const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
-      if (isUserFollowingTvshow) {
-        return res.status(400).json({ error: ERROR.TVSHOW.ALREADY_FOLLOWING });
-      }
-      const addTvshowToUser = await User.addTvshow(userId, tvshowId);
-      if (addTvshowToUser) {
-        return res.sendStatus(200);
-      }
-      throw new Error();
+      await User.addTvshow(userId, tvshowId);
+      return res.sendStatus(200);
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: ERROR.SERVER });
+      return res.status(400).json({ error: ERROR.TVSHOW.ALREADY_FOLLOWING });
     }
   },
   /**
@@ -47,72 +39,22 @@ const userController = {
    * @param {Object} res - Express response object
    * @returns {undefined}
    */
-  async removeTvshowFromUser(req, res) {
-    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
-    const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isFinite(tvshowId)) {
-      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isFinite(userId)) {
+  async removeTvshow(req, res) {
+    const tvshowId = Number.parseInt(req.params.tvshowId, 10);
+    const userId = Number.parseInt(req.user, 10);
+    if (!_.isFinite(userId)) {
       return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
+    } else if (!_.isFinite(tvshowId)) {
+      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
     }
     try {
-      const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
-      if (!isUserFollowingTvshow) {
-        return res.status(400).json({ error: ERROR.TVSHOW.NOT_FOLLOWING });
-      }
-      const removeTvshowFromUser = await User.removeTvshow(userId, tvshowId);
-      if (removeTvshowFromUser) {
+      const removedTvshow = await User.removeTvshow(userId, tvshowId);
+      if (removedTvshow === 1) {
         return res.sendStatus(200);
       }
       throw new Error();
     } catch (e) {
-      console.log(e);
-      return res.status(500).json({ error: ERROR.SERVER });
-    }
-  },
-  /**
-   * Follow/Unfollow a tvshow
-   *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
-   * @returns {undefined}
-   */
-  async setFollowingTvshow(req, res) {
-    const action = _.get(req, 'body.action');
-    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
-    const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isFinite(tvshowId)) {
-      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ID });
-    } else if (!_.isFinite(userId)) {
-      return res.status(400).json({ error: ERROR.AUTH.INVALID_ID });
-    } else if (!_.isString(action) || (action !== 'add' && action !== 'remove')) {
-      // TODO: Check if lodash has something like "isEnum"
-      return res.status(400).json({ error: ERROR.TVSHOW.INVALID_ACTION });
-    }
-    try {
-      if (action === 'add') {
-        const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
-        if (isUserFollowingTvshow) {
-          return res.status(400).json({ error: ERROR.TVSHOW.ALREADY_FOLLOWING });
-        }
-        const addTvshowToUser = await User.addTvshow(userId, tvshowId);
-        if (addTvshowToUser) {
-          return res.sendStatus(200);
-        }
-      } else if (action === 'remove') {
-        const isUserFollowingTvshow = await User.isFollowingTvshow(userId, tvshowId);
-        if (!isUserFollowingTvshow) {
-          return res.status(400).json({ error: ERROR.TVSHOW.NOT_FOLLOWING });
-        }
-        const removeTvshowFromUser = await User.removeTvshow(userId, tvshowId);
-        if (removeTvshowFromUser) {
-          return res.sendStatus(200);
-        }
-      }
-      throw new Error();
-    } catch (e) {
-      console.log(e);
-      return res.status(500).json({ error: ERROR.SERVER });
+      return res.status(400).json({ error: ERROR.TVSHOW.NOT_FOLLOWING });
     }
   },
   /**
@@ -123,21 +65,16 @@ const userController = {
    * @returns {undefined}
    */
   async getWatchlist(req, res) {
-    const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isFinite(userId)) {
-      return res.render('watchlist', {
-        sidebarIndex: 'watchlist',
-      });
-    }
+    const userId = Number.parseInt(req.user, 10);
     let watchlist = null;
     let unwatchedEpisodesCount = null;
     try {
       // Fetch unwatched episodes
       const unwatchedEpisodes = await User.getWatchlist(userId);
       // Group unwatched episodes by tvshowId
-      // Remove unecessary property tvshowId from all episodes
+      // Remove unnecessary property tvshowId from all episodes
       /* eslint-disable no-param-reassign */
-      unwatchedEpisodesCount = _.defaultTo(unwatchedEpisodes.length, null);
+      unwatchedEpisodesCount = unwatchedEpisodes.length;
       watchlist = _(unwatchedEpisodes)
         .groupBy('tvshowId')
         .map((items, tvshowId) => ({
@@ -149,6 +86,7 @@ const userController = {
         }))
         .value();
       /* eslint-enable no-param-reassign */
+      // Group unwatched episodes by season
       watchlist = _.map(watchlist, el => ({
         tvshowId: el.tvshowId,
         data: _(el.episodes)
@@ -158,10 +96,7 @@ const userController = {
       }));
       // Get all different tvshowIds from the unwatched episodes to fetch their posters
       const tvshowIds = _.map(watchlist, 'tvshowId');
-      const tvshowPosters = await knex('tvshows')
-        .select('images', 'name as tvshowName')
-        .select(knex.raw('to_char(thetvdb, \'FM99999999\') as "tvshowId"'))
-        .whereRaw('thetvdb = ANY(?)', [tvshowIds]);
+      const tvshowPosters = await Tvshow.getPosters(tvshowIds);
       watchlist = _.map(watchlist, item => _.extend(item, _.find(tvshowPosters, { tvshowId: item.tvshowId })));
       // TODO: Merge the above maps if possible (check notes for code snippet)
     } catch (e) {
@@ -181,12 +116,11 @@ const userController = {
    * @returns {undefined}
    */
   async getNumberOfUnwatchedEpisodes(req, res) {
-    const userId = parseInt(_.get(req, 'user'), 10);
+    const userId = Number.parseInt(req.user, 10);
     try {
       const unwatchedEpisodesCount = await User.getNumberOfUnwatchedEpisodes(userId);
       return res.json({ unwatchedEpisodesCount });
     } catch (e) {
-      console.log(e);
       return res.status(500).json({ error: ERROR.SERVER });
     }
   },
@@ -197,12 +131,11 @@ const userController = {
    * @param {Object} res - Express response object
    * @returns {undefined}
    */
-  async setEpisodeWatchedStatus(req, res, next) {
+  async setEpisodeWatchedStatus(req, res) {
     const userId = Number.parseInt(req.user, 10);
     const tvshowId = Number.parseInt(req.params.tvshowId, 10);
     const episodeid = Number.parseInt(req.body.episodeid, 10);
-    const setWatched = _.get(req, 'body.setWatched');
-    // const setWatched = 'false';
+    const setWatched = _.get(req.body, 'setWatched');
     if (!_.isFinite(userId)) {
       return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
     } else if (!_.isFinite(tvshowId)) {
@@ -212,23 +145,20 @@ const userController = {
     } else if (!_.isString(setWatched) || (setWatched !== 'true' && setWatched !== 'false')) {
       return res.status(500).json({ error: ERROR.EPISODE.INVALID_ACTION });
     }
-    try {
-      if (setWatched === 'true') {
-        const setEpisodeWatched = await Tvshow.setEpisodeWatched(userId, tvshowId, episodeid);
-        if (!setEpisodeWatched) {
-          return res.status(400).json({ error: ERROR.EPISODE.ALREADY_WATCHED });
-        }
-      } else if (setWatched === 'false') {
-        const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeid);
-        if (!setEpisodeUnwatched) {
-          return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
-        }
+    if (setWatched === 'true') {
+      try {
+        await Tvshow.setEpisodeWatched(userId, tvshowId, episodeid);
+      } catch (e) {
+        return res.status(400).json({ error: ERROR.EPISODE.ALREADY_WATCHED });
       }
-      return res.sendStatus(200);
-    } catch (e) {
-      console.log(e);
+    } else if (setWatched === 'false') {
+      const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeid);
+      if (setEpisodeUnwatched !== 1) {
+        return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
+      }
       return res.status(500).json({ error: ERROR.SERVER });
     }
+    return res.sendStatus(200);
   },
   /**
    * Set season as watched
@@ -238,9 +168,9 @@ const userController = {
    * @returns {undefined}
    */
   async setSeasonWatched(req, res) {
-    const userId = parseInt(_.get(req, 'user'), 10);
-    const tvshowId = parseInt(_.get(req, 'params.tvshowId'), 10);
-    const episodes = _.get(req, 'body.episodes');
+    const userId = Number.parseInt(req.user, 10);
+    const tvshowId = Number.parseInt(req.params.tvshowId, 10);
+    const episodes = _.get(req.body, 'episodes');
     if (!_.isFinite(userId)) {
       return res.status(500).json({ error: ERROR.AUTH.INVALID_ID });
     } else if (!_.isFinite(tvshowId)) {
@@ -249,12 +179,11 @@ const userController = {
       return res.status(500).json({ error: ERROR.EPISODE.EMPTY_ARRAY });
     }
     try {
-      const setSeasonWatched = await Tvshow.setSeasonWatched(userId, tvshowId, episodes);
-      if (setSeasonWatched) return res.sendStatus(200);
-      throw new Error();
+      await Tvshow.setSeasonWatched(userId, tvshowId, episodes);
+      return res.sendStatus(200);
     } catch (e) {
       console.log(e);
-      return res.status(500).json({ error: ERROR.SERVER });
+      return res.status(400).json({ error: ERROR.SEASON.ALREADY_WATCHED });
     }
   },
   /**
@@ -265,12 +194,7 @@ const userController = {
    * @returns {undefined}
    */
   getProfile(req, res) {
-    const userId = parseInt(_.get(req, 'user'), 10);
-    if (!_.isFinite(userId)) {
-      return res.status(400).render('error', {
-        error: ERROR.AUTH.INVALID_ID,
-      });
-    }
+    const userId = Number.parseInt(req.user, 10);
     return res.render('user', {
       id: userId,
     });

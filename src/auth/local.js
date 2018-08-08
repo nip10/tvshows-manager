@@ -97,12 +97,11 @@ passport.use(
       if (!_.isFinite(userId)) {
         const username = profile.displayName.split(' ')[0];
         const activateAccountToken = uuidv4();
-        const newUser = await User.createFbUser(username, normalizedEmail, fbId, activateAccountToken);
-        return done(null, newUser);
+        const newUserId = await User.createFbUser(username, normalizedEmail, fbId, activateAccountToken);
+        return done(null, { id: newUserId });
       }
-      return done(null, userExists); // TODO: Consider changing to a more explicit name
+      return done(null, { id: userId });
     } catch (e) {
-      return done(e); // TODO: Test this
       return done(e);
     }
   })
