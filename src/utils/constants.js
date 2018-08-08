@@ -16,7 +16,11 @@ export const ERROR = {
     INVALID_TOKEN: 'Invalid token.',
     ALREADY_AUTHENTICATED: 'You are already authenticated.',
     NOT_ACTIVATED: 'You need to activate your account first.',
+    ALREADY_ACTIVATED: 'Your account is already activated.',
     INVALID_CREDENTIALS: 'Invalid credentials',
+    EMAIL_NOT_SENT: _.template(
+      "Couldn't send email to ${normalizedEmail}. Please check if the email address is correct and try again."
+    ),
   },
   BUG: {
     DESCRIPTION: 'Please fill in the bug description. Only alphanumerical characters are allowed.',
@@ -41,6 +45,14 @@ export const ERROR = {
   SEASON: {
     ALREADY_WATCHED: 'You already set this season as watched.',
     ALREADY_UNWATCHED: 'You already set this season as unwatched.',
+  },
+};
+
+export const SUCCESS = {
+  AUTH: {
+    EMAIL_SENT: _.template('Activation email sent to ${normalizedEmail}'),
+    ACTIVATED: 'Your account has been activated.',
+    PASSWORD_CHANGE: 'Password changed successfully.',
   },
 };
 

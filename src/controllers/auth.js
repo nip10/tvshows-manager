@@ -5,7 +5,7 @@ import rp from 'request-promise';
 import _ from 'lodash';
 import passport from '../auth/local';
 import User from '../models/user';
-import { ERROR } from '../utils/constants';
+import { ERROR, SUCCESS } from '../utils/constants';
 import Mail from '../mail/mail';
 
 const { RECAPTCHA_SECRET, NODE_ENV, RECAPTCHA_VERIFY_URL, RESET_PASSWORD_TOKEN_EXPIRATION } = process.env;
@@ -151,12 +151,9 @@ const authController = {
         email: normalizedEmail,
         token: resetParams.token,
       });
-      return res.json({ message: 'An email has been sent to your email address.' });
+      return res.json({ message: SUCCESS.AUTH.EMAIL_SENT({ normalizedEmail }) });
     } catch (e) {
-      return res.status(400).json({
-        error: `Couldn't send email to ${normalizedEmail}.
-            Please check if the email address is correct and try again. `,
-      });
+      return res.status(400).json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail }) });
     }
   },
   /**
@@ -226,7 +223,7 @@ const authController = {
       if (!isTokenValid) return res.status(422).json({ error: ERROR.AUTH.INVALID_TOKEN });
       const resetdPassword = await User.resetPassword(normalizedEmail, password);
       if (!resetdPassword) throw new Error();
-      return res.json({ message: 'Password changed successfully.' });
+      return res.json({ message: SUCCESS.AUTH.PASSWORD_CHANGE });
     } catch (e) {
       return res.status(500).json({ error: ERROR.SERVER });
     }
@@ -314,18 +311,17 @@ const authController = {
     }
     // const activateAccountToken = uuidv4();
     try {
-      await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
+      // await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
+      await User.createUser(validateSignup.normalizedEmail, password, null);
       return res.sendStatus(201);
     } catch (e) {
       return res.status(422).json({ error: ERROR.AUTH.EMAIL_EXISTS });
     }
     // try {
-    //   const sentEmail = await Mail.sendEmail(email, 'welcome', { token: activateAccountToken });
+    //   const sentEmail = await Mail.sendEmail(validateSignup.normalizedEmail, 'welcome', { token: activateAccountToken });
     //   if (!sentEmail) {
     //     return res.status(400).json({
-    //       error: `Couldn't send email to ${email}.
-    //       Please check if the email address is correct and try again. `,
-    //     });
+    //       error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail: validateSignup.normalizedEmail }) });
     //   }
     //   return res.sendStatus(201);
     // } catch (e) {
@@ -369,13 +365,13 @@ const authController = {
     try {
       const isAccountActiveByToken = await User.isAccountActiveByToken(token);
       if (isAccountActiveByToken) {
-        res.cookie('message_error', 'Your account is already activated.');
+        res.cookie('message_error', ERROR.AUTH.ALREADY_ACTIVATED);
       } else {
         const activatedAccount = await User.activateAccount(token);
         if (!activatedAccount) {
-          res.cookie('message_error', 'Invalid activation token.');
+          res.cookie('message_error', ERROR.AUTH.INVALID_TOKEN);
         } else {
-          res.cookie('message_success', 'Your account has been activated. You can now login.');
+          res.cookie('message_success', SUCCESS.AUTH.ACTIVATED);
         }
       }
     } catch (e) {
@@ -413,14 +409,11 @@ const authController = {
         if (!addedToken) throw new Error();
         const sentEmail = await Mail.sendEmail(normalizedEmail, 'welcome', { token: activationToken });
         if (!sentEmail) {
-          return res.status(400).json({
-            error: `Couldn't send email to ${normalizedEmail}.
-                Please check if the email address is correct and try again. `,
-          });
+          return res.status(400).json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail }) });
         }
-        return res.json({ message: `Activation email sent to ${normalizedEmail}` });
+        return res.json({ message: SUCCESS.AUTH.EMAIL_SENT(normalizedEmail) });
       }
-      return res.status(400).json({ error: 'Your account is already activated.' });
+      return res.status(400).json({ error: ERROR.AUTH.ALREADY_ACTIVATED });
     } catch (e) {
       console.log(e);
       return res.status(500).json({ error: ERROR.SERVER });
