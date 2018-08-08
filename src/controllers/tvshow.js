@@ -42,7 +42,7 @@ const tvshowsController = {
       const tvshows = await Tvshow.search(tvshowName);
       return res.render('search', { tvshows });
     } catch (e) {
-      // TODO: This should render the search page with an error msg informing 'no tvshows found'
+      // TODO: add error msg 'no tvshows found'
       return res.status(500).render('error');
     }
   },

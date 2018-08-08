@@ -103,21 +103,18 @@ const Tvshow = {
       },
       json: true,
     };
-    try {
-      const { data } = await rp(requestOptions);
-      const filteredData = _.map(data, tvshow => {
+    // There's no need to check if the data exist because the api returns 404 when there are
+    // no results.
+    return rp(requestOptions).then(({ data }) =>
+      _.map(data, tvshow => {
         if (_.isEmpty(tvshow.status)) {
           tvshow.status = 'NA'; // eslint-disable-line no-param-reassign
         } else if (tvshow.status === 'Continuing') {
           tvshow.status = 'Running'; // eslint-disable-line no-param-reassign
         }
         return _.pick(tvshow, ['id', 'seriesName', 'banner', 'status']);
-      });
-      return filteredData;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
+      })
+    );
   },
   /**
    * Get information about a tvshow from the external api
@@ -299,24 +296,20 @@ const Tvshow = {
    * @param {Number} season - season
    * @returns {{}[]} - episodes from the specified season
    */
-  async getEpisodesFromSeasonFromDb(tvshowId, season) {
-    try {
-      const getEpisodesFromDb = await knex('episodes')
-        .select('epnum', 'title', 'id')
-        .select(knex.raw('to_char(airdate, \'DD-MM-YYYY\') as "airdate"'))
-        .where({ tvshow_id: tvshowId, season })
-        .orderBy('epnum', 'asc');
-      const episodes = _.map(getEpisodesFromDb, episode => ({
-        id: episode.id,
-        num: episode.epnum,
-        name: episode.title,
-        airdate: episode.airdate,
-      }));
-      return episodes;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
+  getEpisodesFromSeasonFromDb(tvshowId, season) {
+    return knex('episodes')
+      .select('epnum', 'title', 'id')
+      .select(knex.raw('to_char(airdate, \'DD-MM-YYYY\') as "airdate"'))
+      .where({ tvshow_id: tvshowId, season })
+      .orderBy('epnum', 'asc')
+      .then(dbResp =>
+        _.map(dbResp, episode => ({
+          id: episode.id,
+          num: episode.epnum,
+          name: episode.title,
+          airdate: episode.airdate,
+        }))
+      );
   },
   /**
    * Get the latest season of a tvshow
@@ -454,18 +447,12 @@ const Tvshow = {
    * @param {Number} episodeId - episode id
    * @returns {Boolean} - episode was set as watched
    */
-  async setEpisodeWatched(userId, tvshowId, episodeId) {
-    try {
-      await knex('usereps').insert({
-        user_id: userId,
-        tvshow_id: tvshowId,
-        ep_id: episodeId,
-      });
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
+  setEpisodeWatched(userId, tvshowId, episodeId) {
+    return knex('usereps').insert({
+      user_id: userId,
+      tvshow_id: tvshowId,
+      ep_id: episodeId,
+    });
   },
   /**
    * Set episode as unwatched
@@ -475,20 +462,14 @@ const Tvshow = {
    * @param {Number} episodeId - episode id
    * @returns {Boolean} - episode was set as unwatched
    */
-  async setEpisodeUnwatched(userId, tvshowId, episodeId) {
-    try {
-      await knex('usereps')
-        .del()
-        .where({
-          user_id: userId,
-          tvshow_id: tvshowId,
-          ep_id: episodeId,
-        });
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
+  setEpisodeUnwatched(userId, tvshowId, episodeId) {
+    return knex('usereps')
+      .del()
+      .where({
+        user_id: userId,
+        tvshow_id: tvshowId,
+        ep_id: episodeId,
+      });
   },
   /**
    * Set season as watched
@@ -498,19 +479,13 @@ const Tvshow = {
    * @param {Number[]} episodesId - all episode id's from a season
    * @returns {Promise}
    */
-  async setSeasonWatched(userId, tvshowId, episodesId) {
+  setSeasonWatched(userId, tvshowId, episodesId) {
     const queryData = _.map(episodesId, episodeId => ({
       user_id: userId,
       tvshow_id: tvshowId,
       ep_id: episodeId,
     }));
-    try {
-      const seasonWatched = await knex('usereps').insert(queryData);
-      return seasonWatched.rowCount === queryData.length;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
+    return knex('usereps').insert(queryData);
   },
   /**
    * Filter season finale episodes from a set of episodes
@@ -518,22 +493,17 @@ const Tvshow = {
    * @param {[{}]} episodeIds episode id's
    * @returns {[{}]} season finale episode id's
    */
-  async getSeasonFinaleEpisodes(episodeIds) {
-    try {
-      const seasonFinaleEpisodes = await knex('episodes')
-        .select('id')
-        .from(
-          knex.raw(
-            '(SELECT *, ROW_NUMBER() OVER (PARTITION BY tvshow_id, season ORDER BY epnum DESC) AS ranking FROM episodes)C'
-          )
+  getSeasonFinaleEpisodes(episodeIds) {
+    return knex('episodes')
+      .select('id')
+      .from(
+        knex.raw(
+          '(SELECT *, ROW_NUMBER() OVER (PARTITION BY tvshow_id, season ORDER BY epnum DESC) AS ranking FROM episodes)C'
         )
-        .where({ ranking: 1 })
-        .whereIn('id', episodeIds);
-      return seasonFinaleEpisodes;
-    } catch (e) {
-      console.log(e);
-      return null;
-    }
+      )
+      .where({ ranking: 1 })
+      .whereIn('id', episodeIds);
+  },
   /**
    * Get posters for tvshows
    *
