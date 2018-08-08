@@ -10,8 +10,8 @@ router.get('/search_full/:tvshowName', searchFull);
 router.get('/:tvshowId', getData);
 router.get('/:tvshowId/episodes', getEpisodes);
 router.post('/:tvshowId/add', isLoggedIn, addTvshow);
-router.post('/:tvshowId/remove', isLoggedIn, removeTvshow);
-router.post('/:tvshowId/ep', isLoggedIn, setEpisodeWatchedStatus);
-router.post('/:tvshowId/s', isLoggedIn, setSeasonWatched);
+router.delete('/:tvshowId/remove', isLoggedIn, removeTvshow);
+router.post('/:tvshowId/episode/:episodeId', isLoggedIn, setEpisodeWatchedStatus);
+router.post('/:tvshowId/season/:seasonNum', isLoggedIn, setSeasonWatched);
 
 module.exports = router;
