@@ -14,8 +14,8 @@ const calendarController = {
   /**
    * Render calendar
    *
-   * @param {Object} req - Express request object
-   * @param {Object} res - Express response object
+   * @param {Object} req Express request object
+   * @param {Object} res Express response object
    * @returns {undefined}
    */
   async getCalendar(req, res) {

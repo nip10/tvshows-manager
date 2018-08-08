@@ -22,6 +22,7 @@ passport.serializeUser((user, done) => done(null, user.id));
 
 passport.deserializeUser(async (id, done) => {
   try {
+    // TODO: Move this to the User model
     const user = await knex('users')
       .where({ id })
       .first();
@@ -46,11 +47,9 @@ const localOptions = {
 passport.use(
   new LocalStrategy(localOptions, async (email, password, done) => {
     try {
-      const user = await knex('users')
-        .where({ email })
-        .first();
+      const user = User.getUserByEmail(email);
       // If the user doesnt exist, we dont want to send that information to the client,
-      // just send angeneric error message
+      // just send a generic error message
       if (!user) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
       const passwordsMatch = await User.comparePassword(password, user.password);
       if (!passwordsMatch) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
