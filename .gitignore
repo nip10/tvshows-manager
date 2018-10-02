@@ -61,7 +61,7 @@ typings/
 .vscode
 
 # todo files
-*.todo
+# *.todo
 
 # dist folder
 dist
