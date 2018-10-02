@@ -42,11 +42,11 @@ block content
                                                         ul
                                                             each episode in calendar.calendarData[k + j].episodes
                                                                 li(class={'watched' : episode.watched}).d-none.d-md-block
-                                                                    - if (j + k <= calendar.daysFromPreviousMonth + calendar.day - 1) {
-                                                                        .calendar__cell--checkbox
-                                                                            input(type='checkbox', id=`episode-${episode.id}`, data-tvshowid=episode.thetvdb, data-episodeid=episode.id, checked=(episode.watched) ? true : false)
-                                                                            label(for=`episode-${episode.id}`)
-                                                                    - }
+                                                                    //- - if (j + k <= calendar.daysFromPreviousMonth + calendar.day - 1) {
+                                                                    .calendar__cell--checkbox
+                                                                        input(type='checkbox', id=`episode-${episode.id}`, data-tvshowid=episode.thetvdb, data-episodeid=episode.id, checked=(episode.watched) ? true : false)
+                                                                        label(for=`episode-${episode.id}`)
+                                                                    //- - }
                                                                     a(href='/tsm/tvshows/' + episode.thetvdb, class={'red' : episode.isSeasonFinale}, class={'green' : episode.isSeasonBegin}).calendar__cell--tvshow= episode.name
                                                                     span.calendar__cell--episode= `${episode.title || 'TBC'} (S${episode.season}E${episode.epnum})`
                                                                 li.d-md-none
