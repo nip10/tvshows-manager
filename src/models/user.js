@@ -94,7 +94,8 @@ const User = {
     try {
       const user = await knex('users')
         .select('*')
-        .where({ email });
+        .where({ email })
+        .first();
       return _.defaultTo(user, null);
     } catch (e) {
       console.log(e);
