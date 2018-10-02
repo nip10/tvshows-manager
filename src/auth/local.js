@@ -47,7 +47,7 @@ const localOptions = {
 passport.use(
   new LocalStrategy(localOptions, async (email, password, done) => {
     try {
-      const user = User.getUserByEmail(email);
+      const user = await User.getUserByEmail(email);
       // If the user doesnt exist, we dont want to send that information to the client,
       // just send a generic error message
       if (!user) return done(null, false, { message: ERROR.AUTH.INVALID_CREDENTIALS });
