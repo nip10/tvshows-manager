@@ -6,6 +6,7 @@ const fs = require('fs');
 const gulp = require('gulp');
 const runSequence = require('run-sequence');
 const watch = require('gulp-watch');
+const path = require('path');
 
 const buildProdTaskList = [];
 const buildDevTaskList = [];
@@ -14,7 +15,7 @@ const watchTaskList = [];
 // Exit if the config file is not present
 if (!config) {
   console.error('No config file provided. Make sure you have gulp-config.js in the root of your project.');
-  // TODO: Exit on error
+  // TODO: Exit on error with process.exit
 }
 
 // Get all tasks from the config file
@@ -22,9 +23,9 @@ Object.keys(config.tasks).forEach(taskName => {
   // Check if the task has a name
   if (Object.prototype.hasOwnProperty.call(config.tasks, taskName)) {
     // Check if the task file exists
-    if (fs.existsSync(`./gulp-tasks/${taskName}.js`)) {
+    if (fs.existsSync(path.join(__dirname, 'gulp-tasks', `${taskName.toLowerCase()}.js`))) {
       // Import the task file
-      gulp.task(taskName, require(`./gulp-tasks/${taskName}`));
+      gulp.task(taskName, require(path.join(__dirname, 'gulp-tasks', `${taskName.toLowerCase()}.js`)));
     }
     const task = config.tasks[taskName];
     buildProdTaskList.push(taskName);
