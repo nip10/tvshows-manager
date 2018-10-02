@@ -1,6 +1,6 @@
 # TvShows-Manager
 
-Allows you to explore and manage your favourite tvshows.
+Allows you to explore and manage your favorite tvshows.
 Check it live [here](https://www.p.dcdev.pt/tsm).
 
 # Tech
@@ -16,9 +16,10 @@ Check it live [here](https://www.p.dcdev.pt/tsm).
 # Usage
 
 1. Clone/Fork the repo
-2. Edit .env.sample and rename to .env
-3. Build client and server
-4. Deploy
+2. Install dependencies
+3. Edit .env.sample and rename to .env
+4. Build client and server
+5. Deploy
     - With Docker: Build docker image, Run docker-compose up, Run migrate.sh
     - Witout Docker: Run db migrations, Run the app
 
