@@ -21,7 +21,7 @@ require('./cookies');
     $('#bug-form').submit(e => handlers.bug(e));
     $('#toggle-sidebar').click(e => handlers.toggleSidebar(e));
     $('#close-sidebar').click(e => handlers.closeSidebar(e));
-    $('.poster > img').click(e => handlers.watchlistPosters(e));
+    $('.watchlist__list-poster > img').click(e => handlers.watchlistPosters(e));
     $('div[data-tvshowid] table > tbody > tr > td > span.icon-eye').click(e => handlers.setEpisodeWatched(e));
     $('.mark-watched').click(e => handlers.setSeasonWatched(e));
     $('.calendar__table input[type=checkbox]').change(e => handlers.changeEpisodeWatchedStatusCalendar(e));
