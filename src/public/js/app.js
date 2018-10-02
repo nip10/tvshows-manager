@@ -29,7 +29,7 @@ require('./cookies');
     $('#resend-activation').click(e => handlers.resendActivation(e));
     $('#mobilemenu').click(e => handlers.toggleSidebarMobile(e));
     $('#search-form').submit(e => handlers.search(e));
-    $('.watchlist-list select').change(e => handlers.watchlistSelect(e));
+    $('.watchlist__list select').change(e => handlers.watchlistSelect(e));
     $('.calendar__day').on('touchstart', e => handlers.selectCalendarDay(e));
     $('td.overview span').click(e => handlers.showFullText(e));
     $('#eplist i').click(e => handlers.changeEpisodeWatchedStatusCalendarMobile(e));

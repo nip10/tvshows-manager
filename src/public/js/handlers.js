@@ -436,9 +436,9 @@ module.exports = {
             row.remove();
           }
           // update unwatched episodes counter (global)
-          const counterGlobal = $('.counter span').text();
+          const counterGlobal = $('#sidebar-counter').text();
           const updatedCounterGlobal = counterGlobal - 1;
-          $('.counter span').text(updatedCounterGlobal);
+          $('#sidebar-counter').text(updatedCounterGlobal);
           // update unwatched episodes counter (poster)
           let counterPoster = $(`li[data-tvshowid=${tvshowId}] span`).text();
           $(`li[data-tvshowid=${tvshowId}] span`).text((counterPoster -= 1));
@@ -529,9 +529,9 @@ module.exports = {
       .done(() => {
         const numEps = episodes.length;
         // update unwatched episodes counter (global)
-        const globalCounter = Number.parseInt($('.counter span').text(), 10);
+        const globalCounter = Number.parseInt($('#sidebar-counter').text(), 10);
         const updatedCounter = globalCounter - numEps;
-        $('.counter span').text(updatedCounter);
+        $('#sidebar-counter').text(updatedCounter);
         // update unwatched episides counter (sidebar)
         functions.updateUnwatchedEpisodesCounter(updatedCounter);
         // update unwatched episodes counter (poster)
@@ -569,7 +569,7 @@ module.exports = {
   changeEpisodeWatchedStatusCalendar(event) {
     const setWatched = event.target.checked;
     const { tvshowid, episodeid } = event.target.dataset;
-    $.post(`/tsm/tvshows/${tvshowid}/ep`, { setWatched, episodeid })
+    $.post(`/tsm/tvshows/${tvshowid}/episode/${episodeid}`, { setWatched })
       .done(() => {
         const oldCount = Number.parseInt($('#sidebar-counter').text(), 10);
         if (setWatched) {
