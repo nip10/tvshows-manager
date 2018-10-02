@@ -152,11 +152,14 @@ const userController = {
         return res.status(400).json({ error: ERROR.EPISODE.ALREADY_WATCHED });
       }
     } else if (setWatched === 'false') {
-      const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeId);
-      if (setEpisodeUnwatched !== 1) {
-        return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
+      try {
+        const setEpisodeUnwatched = await Tvshow.setEpisodeUnwatched(userId, tvshowId, episodeId);
+        if (setEpisodeUnwatched !== 1) {
+          return res.status(400).json({ error: ERROR.EPISODE.ALREADY_UNWATCHED });
+        }
+      } catch (e) {
+        return res.status(500).json({ error: ERROR.SERVER });
       }
-      return res.status(500).json({ error: ERROR.SERVER });
     }
     return res.sendStatus(200);
   },
