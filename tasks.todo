@@ -18,21 +18,36 @@ After work:
                 - Modified
                     https://fonts.googleapis.com/css?family=Roboto&text=1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%20
                     Size: 345
-    ☐ Add @done tasks to the archive
+        - Set date format when creating db: set datestyle = 'ISO, DMY';
+            Also note that This is not the correct way of doing things.
+            yyyy-mm-dd (YMD) is the recommended format for date field (ISO 8601 format)
+    ☐ Add tasks to the archive
 NOW:
+    ☐ Refactor padding left methods in calendar.build
+        Use padStart method
+    ✔ Consider refactoring date's format in the database @done(18-10-04 13:26)
+        Im currently changing the date format to DMY on the database creation process, which is required for the getEpisodes query to work.
+        This is not a good idea. (see OneNote docs)
+        I think the only change needed is the start/end intervals that need to be set as YMD, and not DMY.
+    ☐ Fix collapsed sidebar style
+        ☐ Consider removing the collapsed sidebar
+    ☐ Fix episode airdate format on the tvshow's page @low
+        Current format: YYYY-MM-DD
+        Should be: DD-MM-YYYY
     ✔ Watchlist dropdown selector doesnt work on mobile @done(18-10-02 18:11)
         Selecting between multiple tvshows doesnt update the episodes table.
 
         Again: The issue was on the css selector since I've refactored some clases but forgot to update this one.
     ☐ Checkbox's are missing from calendar @critical
         This is the problem: - if (j + k <= calendar.daysFromPreviousMonth + calendar.day - 1)
-            I've commented this temporarly
+            I've commented this out temporarily
     ✔ Fix watchlist counter @done(18-10-02 17:32)
         When marking an episode as watched, the count shows "-1"
         When marking a season as watched, the count shows "NaN"
 
         The issue was on the css selector since I've refactored some clases but forgot to update this one.
     ✔ Clicking on a tvshow poster in watchlist doesn't do anything @done(18-10-02 17:27)
+        Again: The issue was on the css selector since I've refactored some clases but forgot to update this one.
     ☐ Seasons in watchlist are not ordered correcly
         If a tvshow has +10 seasons, this is the order that will be shown:
             10
@@ -1036,7 +1051,8 @@ Auth:
                 I wont be triggering a recaptcha on login failed attemps because the "limiter" is not a great solution.
                 In the future this will be implemented either by 1. using a table on the db 2. using redis
 Database:
-    ☐ Set date format: set datestyle = 'ISO, DMY';
+    ☐ Set date format when creating db set datestyle = 'ISO, DMY' when creating the database;
+        This is not the correct way of doing things. The date format is YMD
     ☐ Change "premiered" (res = "2013-09-23") and "airdate" (airsDayOfWeek = "Wednesday", airsTime = "8:00 PM") columns to timestamps
     check https://stackoverflow.com/questions/21019674/postgresql-create-table-and-set-specific-date-format
 
