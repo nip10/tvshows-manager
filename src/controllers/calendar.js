@@ -30,8 +30,14 @@ const calendarController = {
     }
     const calendar = new Calendar(month, year);
     calendar.buildCalendar();
-    const startInterval = calendar.calendarData[0].day;
-    const endInterval = calendar.calendarData[calendar.calendarData.length - 1].day;
+    const startInterval = calendar.calendarData[0].day
+      .split('-')
+      .reverse()
+      .join('-');
+    const endInterval = calendar.calendarData[calendar.calendarData.length - 1].day
+      .split('-')
+      .reverse()
+      .join('-');
     try {
       const episodes = await User.getEpisodes(userId, startInterval, endInterval);
       const episodeIds = _.map(episodes, episode => episode.id);
