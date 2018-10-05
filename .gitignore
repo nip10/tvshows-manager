@@ -74,3 +74,6 @@ pgdata/
 
 # ideas
 ideas/
+
+# Dockerfile
+docker-compose.yml
