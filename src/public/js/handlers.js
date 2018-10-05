@@ -451,41 +451,6 @@ module.exports = {
       });
     return false;
   },
-  toggleSidebar() {
-    const isReduced = $('nav').hasClass('reduced');
-    if (isReduced) {
-      // sidebar is reduced, change to full
-      // remove 'reduced' class
-      $('nav').removeClass('reduced');
-      $('.main-container').removeClass('reduced');
-      // switch caret orientation
-      $('span.icon-caret-right')
-        .removeClass('icon-caret-right')
-        .addClass('icon-caret-left');
-      // show 'report a bug' button
-      $('.beta button').show();
-      // re-add transitions
-      $('.logo i').css({ transition: 'font-size .3s ease-in-out' });
-      $('nav').css({ transition: 'width .3s ease-in-out' });
-      $('.main-container').css({ transition: 'padding-left .3s ease-in-out' });
-    } else {
-      // sidebar is full, change to reduced
-      $('nav').addClass('reduced');
-      $('.main-container').addClass('reduced');
-      // switch caret orientation
-      $('span.icon-caret-left')
-        .removeClass('icon-caret-left')
-        .addClass('icon-caret-right');
-      // hide 'report a bug' button
-      $('.beta button').hide(100);
-      // remove transitions after 'reducing' the sidebar
-      window.setTimeout(() => {
-        $('.logo i').css({ transition: 'none' });
-        $('nav').css({ transition: 'none' });
-        $('.main-container').css({ transition: 'none' });
-      }, 300);
-    }
-  },
   toggleSidebarMobile(event) {
     event.preventDefault(event);
     $('#sidebar-wrapper').removeClass('d-none');

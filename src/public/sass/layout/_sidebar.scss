@@ -12,54 +12,18 @@
         width: 200px;
         position: fixed;
         background-color: $gray-900;
-        &.reduced {
-            width: 70px;
-            a.logo {
-                > img {
-                    max-width: 50px;
-                }
-            }
-            ul {
-                padding: 0 8px;
-                li a span {
-                    display: none;
-                }
-                li form {
-                    span {
-                        font-size: 20px;
-                        border: none;
-                        padding: 0 8px;
-                    }
-                    .twitter-typeahead,
-                    button {
-                        display: none !important;
-                    }
-                }
-            }
-            #sidebar-counter {
-                top: 10%;
-                right: -10%;
-                border-radius: 15px;
-                font-size: 0.8em;
-                font-weight: bold;
-                background-color: $gray-900;
-            }
-        }
         &.mobile {
             width: 65%;
             z-index: 103;
             > span {
+                position: absolute;
                 right: -30px;
-            }
-        }
-        > span {
-            position: absolute;
-            right: -15px;
-            color: $gray-400;
-            span.icon-close,
-            span.icon-caret-left {
-                color: $gray-900;
-                font-size: 2em;
+                color: $gray-400;
+                span.icon-close,
+                span.icon-caret-left {
+                    color: $gray-900;
+                    font-size: 2em;
+                }
             }
         }
         a.logo {
