@@ -38,6 +38,9 @@ const calendarController = {
       .split('-')
       .reverse()
       .join('-');
+    const dt = new Date();
+    const currentMonth = dt.getMonth() + 1;
+    const isPastMonth = month < currentMonth;
     try {
       const episodes = await User.getEpisodes(userId, startInterval, endInterval);
       const episodeIds = _.map(episodes, episode => episode.id);
@@ -56,6 +59,7 @@ const calendarController = {
           nextYear: month === 12 ? year + 1 : year,
           previousMonth: month === 1 ? 12 : month - 1,
           nextMonth: month === 12 ? 1 : month + 1,
+          isPastMonth,
           month: moment.months(month - 1),
           year,
         },
