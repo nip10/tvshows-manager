@@ -19,7 +19,6 @@ require('./cookies');
     $('#season-select').change(e => handlers.updateEpisodesTable(e));
     $('#userTvShowState').click(e => handlers.addOrRemoveTvshow(e));
     $('#bug-form').submit(e => handlers.bug(e));
-    $('#toggle-sidebar').click(e => handlers.toggleSidebar(e));
     $('#close-sidebar').click(e => handlers.closeSidebar(e));
     $('.watchlist__list-poster > img').click(e => handlers.watchlistPosters(e));
     $('div[data-tvshowid] table > tbody > tr > td > span.icon-eye').click(e => handlers.setEpisodeWatched(e));
