@@ -61,4 +61,5 @@ User page:
     ☐ Stats page (time viewed)
 Deploy:
     ☐ Check if docker is still working
+        ☐ Find a way to use env vars on the docker compose yml
     ☐ Write notes about the procedure
