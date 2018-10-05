@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { ERROR } from '../utils/constants';
 import User from '../models/user';
 
-const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET } = process.env;
+const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, BASE_URL } = process.env;
 
 // Configure Passport authenticated session persistence.
 //
@@ -67,7 +67,7 @@ passport.use(
 const fbOptions = {
   clientID: FACEBOOK_APP_ID,
   clientSecret: FACEBOOK_APP_SECRET,
-  callbackURL: 'https://1de4f13b.ngrok.io/tsm/auth/login/fb/cb',
+  callbackURL: `${BASE_URL}/auth/login/fb/cb`,
   enableProof: true,
   profileFields: ['id', 'displayName', 'email'],
 };
