@@ -40,7 +40,7 @@ const calendarController = {
       .join('-');
     const dt = new Date();
     const currentMonth = dt.getMonth() + 1;
-    const isPastMonth = month < currentMonth;
+    const isPastMonth = month < currentMonth && dt.getFullYear() <= year;
     try {
       const episodes = await User.getEpisodes(userId, startInterval, endInterval);
       const episodeIds = _.map(episodes, episode => episode.id);
