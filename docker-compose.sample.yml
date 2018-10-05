@@ -1,0 +1,34 @@
+version: "3"
+services:
+  redis:
+    image: redis:alpine
+    networks:
+      - webnet
+    restart: always
+  db:
+    image: postgres:alpine
+    volumes:
+      - ./pgdata:/var/lib/postgresql
+    networks:
+      - webnet
+    environment:
+      POSTGRES_PASSWORD:
+      POSTGRES_USER:
+      POSTGRES_DB: tvshows
+    restart: always
+  web:
+    image:
+    ports:
+      - "3002:3002"
+    networks:
+      - webnet
+    environment:
+      DATABASE_HOST_PROD: db
+      REDIS_HOST: redis
+    depends_on:
+      - db
+      - redis
+    restart: always
+    command: ["./wait-for-it.sh", "db:5432", "--", "node", "./dist/server.js"]
+networks:
+  webnet:
