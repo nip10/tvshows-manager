@@ -4,7 +4,6 @@ import { Strategy as FacebookStrategy } from 'passport-facebook';
 import validator from 'validator';
 import uuidv4 from 'uuid/v4';
 import _ from 'lodash';
-import knex from '../db/connection';
 import { ERROR } from '../utils/constants';
 import User from '../models/user';
 
@@ -22,10 +21,7 @@ passport.serializeUser((user, done) => done(null, user.id));
 
 passport.deserializeUser(async (id, done) => {
   try {
-    // TODO: Move this to the User model
-    const user = await knex('users')
-      .where({ id })
-      .first();
+    const user = await User.getUserById(id);
     return done(null, user.id);
   } catch (e) {
     return done(e, null);
