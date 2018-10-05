@@ -38,7 +38,10 @@ block content
                                         - const k = i * 7;
                                             +styleDaysFromOtherMonths(k, j, i)
                                                 .calendar__date.d-none.d-md-block
-                                                    strong= calendar.calendarData[k + j].day
+                                                    - const day = calendar.calendarData[k + j].day.substring(0, 2);
+                                                    - const month = calendar.calendarData[k + j].day.substring(3, 5);
+                                                    - const monthStr = monthsOfYear[month - 1].substring(0, 3);
+                                                    strong= `${day} ${monthStr}`
                                                 .calendar__cell
                                                     strong.d-md-none= calendar.calendarData[k + j].day.substring(0, 2)
                                                     - if (calendar.calendarData[k + j].episodes)
