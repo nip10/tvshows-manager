@@ -17,7 +17,7 @@ block content
                                 |
                                 | unwatched episodes
                     .watchlist__list.my-5
-                        if watchlist
+                        if watchlist && unwatchedEpisodesCount !== 0
                             ul.list-inline.d-none.d-md-block
                                 each tvshow, i in watchlist
                                     li.list-inline-item.watchlist__list-poster.mb-3(class={'highlight' : i === 0}, data-tvshowid=tvshow.tvshowId)
