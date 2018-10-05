@@ -112,9 +112,14 @@ $shadow: rgba($black, 0.1) 0 2px 4px, rgba($black, 0.1) 0 0 3px;
         }
     }
     &__nav {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        &-year {
+            font-size: 0.75rem;
+        }
+        &-month {
+            :nth-child(2) {
+                width: 10rem;
+            }
+        }
         &-item {
             width: 40%;
         }
