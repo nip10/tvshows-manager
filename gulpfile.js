@@ -15,7 +15,7 @@ const watchTaskList = [];
 // Exit if the config file is not present
 if (!config) {
   console.error('No config file provided. Make sure you have gulp-config.js in the root of your project.');
-  // TODO: Exit on error with process.exit
+  process.exit(1);
 }
 
 // Get all tasks from the config file
