@@ -94,11 +94,15 @@ const userController = {
           .map((items, season) => ({ season, episodes: items }))
           .value(),
       }));
+      // Order seasons asc
+      watchlist = _.map(watchlist, el => ({
+        tvshowId: el.tvshowId,
+        data: _.sortBy(el.data, 'season'),
+      }));
       // Get all different tvshowIds from the unwatched episodes to fetch their posters
       const tvshowIds = _.map(watchlist, 'tvshowId');
       const tvshowPosters = await Tvshow.getPosters(tvshowIds);
       watchlist = _.map(watchlist, item => _.extend(item, _.find(tvshowPosters, { tvshowId: item.tvshowId })));
-      // TODO: Merge the above maps if possible (check notes for code snippet)
     } catch (e) {
       console.log(e);
     }
