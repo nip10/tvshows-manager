@@ -27,7 +27,7 @@ export default class Calendar {
     const firstDayOfMonth = new Date(this.year, this.month - 1, 1).getDay();
     if (firstDayOfMonth !== 1) {
       const previousMonth = this.month - 1;
-      const previousMonthStr = previousMonth < 10 ? `0${previousMonth}` : previousMonth;
+      const previousMonthStr = previousMonth.toString().padStart(2, '0');
       // daysFromPreviousMonth returns a number representing
       // the weekday of the last day of the previous month.
       // weekdays start on Sunday (= 0)
@@ -40,7 +40,7 @@ export default class Calendar {
       }
     }
     // 2. add current month days
-    const currentMonthStr = this.month < 10 ? `0${this.month}` : this.month;
+    const currentMonthStr = this.month.toString().padStart(2, '0');
     for (let i = 1; i <= this.daysInMonth[this.month - 1]; i += 1) {
       const day = i < 10 ? `0${i}` : i;
       this.calendarData.push({
@@ -56,7 +56,7 @@ export default class Calendar {
       // last day of the current month is NOT a Sunday.
       // add days from the next month
       const nextMonth = this.month + 1 !== 13 ? this.month + 1 : 1;
-      const nextMonthStr = nextMonth < 10 ? `0${nextMonth}` : nextMonth;
+      const nextMonthStr = nextMonth.toString().padStart(2, '0');
       const nextYear = nextMonth === 1 ? this.year + 1 : this.year;
       for (let i = 0; i < this.daysFromNextMonth; i += 1) {
         this.calendarData.push({
