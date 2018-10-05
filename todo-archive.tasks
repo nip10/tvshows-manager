@@ -1,294 +1,314 @@
 NOW:
-  ✔ Show year on calendar @done(18-10-05 22:16)
-      This is useful when the current month is near a year change (Nov - Feb) where the user may switch back and forth
-      and may get confused on what year the calendar is on
-      ✔ Check if span.calendar__nav is used in any event @done(18-10-05 22:17)
-  ✔ Calendar crashes when navigating to a future year @done(18-10-05 22:14)
-      eg: http://localhost:3000/tsm/calendar/2019/1
-      There were multiple issues on the first step on buildCalendar: the year was static so it would get the
-      wrong past days, and the month was just substracting 1, so it crashed when the result of that was 0 (January - 1 === 0)
-  ✔ Make imdbRating a decimal number with 1 decimal place @done(18-10-05 18:27)
-  ✔ Refactor padding left methods in calendar.build @done(18-10-05 18:02)
-      Use padStart method
-  ✔ Consider refactoring date's format in the database @done(18-10-04 13:26)
-      Im currently changing the date format to DMY on the database creation process, which is required for the getEpisodes query to work.
-      This is not a good idea. (see OneNote docs)
-      I think the only change needed is the start/end intervals that need to be set as YMD, and not DMY.
-  ✔ Fix episode airdate format on the tvshow's page @done(18-10-05 18:43)
-      Current format: YYYY-MM-DD
-      Should be: DD-MM-YYYY
+    ✘ Update the query for unwatched episodes to group the result by tvshowId and season @cancelled(18-10-06 00:01)
+    ✔ Seasons in watchlist are not ordered correcly @done(18-10-05 23:45)
+        Repro: Add a tvshow with more than 10 seasons. Season 10 will be the first one, when it should be the last.
+        This was fixed by doing a sortBy. Ideally, the db query would transform the data being returned.
+    ✔ Remove dropdown + counter from watchlist on mobile, when there are no unwatched episodes @done(18-10-05 22:49)
+    ✔ Refactor controllers @done(18-10-05 22:44)
+        ✔ Auth @done(18-08-08 00:02)
+        ✔ Bug @done(18-08-07 23:15)
+        ✔ Calendar @done(18-08-07 23:23)
+        ✔ Tvshow @done(18-08-08 00:16)
+            ✘ getData @cancelled(18-10-05 22:44)
+        ✔ User @done(18-08-07 22:14)
+    ✔ Consider removing the collapsed sidebar @done(18-10-05 22:43)
+        Since im not saving the "sidebar state", this is pretty much useless.
+        Although I've already done this before, I dont think its worth it, so I'm removing it.
+        ✔ Clean pug @done(18-10-05 22:29)
+            span#toggle-sidebar.icon-caret-left
+            span#close-sidebar.icon-close.d-none
+        ✔ Cleas scss @done(18-10-05 22:43)
+        ✔ Clean js @done(18-10-05 22:43)
+    ✔ Show year on calendar @done(18-10-05 22:16)
+        This is useful when the current month is near a year change (Nov - Feb) where the user may switch back and forth
+        and may get confused on what year the calendar is on
+        ✔ Check if span.calendar__nav is used in any event @done(18-10-05 22:17)
+    ✔ Calendar crashes when navigating to a future year @done(18-10-05 22:14)
+        eg: http://localhost:3000/tsm/calendar/2019/1
+        There were multiple issues on the first step on buildCalendar: the year was static so it would get the
+        wrong past days, and the month was just substracting 1, so it crashed when the result of that was 0 (January - 1 === 0)
+    ✔ Make imdbRating a decimal number with 1 decimal place @done(18-10-05 18:27)
+    ✔ Refactor padding left methods in calendar.build @done(18-10-05 18:02)
+        Use padStart method
+    ✔ Consider refactoring date's format in the database @done(18-10-04 13:26)
+        Im currently changing the date format to DMY on the database creation process, which is required for the getEpisodes query to work.
+        This is not a good idea. (see OneNote docs)
+        I think the only change needed is the start/end intervals that need to be set as YMD, and not DMY.
+    ✔ Fix episode airdate format on the tvshow's page @done(18-10-05 18:43)
+        Current format: YYYY-MM-DD
+        Should be: DD-MM-YYYY
 
-      This only happens when the tvshow is not on the db (= data fetched from the api)
-  ✔ Watchlist dropdown selector doesnt work on mobile @done(18-10-02 18:11)
-      Selecting between multiple tvshows doesnt update the episodes table.
+        This only happens when the tvshow is not on the db (= data fetched from the api)
+    ✔ Watchlist dropdown selector doesnt work on mobile @done(18-10-02 18:11)
+        Selecting between multiple tvshows doesnt update the episodes table.
 
-      Again: The issue was on the css selector since I've refactored some clases but forgot to update this one.
-  ✔ Checkbox's are missing from calendar @critical @done(18-10-05 20:04)
-      This is the problem: - if (j + k <= calendar.daysFromPreviousMonth + calendar.day - 1)
-          I've commented this out temporarily
+        Again: The issue was on the css selector since I've refactored some clases but forgot to update this one.
+    ✔ Checkbox's are missing from calendar @critical @done(18-10-05 20:04)
+        This is the problem: - if (j + k <= calendar.daysFromPreviousMonth + calendar.day - 1)
+            I've commented this out temporarily
 
-      This if statment is supposed to check if the episode has already aired, because it doesnt make sense
-      to allow marking an un-aired episode as watched.
+        This if statment is supposed to check if the episode has already aired, because it doesnt make sense
+        to allow marking an un-aired episode as watched.
 
-      This is working correctly on the current month calendar. The issue is on past months, because the index
-      of the current day doesnt change.
-  ✔ Fix watchlist counter @done(18-10-02 17:32)
-      When marking an episode as watched, the count shows "-1"
-      When marking a season as watched, the count shows "NaN"
+        This is working correctly on the current month calendar. The issue is on past months, because the index
+        of the current day doesnt change.
+    ✔ Fix watchlist counter @done(18-10-02 17:32)
+        When marking an episode as watched, the count shows "-1"
+        When marking a season as watched, the count shows "NaN"
 
-      The issue was on the css selector since I've refactored some clases but forgot to update this one.
-  ✔ Clicking on a tvshow poster in watchlist doesn't do anything @done(18-10-02 17:27)
-      Again: The issue was on the css selector since I've refactored some clases but forgot to update this one.
-  ✔ Search page throws an error @done(18-10-05 19:16)
-      SyntaxError: Unexpected token (160:3)
-      repro: go to http://localhost:3002/tsm/tvshows/search_full/power
-              or http://localhost:3002/tsm/tvshows/search_full/the%20big%20bang
-  ✔ Fix docs @done(18-08-08 20:32)
-  ✔ Types must be capitalized @done(18-08-08 20:32)
-      Specially the returns that were changed from bools to promises
-  ✔ Remove email for now @done(18-08-08 20:09)
-      I've made a clean install on the VPS and wont install an email server. It's too much work and not worth it.
-      Looking into Sendgrid, Mailchimp, etc.. Check what's included in the Github Students pack.
-  ✔ Refactor where this is _.defaultTo(values, null) @done(18-08-08 20:17)
-      Because the result of an empty select is an empty array
-  ✔ Remove '-' from docs @done(18-08-08 20:30)
-  ✔ Add/Remove tvshow should be a POST/DELETE. Also, the POST doesnt make much sense without @done(18-08-08 21:49)
-      a body. Consider changing to /tvshows/add and pass the tvshowid in the body.
-  ✔ Check for hardcoded messages @done(18-08-08 20:46)
-      ✔ message_error @done(18-08-08 20:46)
-      ✔ message: @done(18-08-08 20:45)
-      ✔ error: @done(18-08-08 20:45)
-  ✔ Refactor models @done(18-08-08 20:32)
-      ✔ Bug @done(18-08-08 00:18)
-      ✔ Calendar @done(18-08-08 00:20)
-      ✔ Tvshow @done(18-08-08 20:32)
-      ✔ User @done(18-08-08 15:29)
-  ✔ Check for unnecessary async keyword @done(18-08-08 20:32)
-  ✔ Replace _.get(req, 'body.FOO') by _.get(req.body, 'FOO') @done(18-08-08 20:32)
-      Body always exist
-  ✔ Should return res.json / next / ... ??? @done(18-08-08 20:34)
-          If there's nothing to do after the response, yes.
-          If you need to log something or whatever, remove the return keyword
-  ✘ Fix error @cancelled(18-08-08 20:32)
-      - Shows up on signup (probably email gen ?)
-      (node:12588) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues.
-      Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+        The issue was on the css selector since I've refactored some clases but forgot to update this one.
+    ✔ Clicking on a tvshow poster in watchlist doesn't do anything @done(18-10-02 17:27)
+        Again: The issue was on the css selector since I've refactored some clases but forgot to update this one.
+    ✔ Search page throws an error @done(18-10-05 19:16)
+        SyntaxError: Unexpected token (160:3)
+        repro: go to http://localhost:3002/tsm/tvshows/search_full/power
+                or http://localhost:3002/tsm/tvshows/search_full/the%20big%20bang
+    ✔ Fix docs @done(18-08-08 20:32)
+    ✔ Types must be capitalized @done(18-08-08 20:32)
+        Specially the returns that were changed from bools to promises
+    ✔ Remove email for now @done(18-08-08 20:09)
+        I've made a clean install on the VPS and wont install an email server. It's too much work and not worth it.
+        Looking into Sendgrid, Mailchimp, etc.. Check what's included in the Github Students pack.
+    ✔ Refactor where this is _.defaultTo(values, null) @done(18-08-08 20:17)
+        Because the result of an empty select is an empty array
+    ✔ Remove '-' from docs @done(18-08-08 20:30)
+    ✔ Add/Remove tvshow should be a POST/DELETE. Also, the POST doesnt make much sense without @done(18-08-08 21:49)
+        a body. Consider changing to /tvshows/add and pass the tvshowid in the body.
+    ✔ Check for hardcoded messages @done(18-08-08 20:46)
+        ✔ message_error @done(18-08-08 20:46)
+        ✔ message: @done(18-08-08 20:45)
+        ✔ error: @done(18-08-08 20:45)
+    ✔ Refactor models @done(18-08-08 20:32)
+        ✔ Bug @done(18-08-08 00:18)
+        ✔ Calendar @done(18-08-08 00:20)
+        ✔ Tvshow @done(18-08-08 20:32)
+        ✔ User @done(18-08-08 15:29)
+    ✔ Check for unnecessary async keyword @done(18-08-08 20:32)
+    ✔ Replace _.get(req, 'body.FOO') by _.get(req.body, 'FOO') @done(18-08-08 20:32)
+        Body always exist
+    ✔ Should return res.json / next / ... ??? @done(18-08-08 20:34)
+            If there's nothing to do after the response, yes.
+            If you need to log something or whatever, remove the return keyword
+    ✘ Fix error @cancelled(18-08-08 20:32)
+        - Shows up on signup (probably email gen ?)
+        (node:12588) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues.
+        Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
 
-      This stopped showing up. Dont know why.
-  ✔ Add _.isEmpty validation where _.isString is used @done(18-08-04 22:33)
-      Because _.isString("") returns true
-  ✔ Search for error responses without status @done(18-08-04 21:52)
-      I've already found 2 cases where the status was not defined (defaulted to 200)
-  ✔ Move knex code from controllers to model @done(18-08-04 21:51)
-  ✔ No need for _.get when doing parseInt @done(18-08-04 20:57)
-      parseInt(undefined) returns NaN
-  ✔ Restrict the user_id + tvshow_id combination to unique in the db @done(18-08-04 20:53)
-      Without this, a user can follow the same tvshow multiple times since the combination uniqueness
-      is not verified
-  ✔ Make gulp task to copy the fonts folder @done(18-08-02 03:50)
-  ✔ Consider moving .env to src/ so that I can use the dotenv.config w/ path and make them both work on dev and prod without making changes @done(18-08-02 03:49)
-      Also test migrations/seeds in both environments
-      Solved using __dirname and path.join and placing the env file inside /src (and inside /dist)
-  ✔ Check for unused bootstrap modules @done(18-07-26 00:38)
-  ✔ When building for production, the social icons folder is copied to dist @done(18-07-26 01:36)
-  ✔ Recaptcha js/css should only be loaded when the modals that required it are opened @done(18-07-26 01:01)
-  ✔ JS minify/uglify is not working when building for production @done(18-07-26 01:01)
-      Gulp flag --production is not making effect, using cross-env to fix
-  ✔ Reduce size of google font @done(18-07-26 01:02)
-      Tip #1: Request specific letters/numbers
-          <link href='http://fonts.googleapis.com/css?family=Cabin+Sketch&text=1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%20' rel='stylesheet' type='text/css' />
-          - Test
-              - Original
-                  https://fonts.googleapis.com/css?family=Roboto
-                  Size: 557
-              - Modified
-                  https://fonts.googleapis.com/css?family=Roboto&text=1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%20
-                  Size: 345
-  ✔ Check if all images have alt's @done(18-07-26 01:35)
-  ✔ Clean up css and lint @done(18-07-26 01:33)
-  ✔ Consider changing the use of .each by js's native 'for each' @done(18-07-25 01:05)
-  ✔ Replace .pull-right and .pull-left by float-right and float-left @done(18-07-24 21:18)
-  ✔ Fix foreach loops because of duplicated rows in tables @done(18-07-24 21:01)
-      When marking a season as watched the data is
-      ["1","","2","","3","","4","","5","","6","","7","","8"]
-      This was caused by the added "invisible" rows for expanding the episodes overview.
-  ✔ Add snippet in VS Code for console.log(JSON.stringify(VAR_NAME_HERE, null, 2)); @done(18-07-18 19:24)
-  ✔ Fix text in search full @done(18-07-01 14:58)
-      It should be "Found X tvshow(s)" not episodes
-  ✔ Bugs in episode values @done(18-07-01 14:58)
-      ✔ Episode name should be null but shows empty @done(18-07-01 14:54)
-          The OA - S02E02
-      ✔ Episode 0 should not show up @done(18-07-01 14:58)
-          Shooter - S02E00
-  ✔ After removing ALL episodes in "watchlist", it doesnt show the "You don't have any unwatched episodes." @done(18-06-29 18:30)
-      This needs to be triggered via JS.
-  ✘ Bug: Bluebird warning with tarn (pool used by knex) @cancelled(18-06-29 18:31)
-      (node:8372) Warning: a promise was created in a handler at domain.js:121:23 but was not returned from it, see http://goo.gl/rRqMUw
-      at new Promise (E:\Dev\tvshows-manager\node_modules\bluebird\js\release\promise.js:79:10)
+        This stopped showing up. Dont know why.
+    ✔ Add _.isEmpty validation where _.isString is used @done(18-08-04 22:33)
+        Because _.isString("") returns true
+    ✔ Search for error responses without status @done(18-08-04 21:52)
+        I've already found 2 cases where the status was not defined (defaulted to 200)
+    ✔ Move knex code from controllers to model @done(18-08-04 21:51)
+    ✔ No need for _.get when doing parseInt @done(18-08-04 20:57)
+        parseInt(undefined) returns NaN
+    ✔ Restrict the user_id + tvshow_id combination to unique in the db @done(18-08-04 20:53)
+        Without this, a user can follow the same tvshow multiple times since the combination uniqueness
+        is not verified
+    ✔ Make gulp task to copy the fonts folder @done(18-08-02 03:50)
+    ✔ Consider moving .env to src/ so that I can use the dotenv.config w/ path and make them both work on dev and prod without making changes @done(18-08-02 03:49)
+        Also test migrations/seeds in both environments
+        Solved using __dirname and path.join and placing the env file inside /src (and inside /dist)
+    ✔ Check for unused bootstrap modules @done(18-07-26 00:38)
+    ✔ When building for production, the social icons folder is copied to dist @done(18-07-26 01:36)
+    ✔ Recaptcha js/css should only be loaded when the modals that required it are opened @done(18-07-26 01:01)
+    ✔ JS minify/uglify is not working when building for production @done(18-07-26 01:01)
+        Gulp flag --production is not making effect, using cross-env to fix
+    ✔ Reduce size of google font @done(18-07-26 01:02)
+        Tip #1: Request specific letters/numbers
+            <link href='http://fonts.googleapis.com/css?family=Cabin+Sketch&text=1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%20' rel='stylesheet' type='text/css' />
+            - Test
+                - Original
+                    https://fonts.googleapis.com/css?family=Roboto
+                    Size: 557
+                - Modified
+                    https://fonts.googleapis.com/css?family=Roboto&text=1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%20
+                    Size: 345
+    ✔ Check if all images have alt's @done(18-07-26 01:35)
+    ✔ Clean up css and lint @done(18-07-26 01:33)
+    ✔ Consider changing the use of .each by js's native 'for each' @done(18-07-25 01:05)
+    ✔ Replace .pull-right and .pull-left by float-right and float-left @done(18-07-24 21:18)
+    ✔ Fix foreach loops because of duplicated rows in tables @done(18-07-24 21:01)
+        When marking a season as watched the data is
+        ["1","","2","","3","","4","","5","","6","","7","","8"]
+        This was caused by the added "invisible" rows for expanding the episodes overview.
+    ✔ Add snippet in VS Code for console.log(JSON.stringify(VAR_NAME_HERE, null, 2)); @done(18-07-18 19:24)
+    ✔ Fix text in search full @done(18-07-01 14:58)
+        It should be "Found X tvshow(s)" not episodes
+    ✔ Bugs in episode values @done(18-07-01 14:58)
+        ✔ Episode name should be null but shows empty @done(18-07-01 14:54)
+            The OA - S02E02
+        ✔ Episode 0 should not show up @done(18-07-01 14:58)
+            Shooter - S02E00
+    ✔ After removing ALL episodes in "watchlist", it doesnt show the "You don't have any unwatched episodes." @done(18-06-29 18:30)
+        This needs to be triggered via JS.
+    ✘ Bug: Bluebird warning with tarn (pool used by knex) @cancelled(18-06-29 18:31)
+        (node:8372) Warning: a promise was created in a handler at domain.js:121:23 but was not returned from it, see http://goo.gl/rRqMUw
+        at new Promise (E:\Dev\tvshows-manager\node_modules\bluebird\js\release\promise.js:79:10)
 
-      Full stack (edited the debbugability.js file from bluebird):
-      Stake (line 433)
-      [ '    at defer (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\utils.js:9:19)',
-      '    at new Resource (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Resource.js:10:21)',
-      '    at callbackOrPromise.then.resource (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:310:24)',
-      '    at runCallback (timers.js:696:18)',
-      '    at tryOnImmediate (timers.js:667:5)',
-      '    at processImmediate (timers.js:649:5)',
-      '    at process.topLevelDomainCallback (domain.js:121:23)' ]
-      ------------ END STACK ------------
-      (node:11520) Warning: a promise was created in a handler at domain.js:121:23 but was not returned from it, see http://goo.gl/rRqMUw
-          at new Promise (E:\Dev\tvshows-manager\node_modules\bluebird\js\release\promise.js:79:10)
-      Stake (line 433)
-      [ '    at defer (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\utils.js:9:19)',
-      '    at new Resource (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Resource.js:10:21)',
-      '    at Resource.resolve (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Resource.js:19:12)',
-      '    at Pool._doAcquire (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:236:27)',
-      '    at Pool._tryAcquireOrCreate (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:210:12)',
-      '    at pendingCreate.promise.then (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:280:14)',
-      '    at runCallback (timers.js:696:18)',
-      '    at tryOnImmediate (timers.js:667:5)',
-      '    at processImmediate (timers.js:649:5)',
-      '    at process.topLevelDomainCallback (domain.js:121:23)' ]
-      ------------ END STACK ------------
-      (node:11520) Warning: a promise was created in a handler at domain.js:121:23 but was not returned from it, see http://goo.gl/rRqMUw
-          at new Promise (E:\Dev\tvshows-manager\node_modules\bluebird\js\release\promise.js:79:10)
+        Full stack (edited the debbugability.js file from bluebird):
+        Stake (line 433)
+        [ '    at defer (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\utils.js:9:19)',
+        '    at new Resource (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Resource.js:10:21)',
+        '    at callbackOrPromise.then.resource (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:310:24)',
+        '    at runCallback (timers.js:696:18)',
+        '    at tryOnImmediate (timers.js:667:5)',
+        '    at processImmediate (timers.js:649:5)',
+        '    at process.topLevelDomainCallback (domain.js:121:23)' ]
+        ------------ END STACK ------------
+        (node:11520) Warning: a promise was created in a handler at domain.js:121:23 but was not returned from it, see http://goo.gl/rRqMUw
+            at new Promise (E:\Dev\tvshows-manager\node_modules\bluebird\js\release\promise.js:79:10)
+        Stake (line 433)
+        [ '    at defer (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\utils.js:9:19)',
+        '    at new Resource (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Resource.js:10:21)',
+        '    at Resource.resolve (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Resource.js:19:12)',
+        '    at Pool._doAcquire (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:236:27)',
+        '    at Pool._tryAcquireOrCreate (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:210:12)',
+        '    at pendingCreate.promise.then (E:\\Dev\\tvshows-manager\\node_modules\\tarn\\lib\\Pool.js:280:14)',
+        '    at runCallback (timers.js:696:18)',
+        '    at tryOnImmediate (timers.js:667:5)',
+        '    at processImmediate (timers.js:649:5)',
+        '    at process.topLevelDomainCallback (domain.js:121:23)' ]
+        ------------ END STACK ------------
+        (node:11520) Warning: a promise was created in a handler at domain.js:121:23 but was not returned from it, see http://goo.gl/rRqMUw
+            at new Promise (E:\Dev\tvshows-manager\node_modules\bluebird\js\release\promise.js:79:10)
 
-      From what I understand, this can be safelly ignored.
-      From tarn github: https://github.com/Vincit/tarn.js/issues/5
-          TLDR: It is an issue of a promise being created in a handler and not returned from it, but that's done intentionally.
-  ✔ PWA @done(18-06-27 20:43)
-      ✔ Add manifest.json @done(18-06-27 01:32)
-      ✔ Add icons @done(18-06-27 17:59)
-      ✔ Add gulp task to copy manifest.json from src to dist @done(18-06-27 18:10)
-      ✘ Add service worker @cancelled(18-06-27 20:38)
-          This was kinda working but needs a lot of configuring.. Im skipping this for now.
-          ✔ Cache files @done(18-06-27 20:29)
-          ✔ Disable in dev mode ? @done(18-06-27 20:29)
-              ✔ Figure out how to make it work with browsersync @done(18-06-27 20:29)
-                  Browsersync messes up the service worker.
-              To keep the code unchanged, the sw can be disabled via dev tools:
-                  Application>Service Workers path select the Update on refresh checkbox
-                  Then select the Bypass for network option shown in above image to avoid the registration
-      ✔ Test in prod @done(18-06-27 20:43)
-      ✔ Test with lighthouse @done(18-06-27 20:38)
-  ✘ On mobile, marking a season as watched throws an error (duplicate key value violates unique constraint) @cancelled(18-06-27 20:42)
-      This is probably related to manual db modifications.
-  ✔ On mobile, make the topbar black (in chrome itself) @done(18-06-27 01:31)
-  ✘ On mobile, login/signup buttons dont work @cancelled(18-06-27 01:00)
-      Dont know what caused this. Its working atm.
-  ✔ Fix index cards on index on SM/MD screens @done(18-06-27 00:49)
-  ✔ Change tvshow status from 'Continuing' to 'Running' (or whatever Im using) on the full search results page @done(18-06-23 01:21)
-  ✔ Validate search input before redirecting to search_full @done(18-06-23 01:50)
-      Atm, there's no validation, so a search for null is valid, although the server responds with 500.
-      ✔ Client-side @done(18-06-23 01:24)
-      ✔ Server-side @done(18-06-23 01:50)
-  ✔ Bug: When searching using the "full search" feature, the query is always "GO" @done(18-06-20 21:38)
-      This only happens when the form is submited on mobile
-      "GO" is the content of the "value" attribute on the input
+        From what I understand, this can be safelly ignored.
+        From tarn github: https://github.com/Vincit/tarn.js/issues/5
+            TLDR: It is an issue of a promise being created in a handler and not returned from it, but that's done intentionally.
+    ✔ PWA @done(18-06-27 20:43)
+        ✔ Add manifest.json @done(18-06-27 01:32)
+        ✔ Add icons @done(18-06-27 17:59)
+        ✔ Add gulp task to copy manifest.json from src to dist @done(18-06-27 18:10)
+        ✘ Add service worker @cancelled(18-06-27 20:38)
+            This was kinda working but needs a lot of configuring.. Im skipping this for now.
+            ✔ Cache files @done(18-06-27 20:29)
+            ✔ Disable in dev mode ? @done(18-06-27 20:29)
+                ✔ Figure out how to make it work with browsersync @done(18-06-27 20:29)
+                    Browsersync messes up the service worker.
+                To keep the code unchanged, the sw can be disabled via dev tools:
+                    Application>Service Workers path select the Update on refresh checkbox
+                    Then select the Bypass for network option shown in above image to avoid the registration
+        ✔ Test in prod @done(18-06-27 20:43)
+        ✔ Test with lighthouse @done(18-06-27 20:38)
+    ✘ On mobile, marking a season as watched throws an error (duplicate key value violates unique constraint) @cancelled(18-06-27 20:42)
+        This is probably related to manual db modifications.
+    ✔ On mobile, make the topbar black (in chrome itself) @done(18-06-27 01:31)
+    ✘ On mobile, login/signup buttons dont work @cancelled(18-06-27 01:00)
+        Dont know what caused this. Its working atm.
+    ✔ Fix index cards on index on SM/MD screens @done(18-06-27 00:49)
+    ✔ Change tvshow status from 'Continuing' to 'Running' (or whatever Im using) on the full search results page @done(18-06-23 01:21)
+    ✔ Validate search input before redirecting to search_full @done(18-06-23 01:50)
+        Atm, there's no validation, so a search for null is valid, although the server responds with 500.
+        ✔ Client-side @done(18-06-23 01:24)
+        ✔ Server-side @done(18-06-23 01:50)
+    ✔ Bug: When searching using the "full search" feature, the query is always "GO" @done(18-06-20 21:38)
+        This only happens when the form is submited on mobile
+        "GO" is the content of the "value" attribute on the input
 
-      The issue is here:-
-      var tvshowName = event.target[1].value;
-          On mobile, the input is target[0] (and target[1] is the button)
-          On desktop, the input is target[1] (and target[0] is the typeahead input)
+        The issue is here:-
+        var tvshowName = event.target[1].value;
+            On mobile, the input is target[0] (and target[1] is the button)
+            On desktop, the input is target[1] (and target[0] is the typeahead input)
 
-      Fixed by using an ID selector on the input
-  ✔ Fix reduced sidebar on desktop @done(18-06-23 00:44)
-      This is now fixed on <= MD screens. Check on LG.
-  ✘ Use an overlay when the sidebar is open on mobile @cancelled(18-07-18 19:24)
-      Not going to bother with this now, because the "pseudo" overlay is working and this is just
-      an improvement
+        Fixed by using an ID selector on the input
+    ✔ Fix reduced sidebar on desktop @done(18-06-23 00:44)
+        This is now fixed on <= MD screens. Check on LG.
+    ✘ Use an overlay when the sidebar is open on mobile @cancelled(18-07-18 19:24)
+        Not going to bother with this now, because the "pseudo" overlay is working and this is just
+        an improvement
 
-      This overlay needs to be placed at the root (like a modal)
-      Add a click event that closes the sidebar and removes the overlay
-      ✘ Consider preventing scroll @cancelled(18-07-18 19:25)
-          .noScroll {
-              overflow: hidden;
-              position: fixed;
-          }
-  ✔ Stop typeahead requests on mobile @done(18-06-20 21:21)
-      Typeahead is hidden on mobile but it's still making requests
+        This overlay needs to be placed at the root (like a modal)
+        Add a click event that closes the sidebar and removes the overlay
+        ✘ Consider preventing scroll @cancelled(18-07-18 19:25)
+            .noScroll {
+                overflow: hidden;
+                position: fixed;
+            }
+    ✔ Stop typeahead requests on mobile @done(18-06-20 21:21)
+        Typeahead is hidden on mobile but it's still making requests
 
-      Using the matchMedia API I'm able to check if the client is on mobile or not.
-      ✔ Fix style on mobile @done(18-06-20 21:39)
-          Typeahead is now working as expected but this broke the styling
+        Using the matchMedia API I'm able to check if the client is on mobile or not.
+        ✔ Fix style on mobile @done(18-06-20 21:39)
+            Typeahead is now working as expected but this broke the styling
 
-          Since typeahead is not initialized anymore on mobile, the styles are broken.
-          Also, remove the work-around code I had to hide the typeahead results div on mobile.
-  ✘ Check: Adding 'The OA' and then going into 'Watchlist' only shows season 1 eps @cancelled(18-06-20 19:01)
-      The thing is the tvshow page shows season 2 eps
-      To consider: All 4 episodes from season 2, have a TBC on the airdate
+            Since typeahead is not initialized anymore on mobile, the styles are broken.
+            Also, remove the work-around code I had to hide the typeahead results div on mobile.
+    ✘ Check: Adding 'The OA' and then going into 'Watchlist' only shows season 1 eps @cancelled(18-06-20 19:01)
+        The thing is the tvshow page shows season 2 eps
+        To consider: All 4 episodes from season 2, have a TBC on the airdate
 
-      The issue is on: .where('episodes.airdate', '<=', knex.fn.now())
+        The issue is on: .where('episodes.airdate', '<=', knex.fn.now())
 
-      Im not checking for future episodes. And it makes sense since the "watchlist" is to mark episodes as watched.
-  ✔ Fix error when going to a tvshow page where some episode doesnt have an airdate (eg: The OA - Season 1, Breaking Bad - season uknown) @done(18-06-20 18:55)
-      Error fetching episodes. Error details: error: insert into "episodes" ("airdate", "epnum", "overview", "season", "title", "tvshow_id")
-      values ($1, $2, $3, $4, $5, $6), ($7, $8, $9, $10, $11, $12), ($13, $14, $15, $16, $17, $18), ($19, $20, $21, $22, $23, $24),
-      ($25, $26, $27, $28, $29, $30), ($31, $32, $33, $34, $35, $36), ($37, $38, $39, $40, $41, $42), ($43, $44, $45, $46, $47, $48),
-      ($49, $50, $51, $52, $53, $54), ($55, $56, $57, $58, $59, $60), ($61, $62, $63, $64, $65, $66), ($67, $68, $69, $70, $71, $72)
-      .- invalid input syntax for type date: ""
+        Im not checking for future episodes. And it makes sense since the "watchlist" is to mark episodes as watched.
+    ✔ Fix error when going to a tvshow page where some episode doesnt have an airdate (eg: The OA - Season 1, Breaking Bad - season uknown) @done(18-06-20 18:55)
+        Error fetching episodes. Error details: error: insert into "episodes" ("airdate", "epnum", "overview", "season", "title", "tvshow_id")
+        values ($1, $2, $3, $4, $5, $6), ($7, $8, $9, $10, $11, $12), ($13, $14, $15, $16, $17, $18), ($19, $20, $21, $22, $23, $24),
+        ($25, $26, $27, $28, $29, $30), ($31, $32, $33, $34, $35, $36), ($37, $38, $39, $40, $41, $42), ($43, $44, $45, $46, $47, $48),
+        ($49, $50, $51, $52, $53, $54), ($55, $56, $57, $58, $59, $60), ($61, $62, $63, $64, $65, $66), ($67, $68, $69, $70, $71, $72)
+        .- invalid input syntax for type date: ""
 
-      This is ok on the frontend as I'm showing 'TBC' instead of null.
-      Solution:
-          ✔ Fix database insert on the date field @done(18-06-20 18:55)
-              If the airdate is null, insert NULL in the db. (Currently inserting "")
-  ✔ Calendar @done(18-07-23 21:20)
-      ✔ M: Allow marking an episode as watched/unwatched @done(18-07-19 18:55)
-          ✔ Add icon @done(18-07-19 18:55)
-          ✔ Add handler @done(18-07-19 18:55)
-      ✔ M: When going to a previous/future month, the highlighted day is the current day. @done(18-07-19 20:06)
-          If the current day is still on that month (eg: calendar for 'june', current day is '01 july'), highlight that day
-          If not, dont highlight any day
+        This is ok on the frontend as I'm showing 'TBC' instead of null.
+        Solution:
+            ✔ Fix database insert on the date field @done(18-06-20 18:55)
+                If the airdate is null, insert NULL in the db. (Currently inserting "")
+    ✔ Calendar @done(18-07-23 21:20)
+        ✔ M: Allow marking an episode as watched/unwatched @done(18-07-19 18:55)
+            ✔ Add icon @done(18-07-19 18:55)
+            ✔ Add handler @done(18-07-19 18:55)
+        ✔ M: When going to a previous/future month, the highlighted day is the current day. @done(18-07-19 20:06)
+            If the current day is still on that month (eg: calendar for 'june', current day is '01 july'), highlight that day
+            If not, dont highlight any day
 
-          For now, Im not highlighting any day, even if the day is on a past/future month.
-      ✔ M: When selecting a special episode (season begin, season finale, watched), the day description should show that @done(18-07-19 18:07)
-          Currently, the dot is highlighted on the calendar (green, red, grey w/ opacity) but the text doesnt reflect that
-      ✔ M: When going to the calendar, the date below the calendar is wrong @done(18-07-19 17:55)
-      ✘ LOW: animate the "over line" when marking an episode as watched/unwatched @cancelled(18-07-19 16:55)
-          https://stackoverflow.com/questions/36267507/is-it-possible-to-animate-a-css-line-through-text-decoration
-      ✔ User shouldnt be able to mark an unaired episode as watched/unwatched @done(18-07-19 01:15)
-          Remove the checkbox
-      ✔ Update watchlist counter When marking an episode as watched/unwatched @done(18-07-18 19:36)
-      ✔ Add a way to mark an episode as watched/unwatched @done(18-07-18 19:28)
-      ✔ Fix date on eplist according to the selected table cell @done(18-07-03 12:49)
-      ✔ Revert test changes @done(18-07-01 21:49)
-          ul(class={'d-none' : i !== 6}).calendar__eplist
-          should be
-          ul(class={'d-none' : i !== 0}).calendar__eplist
+            For now, Im not highlighting any day, even if the day is on a past/future month.
+        ✔ M: When selecting a special episode (season begin, season finale, watched), the day description should show that @done(18-07-19 18:07)
+            Currently, the dot is highlighted on the calendar (green, red, grey w/ opacity) but the text doesnt reflect that
+        ✔ M: When going to the calendar, the date below the calendar is wrong @done(18-07-19 17:55)
+        ✘ LOW: animate the "over line" when marking an episode as watched/unwatched @cancelled(18-07-19 16:55)
+            https://stackoverflow.com/questions/36267507/is-it-possible-to-animate-a-css-line-through-text-decoration
+        ✔ User shouldnt be able to mark an unaired episode as watched/unwatched @done(18-07-19 01:15)
+            Remove the checkbox
+        ✔ Update watchlist counter When marking an episode as watched/unwatched @done(18-07-18 19:36)
+        ✔ Add a way to mark an episode as watched/unwatched @done(18-07-18 19:28)
+        ✔ Fix date on eplist according to the selected table cell @done(18-07-03 12:49)
+        ✔ Revert test changes @done(18-07-01 21:49)
+            ul(class={'d-none' : i !== 6}).calendar__eplist
+            should be
+            ul(class={'d-none' : i !== 0}).calendar__eplist
 
-          p(class={'d-none' : i !== 6}) No episodes
-          should be
-          p(class={'d-none' : i !== 0}) No episodes
-  ✔ Watchlist @done(18-07-25 01:05)
-      ✔ M: Show episode description when clicking on an episode row @done(18-07-19 19:23)
-      ✘ M: Re-add episode description with text-ellipsis and a clickable (...) @cancelled(18-07-19 16:56)
-      ✔ D: Episode description must also be trimed on desktop @done(18-07-19 01:02)
-      ✔ Make table columns have a fixed width @done(18-07-01 15:07)
-      ✔ M: 'counter' should change when the "option" on the "select" dropdown is changed @done(18-06-20 16:48)
-          Count all episodes from all tables (seasons)
-      ✘ M: Change "option" background color (on hover) @cancelled(18-06-18 15:46)
-      ✔ D: Remove hover animation on #sidebar-counter @done(18-06-20 19:02)
-      ✔ D: Fix 'counter' style @done(18-06-16 23:19)
-      ✔ D: Check if 'data-tvshowid=tvshow.tvshowId' is needed on both the LI and the IMG @done(18-06-18 15:46)
-      ✔ Fix counter/li(img) @done(18-06-18 15:43)
-          - When checking season as watched, the counter is not updated and the li element is not removed
-          Repro: Add westworld/flashforward to following and mark all episodes as watched
+            p(class={'d-none' : i !== 6}) No episodes
+            should be
+            p(class={'d-none' : i !== 0}) No episodes
+    ✔ Watchlist @done(18-07-25 01:05)
+        ✔ M: Show episode description when clicking on an episode row @done(18-07-19 19:23)
+        ✘ M: Re-add episode description with text-ellipsis and a clickable (...) @cancelled(18-07-19 16:56)
+        ✔ D: Episode description must also be trimed on desktop @done(18-07-19 01:02)
+        ✔ Make table columns have a fixed width @done(18-07-01 15:07)
+        ✔ M: 'counter' should change when the "option" on the "select" dropdown is changed @done(18-06-20 16:48)
+            Count all episodes from all tables (seasons)
+        ✘ M: Change "option" background color (on hover) @cancelled(18-06-18 15:46)
+        ✔ D: Remove hover animation on #sidebar-counter @done(18-06-20 19:02)
+        ✔ D: Fix 'counter' style @done(18-06-16 23:19)
+        ✔ D: Check if 'data-tvshowid=tvshow.tvshowId' is needed on both the LI and the IMG @done(18-06-18 15:46)
+        ✔ Fix counter/li(img) @done(18-06-18 15:43)
+            - When checking season as watched, the counter is not updated and the li element is not removed
+            Repro: Add westworld/flashforward to following and mark all episodes as watched
 
-          - Cenario 1:
-              - Add westworld
-              - Both seasons = 19 eps (s1 = 10, s2 = 9)
-              - Mark season 1 as watched
-                  - Expected counter to be 9
-                  - Counter is 104
+            - Cenario 1:
+                - Add westworld
+                - Both seasons = 19 eps (s1 = 10, s2 = 9)
+                - Mark season 1 as watched
+                    - Expected counter to be 9
+                    - Counter is 104
 
-          - Shows with 0 unwatched episodes are still shown
-              Repro: Add westworld, mark all eps as watched, see the LI still there
+            - Shows with 0 unwatched episodes are still shown
+                Repro: Add westworld, mark all eps as watched, see the LI still there
 
-          There were multiple issues here:
-              - #1: I was fetching special episodes (season 0) which would affect the unwatched episodes count,
-              and since I'm not showing them in the watchlist page, there was no way to mark them as watched/unwatched
-                  - This was fixed by removing the season 0 episodes when fetching from the db
-              - #2: I was updating the local/poster counter with the global counter value
+            There were multiple issues here:
+                - #1: I was fetching special episodes (season 0) which would affect the unwatched episodes count,
+                and since I'm not showing them in the watchlist page, there was no way to mark them as watched/unwatched
+                    - This was fixed by removing the season 0 episodes when fetching from the db
+                - #2: I was updating the local/poster counter with the global counter value
 
   ✔ Bug promises @done(18-06-18 15:06)
       (node:13200) Warning: a promise was created in a handler at E:\OneDrive\OneDrive - Universidade do Porto\dev\tvshows-manager\node_modules\tarn\lib\Pool.js:310:24 but was not returned from it, see http://goo.gl/rRqMUw
@@ -824,16 +844,21 @@ TvShow page:
   ✔ Add button to select seasons @done (2017-10-22 23:09:09)
 
 Calendar page:
-  ✔ Fix db query: @done (2017-10-27 12:43:01)
-      Remove tvshow_id
-      Add tvshow name
-      Add episode name
-  ✔ Add link to tvshow page on the tvshow name @done (2017-10-27 13:01:20)
-  ✔ Fix cell template @done (2017-10-27 12:43:04)
-      This should be
-          [checkbox] TvShow Name
-          Episode Name (S##E##)
-  ✔ Add month navigation @done (2017-11-22 21:04:53)
+    ✔ Change date format and decrease height @done(18-10-05 23:06)
+        Now: 01-01-2018
+        Change to: 01 Jan
+        Can't use moment in pug even if i import it client-side
+        this needs to be done either using valina js on the pug template, or by injecting momentjs into the pug template
+    ✔ Fix db query: @done (2017-10-27 12:43:01)
+        Remove tvshow_id
+        Add tvshow name
+        Add episode name
+    ✔ Add link to tvshow page on the tvshow name @done (2017-10-27 13:01:20)
+    ✔ Fix cell template @done (2017-10-27 12:43:04)
+        This should be
+            [checkbox] TvShow Name
+            Episode Name (S##E##)
+    ✔ Add month navigation @done (2017-11-22 21:04:53)
 
 Watchlist page:
   ✔ Set episode as watched @done(18-02-04 21:14)
@@ -978,15 +1003,19 @@ Auth:
               I wont be triggering a recaptcha on login failed attemps because the "limiter" is not a great solution.
               In the future this will be implemented either by 1. using a table on the db 2. using redis
 Database:
-  ✔ Correct seeds files @done(18-01-29 01:05)
-  ✔ Add table for tracking user-episodes status (watched, not watched) @done(18-01-24 13:52)
-  ✔ Migrate db to change overview/summary/description to overview @done (2017-11-22 21:06:12)
-  ✔ TvShows: @done (2017-10-25 12:21:15)
-      ✔ Add column imdb id @done (2017-10-4 17:49:39)
-      ✔ Add column gender[] @done (2017-10-13 19:03:12)
-      ✔ Add column network @done (2017-10-13 19:03:13)
-      ✔ Add column airdate @done (2017-10-13 19:03:14)
+    ✘ Change "premiered" (res = "2013-09-23") and "airdate" (airsDayOfWeek = "Wednesday", airsTime = "8:00 PM") columns to timestamps @cancelled(18-10-05 23:07)
+        check https://stackoverflow.com/questions/21019674/postgresql-create-table-and-set-specific-date-format
 
+        Check if tvshow is on the database
+        SELECT exists (SELECT 1 FROM tvshows WHERE thetvdb = <tvshowId> LIMIT 1);
+    ✔ Correct seeds files @done(18-01-29 01:05)
+    ✔ Add table for tracking user-episodes status (watched, not watched) @done(18-01-24 13:52)
+    ✔ Migrate db to change overview/summary/description to overview @done (2017-11-22 21:06:12)
+    ✔ TvShows: @done (2017-10-25 12:21:15)
+        ✔ Add column imdb id @done (2017-10-4 17:49:39)
+        ✔ Add column gender[] @done (2017-10-13 19:03:12)
+        ✔ Add column network @done (2017-10-13 19:03:13)
+        ✔ Add column airdate @done (2017-10-13 19:03:14)
 Sidebar:
   ✘ Increase delay on search function (the request is triggered too fast) @cancelled(18-02-04 21:15)
       Trigger the first search X ms/s after keyup
