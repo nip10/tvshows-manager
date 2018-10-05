@@ -431,8 +431,8 @@ const Tvshow = {
     };
     try {
       const { imdbRating } = await rp(requestOptions);
-      const imdbRatingParsed = Number.parseInt(imdbRating, 10);
-      if (!_.isFinite(imdbRatingParsed)) throw new Error();
+      if (_.isEmpty(imdbRating)) throw new Error();
+      const imdbRatingParsed = Number.parseFloat(imdbRating, 10).toFixed(1);
       return imdbRatingParsed;
     } catch (e) {
       console.log(e);
