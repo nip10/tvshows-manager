@@ -443,6 +443,11 @@ const User = {
       .update('last_login', knex.fn.now())
       .where('id', userId);
   },
+  getUserById(id) {
+    return knex('users')
+      .where({ id })
+      .first();
+  },
 };
 
 module.exports = User;
