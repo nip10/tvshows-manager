@@ -596,7 +596,7 @@ module.exports = {
     const episodeid = $(event.target)
       .closest('tr')
       .data('episodeid');
-    $.post(`/tsm/tvshows/${tvshowId}/ep`, { setWatched, episodeid })
+    $.post(`/tsm/tvshows/${tvshowId}/episode/${episodeid}`, { setWatched })
       .done(() => {
         if (setWatched) {
           $(event.target).addClass('watched');
@@ -663,7 +663,7 @@ module.exports = {
     const { tvshowid, episodeid } = episodeIdEl[0].dataset;
     const watchStatusEl = $(event.currentTarget).closest('div');
     const setWatched = !$(watchStatusEl).hasClass('watched');
-    $.post(`/tsm/tvshows/${tvshowid}/ep`, { setWatched, episodeid })
+    $.post(`/tsm/tvshows/${tvshowid}/episode/${episodeid}`, { setWatched })
       .done(() => {
         const oldCount = Number.parseInt($('#sidebar-counter').text(), 10);
         if (setWatched) {
