@@ -23,7 +23,7 @@ const calendarController = {
     let month = Number.parseInt(req.params.month, 10);
     let year = Number.parseInt(req.params.year, 10);
     if (!_.isFinite(month) || !_.isFinite(year)) {
-      // If month/year is not defined, default to current month/year
+      // If month/year is not defined, default to the current month/year
       const date = new Date();
       month = Number.parseInt(date.getMonth() + 1, 10, 10);
       year = Number.parseInt(date.getFullYear(), 10, 10);
@@ -45,9 +45,7 @@ const calendarController = {
       if (!_.isNil(seasonFinaleEpisodes) && !_.isEmpty(seasonFinaleEpisodes)) {
         for (const ep of seasonFinaleEpisodes) {
           const epIndex = episodes.findIndex(element => element.id === ep.id);
-          if (epIndex !== -1) {
-            episodes[epIndex].isSeasonFinale = true;
-          }
+          episodes[epIndex].isSeasonFinale = epIndex !== -1;
         }
       }
       calendar.addEpisodesToCalendar(episodes);
