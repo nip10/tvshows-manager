@@ -118,10 +118,16 @@ $shadow: rgba($black, 0.1) 0 2px 4px, rgba($black, 0.1) 0 0 3px;
         &-month {
             :nth-child(2) {
                 width: 10rem;
+                @include media-breakpoint-down(md) {
+                    width: auto;
+                }
             }
         }
         &-item {
             width: 40%;
+            @include media-breakpoint-down(md) {
+                width: auto;
+            }
         }
     }
     &__header {
