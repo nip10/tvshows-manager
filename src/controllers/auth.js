@@ -250,7 +250,6 @@ const authController = {
       if (err) return next(err);
       if (!user) return res.status(422).json({ error: info.message });
       try {
-        // TODO: Move this to the local auth strategy implementation ?
         // const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
         // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
         await User.updateLastLogin(user.id);
@@ -280,7 +279,6 @@ const authController = {
     return passport.authenticate('facebook', async (err, user, info) => {
       if (err) return next(err);
       if (!user) return res.status(422).json({ error: info.message });
-      // TODO: Move this to the local auth strategy implementation ?
       // const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
       // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
       await User.updateLastLogin(user.id);
