@@ -123,6 +123,15 @@ const tvshowsController = {
           Tvshow.getArtworkFromApi(tvshowId, 'poster'),
           Tvshow.getEpisodesFromSeasonFromApi(tvshowId, latestSeason),
         ]);
+        // Change date format in episodes' airdate
+        getTvshowData[2] = _.map(getTvshowData[2], ep =>
+          Object.assign({}, ep, {
+            airdate: ep.airdate
+              .split('-')
+              .reverse()
+              .join('-'),
+          })
+        );
         // Get tvshow imdb rating
         const imdbRating = await Tvshow.getImdbRating(getTvshowData[0].imdb);
         // Merge tvshow info and artwork
