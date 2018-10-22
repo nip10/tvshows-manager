@@ -1,4 +1,11 @@
 NOW:
+    ✔ Fix thetvdb api login @done(18-10-22 01:28)
+        - The login POST request now takes the following schema:
+        {
+            "apikey": "string",
+            "userkey": "string",
+            "username": "string"
+        }
     ✘ Update the query for unwatched episodes to group the result by tvshowId and season @cancelled(18-10-06 00:01)
     ✔ Seasons in watchlist are not ordered correcly @done(18-10-05 23:45)
         Repro: Add a tvshow with more than 10 seasons. Season 10 will be the first one, when it should be the last.
