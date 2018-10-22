@@ -6,7 +6,7 @@ import cp from 'child_process';
 import knex from '../db/connection';
 import { API } from '../utils/constants';
 
-const { THETVDB_API_KEY, OMDB_API_KEY, NODE_ENV } = process.env;
+const { THETVDB_API_KEY, THETVDB_API_USERKEY, THETVDB_API_USERNAME, OMDB_API_KEY, NODE_ENV } = process.env;
 
 const Tvshow = {
   /**
@@ -73,6 +73,8 @@ const Tvshow = {
       uri: API.THETVDB.AUTH_LOGIN,
       body: {
         apikey: THETVDB_API_KEY,
+        userkey: THETVDB_API_USERKEY,
+        username: THETVDB_API_USERNAME,
       },
       json: true,
     };
