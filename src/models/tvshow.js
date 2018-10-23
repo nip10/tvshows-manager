@@ -3,6 +3,7 @@ import moment from 'moment';
 import rp from 'request-promise';
 import path from 'path';
 import cp from 'child_process';
+import util from 'util';
 import knex from '../db/connection';
 import { API } from '../utils/constants';
 
@@ -489,7 +490,13 @@ const Tvshow = {
       tvshow_id: tvshowId,
       ep_id: episodeId,
     }));
-    return knex('usereps').insert(queryData);
+    const query = util.format(
+      '%s ON CONFLICT (user_id, tvshow_id, ep_id) DO NOTHING',
+      knex('usereps')
+        .insert(queryData)
+        .toString()
+    );
+    return knex.raw(query);
   },
   /**
    * Filter season finale episodes from a set of episodes
