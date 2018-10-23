@@ -1,34 +1,12 @@
-After work:
-    ☐ Add to OneNote:
-        - To assert the performance of a postgres query, use EXPLAIN ANALYZE before the query
-        - knex updates return the number of updated rows
-            .then(dbRes => dbRes === 1);
-        - knex selects return the selected properties OR an empty array if not found
-            - However, when using first(), if the query doesnt have any matches, it will return undefined
-        - knex deletes return the number of deleted rows
-            .then(dbRes => dbRes === 1);
-        - knex inserts return nothing ?? and throw error when it fails
-        - tarn pool bluebird error
-        - Reduce size of google font
-            Tip #1: Request specific letters/numbers by specifying the chars in text query param
-            - Test
-                - Original
-                    https://fonts.googleapis.com/css?family=Roboto
-                    Size: 557
-                - Modified
-                    https://fonts.googleapis.com/css?family=Roboto&text=1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz%20
-                    Size: 345
-        - Set date format when creating db: set datestyle = 'ISO, DMY';
-            Also note that This is not the correct way of doing things.
-            yyyy-mm-dd (YMD) is the recommended format for date field (ISO 8601 format)
-    ☐ Add tasks to the archive
 NOW:
+    ☐ Fix order of episodes in the tvshow view
+        check screenshot
     ☐ Add dcdev to facebook url whitelist
-        ☐ Disable login with facebook while this is not resolved @critical
-    ☐ Test using 2 different "devices" with the same account, at the same time
+        ✔ Disable login with facebook while this is not resolved @done(18-10-23 23:37)
+    ☐ Test using 2 different "devices" with the same account, at the same time @low
     ☐ Consider refactoring user model to be a class @low
     ☐ reset password AND resend activation token are broken @high
-        I've removed reset password from the login modal, while this is not resolved
+        - I've removed reset password from the login modal, while this is not resolved
     ☐ Use the Re:view chrome extention to check all breakpoints
     ☐ Check for unused classes in css
     ☐ Fix icons line-height
@@ -47,6 +25,7 @@ NOW:
 Global:
     ☐ Change email service to use an online service @high
     ☐ Log failed login attemps
+        ☐ Consider using redis for this
         ☐ Add columns to the users table (failed attemps: integer, login timeout: timestamp)
         ☐ Handle login error on attemps exceeded and show time remaining until next try
     ☐ Add rate limiting
