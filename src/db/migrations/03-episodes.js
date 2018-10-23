@@ -2,7 +2,7 @@ exports.up = (knex, Promise) =>
   knex.schema.hasTable('episodes').then(exists => {
     if (!exists) {
       return knex.schema.createTable('episodes', table => {
-        table.increments('id');
+        table.integer('id').notNullable().unique();
         table.integer('tvshow_id').references('tvshows.thetvdb');
         table.integer('season').notNullable();
         table.integer('epnum').notNullable();

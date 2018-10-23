@@ -57,6 +57,7 @@ async function getEpisodes(tvshowId, page = 1, episodes = []) {
   try {
     const res = await rp(requestOptions);
     const filteredEpisodes = _.map(res.data, episode => ({
+      id: episode.id,
       tvshow_id: tvshowId,
       season: episode.airedSeason,
       epnum: episode.airedEpisodeNumber,
