@@ -7,25 +7,25 @@ import {
   resetPassword,
   changePassword,
   login,
-  loginFb,
+  // loginFb,
   signup,
   logout,
   activateAccount,
   resendActivateAccount,
 } from '../controllers/auth';
-import passport from '../auth/local';
+// import passport from '../auth/local';
 
 const router = express.Router();
 
 router.post('/login', login);
-router.get('/login/fb', loginFb);
-router.get(
-  '/login/fb/cb',
-  passport.authenticate('facebook', {
-    successRedirect: '/tsm/calendar',
-    failureRedirect: '/tsm',
-  })
-);
+// router.get('/login/fb', loginFb);
+// router.get(
+//   '/login/fb/cb',
+//   passport.authenticate('facebook', {
+//     successRedirect: '/tsm/calendar',
+//     failureRedirect: '/tsm',
+//   })
+// );
 router.post('/activate', resendActivateAccount);
 router.get('/activate/:token', activateAccount);
 router.post('/signup', validateRecaptcha, signup);
