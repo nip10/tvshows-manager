@@ -187,7 +187,7 @@ const tvshowsController = {
         const watchedEpisodesIds = await User.getWatchedEpisodesById(episodeIds, userId);
         tvshowData.episodes = _.map(tvshowData.episodes, episode => ({
           id: episode.id,
-          num: episode.num,
+          epnum: episode.num,
           name: episode.name,
           airdate: episode.airdate,
           watched: _.includes(watchedEpisodesIds, episode.id),

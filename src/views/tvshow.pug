@@ -84,7 +84,7 @@ block content
                             tbody
                                 each episode in episodes
                                     tr(data-episodeid= episode.id)
-                                        td.num #{episode.num.toString().padStart(2, '0')}
+                                        td.num #{episode.epnum.toString().padStart(2, '0')}
                                         td.title= episode.name || 'TBC'
                                         td.airdate= episode.airdate || 'TBC'
                                         td.markwatched

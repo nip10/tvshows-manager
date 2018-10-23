@@ -262,7 +262,7 @@ const Tvshow = {
    *
    * @param {Number} tvshowId - tvshow id
    * @param {Number} season - season
-   * @returns {{num: number, name: string, airdate: date, overview: string}[]} tvshow episodes from a particular season
+   * @returns {{epnum: number, name: string, airdate: date, overview: string}[]} tvshow episodes from a particular season
    */
   async getEpisodesFromSeasonFromApi(tvshowId, season) {
     const requestOptions = {
@@ -280,7 +280,8 @@ const Tvshow = {
     try {
       const { data } = await rp(requestOptions);
       const episodes = _.map(data, episode => ({
-        num: episode.airedEpisodeNumber,
+        id: episode.id,
+        epnum: episode.airedEpisodeNumber,
         name: episode.episodeName,
         airdate: episode.firstAired,
         overview: episode.overview,
@@ -307,7 +308,7 @@ const Tvshow = {
       .then(dbResp =>
         _.map(dbResp, episode => ({
           id: episode.id,
-          num: episode.epnum,
+          epnum: episode.epnum,
           name: episode.title,
           airdate: episode.airdate,
         }))
@@ -396,6 +397,7 @@ const Tvshow = {
         const res = await rp(requestOptions);
         const filteredEpisodes = _.map(res.data, episode => ({
           tvshow_id: tvshowId,
+          id: episode.id,
           season: episode.airedSeason,
           epnum: episode.airedEpisodeNumber,
           title: !_.isEmpty(episode.episodeName) ? episode.episodeName : null,
