@@ -1,11 +1,26 @@
 NOW:
-    ✔ Fix thetvdb api login @done(18-10-22 01:28)
-        - The login POST request now takes the following schema:
-        {
-            "apikey": "string",
-            "userkey": "string",
-            "username": "string"
-        }
+    ✔ Make epnum/num consistent (ie: name them all the same) @done(18-10-23 23:27)
+    ✔ Bug: When you add a tvshow, set an episode as watched, and then set the season as watched, the app will "break" @done(18-10-23 23:25)
+        (user_id, tvshow_id, ep_id)=(1, 276562, 4750424) already exists.'
+        This is caused by the restrain in usereps
+    ✔ Fix updatetvshows script @done(18-10-23 22:33)
+        - When the script runs, all episodes get the same data. This is caused by the update query that is wrong.
+        It translates to:
+            'update "episodes" set "tvshow_id" = ?, "season" = ?, "epnum" = ?, "title" = ?, "overview" = ?, "airdate" = ? where "tvshow_id" = ?',
+        Solution:
+            - Use the episode id provided by the api
+            ✔ Stop using an auto increment id @done(18-10-23 17:46)
+            ✔ Add id when fetching episodes @done(18-10-23 17:46)
+            ✔ Use the id to set an episode as watched/unwatched @done(18-10-23 22:33)
+            ✔ Use the id to set a season as watched @done(18-10-23 22:33)
+            ✔ Update the query to an upsert using the id @done(18-10-23 17:46)
+            ✔ Fix thetvdb api login @done(18-10-22 01:28)
+                - The login POST request now takes the following schema:
+                {
+                    "apikey": "string",
+                    "userkey": "string",
+                    "username": "string"
+                }
     ✘ Update the query for unwatched episodes to group the result by tvshowId and season @cancelled(18-10-06 00:01)
     ✔ Seasons in watchlist are not ordered correcly @done(18-10-05 23:45)
         Repro: Add a tvshow with more than 10 seasons. Season 10 will be the first one, when it should be the last.
