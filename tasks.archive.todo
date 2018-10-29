@@ -1,4 +1,23 @@
 NOW:
+    ✔ Lint server files @done(18-10-29 01:22)
+        Since the update to the newest version of eslint and eslint-import, there's an issue with the exports
+        ✔ Change all exports to named exports @done(18-10-29 01:22)
+            Ie: Remove the "global" object and make the functions individual, named and exported
+    ✔ Update babel @done(18-10-29 00:57)
+    Before:
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.3",
+        "babel-preset-env": "^1.7.0",
+        "babel-register": "^6.26.0",
+        - babel-node was part of babel-cli but is now at @babel/node
+        - i believe babel-register is not used
+
+    Result: npm i @babel/core @babel/cli @babel/node @babel/preset-env @babel/plugin-proposal-object-rest-spread @babel/plugin-proposal-class-properties
+    ✔ Add dcdev to facebook url whitelist @done(18-10-29 00:10)
+        ✔ Disable login with facebook while this is not resolved @done(18-10-23 23:37)
+        - ToS and Privacy Policy
+            https://termsfeed.com/terms-conditions/1726eb84ac4b718e97212fc86ef9fd12
+            https://www.freeprivacypolicy.com/privacy/view/f9fbcd2f43d47c493e9861421efe5051
     ✔ Make epnum/num consistent (ie: name them all the same) @done(18-10-23 23:27)
     ✔ Bug: When you add a tvshow, set an episode as watched, and then set the season as watched, the app will "break" @done(18-10-23 23:25)
         (user_id, tvshow_id, ep_id)=(1, 276562, 4750424) already exists.'

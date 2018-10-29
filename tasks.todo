@@ -1,8 +1,8 @@
 NOW:
+    ☐ Add Travis
+        Should run linter, tests and build
     ☐ Fix order of episodes in the tvshow view
         check screenshot
-    ☐ Add dcdev to facebook url whitelist
-        ✔ Disable login with facebook while this is not resolved @done(18-10-23 23:37)
     ☐ Test using 2 different "devices" with the same account, at the same time @low
     ☐ Consider refactoring user model to be a class @low
     ☐ reset password AND resend activation token are broken @high
