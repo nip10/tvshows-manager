@@ -5,7 +5,7 @@ import validator from 'validator';
 import uuidv4 from 'uuid/v4';
 import _ from 'lodash';
 import { ERROR } from '../utils/constants';
-import User from '../models/user';
+import * as User from '../models/user';
 
 const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, BASE_URL } = process.env;
 
