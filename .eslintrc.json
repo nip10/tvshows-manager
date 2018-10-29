@@ -4,10 +4,7 @@
         "prettier"
     ],
     "rules": {
-        "linebreak-style": [
-            "error",
-            "windows"
-        ],
+        "linebreak-style": 0,
         "no-console": "off",
         "no-restricted-syntax": [
             "error",
