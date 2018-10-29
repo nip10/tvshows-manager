@@ -1,7 +1,7 @@
 import moment from 'moment';
 import _ from 'lodash';
-import User from '../models/user';
-import Tvshow from '../models/tvshow';
+import * as User from '../models/user';
+import * as Tvshow from '../models/tvshow';
 import Calendar from '../models/calendar';
 import { ERROR } from '../utils/constants';
 

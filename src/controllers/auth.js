@@ -4,7 +4,7 @@ import validator from 'validator';
 import rp from 'request-promise';
 import _ from 'lodash';
 import passport from '../auth/local';
-import User from '../models/user';
+import * as User from '../models/user';
 import { ERROR, SUCCESS } from '../utils/constants';
 import Mail from '../mail/mail';
 
@@ -250,7 +250,7 @@ export async function login(req, res, next) {
     if (err) return next(err);
     if (!user) return res.status(422).json({ error: info.message });
     try {
-      // const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
+      // const isUserAccountActive = await isAccountActiveByEmail(validateLogin.normalizedEmail);
       // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
       await User.updateLastLogin(user.id);
       return req.logIn(user, err2 => {
@@ -279,7 +279,7 @@ export async function loginFb(req, res, next) {
   return passport.authenticate('facebook', async (err, user, info) => {
     if (err) return next(err);
     if (!user) return res.status(422).json({ error: info.message });
-    // const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
+    // const isUserAccountActive = await isAccountActiveByEmail(validateLogin.normalizedEmail);
     // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
     await User.updateLastLogin(user.id);
     return req.logIn(user, err2 => {
@@ -309,7 +309,7 @@ export async function signup(req, res) {
   }
   // const activateAccountToken = uuidv4();
   try {
-    // await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
+    // await createUser(validateSignup.normalizedEmail, password, activateAccountToken);
     await User.createUser(validateSignup.normalizedEmail, password, null);
     return res.sendStatus(201);
   } catch (e) {
@@ -339,7 +339,7 @@ export async function changePassword(req, res) {
   const newPassword = _.get(req.body, 'newPassword');
   const currentPassword = _.get(req.body, 'currentPassword');
   try {
-    const changedPassword = await User.changePassword(userId, currentPassword, newPassword);
+    const changedPassword = await changePassword(userId, currentPassword, newPassword);
     if (changedPassword === 1 && !changedPassword.error) {
       return res.sendStatus(200);
     }
@@ -366,7 +366,7 @@ export async function activateAccount(req, res) {
     if (isAccountActiveByToken) {
       res.cookie('message_error', ERROR.AUTH.ALREADY_ACTIVATED);
     } else {
-      const activatedAccount = await User.activateAccount(token);
+      const activatedAccount = await activateAccount(token);
       if (!activatedAccount) {
         res.cookie('message_error', ERROR.AUTH.INVALID_TOKEN);
       } else {

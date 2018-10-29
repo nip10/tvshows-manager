@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import Tvshow from '../models/tvshow';
-import User from '../models/user';
+import * as Tvshow from '../models/tvshow';
+import * as User from '../models/user';
 import { ERROR, MISC } from '../utils/constants';
 
 /**
