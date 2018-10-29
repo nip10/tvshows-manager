@@ -287,7 +287,8 @@ export async function getEpisodesFromSeasonFromApi(tvshowId, season) {
       airdate: episode.firstAired,
       overview: episode.overview,
     }));
-    return episodes;
+    const orderedEpisodesByEpnum = _.sortBy(episodes, 'epnum');
+    return orderedEpisodesByEpnum;
   } catch (e) {
     console.log(e);
     return null;
