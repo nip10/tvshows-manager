@@ -299,7 +299,8 @@ module.exports = {
       return $('#forgotpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>'
       );
-    } else if (email !== emailDuplicate) {
+    }
+    if (email !== emailDuplicate) {
       return $('#forgotpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Email adresses don\'t match ! </div>'
       );
@@ -345,17 +346,20 @@ module.exports = {
       return $('#resetpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Password must be 8-30 chars ! </div>'
       );
-    } else if (password !== passwordDuplicate) {
+    }
+    if (password !== passwordDuplicate) {
       // validate passwords match
       return $('#resetpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Passwords don\'t match ! </div>'
       );
-    } else if (!email || !validator.isEmail(email)) {
+    }
+    if (!email || !validator.isEmail(email)) {
       // validate email
       return $('#resetpw-form').before(
         '<div class="alert alert-danger" role="alert"> Error: Invalid email address ! </div>'
       );
-    } else if (!token) {
+    }
+    if (!token) {
       // validate token
       return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid token ! </div>');
     }
