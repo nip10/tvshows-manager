@@ -1,5 +1,7 @@
 # TvShows-Manager
 
+[![Build Status](https://travis-ci.org/nip10/tvshows-manager.svg?branch=master)](https://travis-ci.org/nip10/tvshows-manager)
+
 Allows you to explore and manage your favorite tvshows.
 Check it live [here](https://www.p.dcdev.pt/tsm).
 
