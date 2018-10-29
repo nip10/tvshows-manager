@@ -21,7 +21,7 @@ module.exports = {
       source: ['public/js/app.js'],
       destination: 'public/js',
       destinationFile: 'app.js',
-      babelPresets: 'env',
+      babelPresets: '@babel/env',
       watch: true,
       buildDev: true,
     },
