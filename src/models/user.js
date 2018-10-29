@@ -254,9 +254,11 @@ const User = {
   validateSignup(email, password, passwordDuplicate) {
     if (!_.isString(email) || !validator.isEmail(email)) {
       return { error: ERROR.AUTH.INVALID_EMAIL };
-    } else if (!_.isString(password) || password.length < 8 || password.length > 30) {
+    }
+    if (!_.isString(password) || password.length < 8 || password.length > 30) {
       return { error: ERROR.AUTH.PASSWORD_LEN };
-    } else if (!_.isString(passwordDuplicate) || password !== passwordDuplicate) {
+    }
+    if (!_.isString(passwordDuplicate) || password !== passwordDuplicate) {
       return { error: ERROR.AUTH.PASSWORD_MATCH };
     }
     return {
@@ -274,7 +276,8 @@ const User = {
   validateLogin(email, password) {
     if (!_.isString(email) || !validator.isEmail(email)) {
       return { error: ERROR.AUTH.INVALID_EMAIL };
-    } else if (!_.isString(password) || password.length < 8 || password.length > 30) {
+    }
+    if (!_.isString(password) || password.length < 8 || password.length > 30) {
       return { error: ERROR.AUTH.PASSWORD_LEN };
     }
     return {

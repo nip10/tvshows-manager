@@ -1,5 +1,3 @@
-const config = require('./gulp-config');
-
 const browserSync = require('browser-sync');
 const del = require('del');
 const fs = require('fs');
@@ -7,6 +5,8 @@ const gulp = require('gulp');
 const runSequence = require('run-sequence');
 const watch = require('gulp-watch');
 const path = require('path');
+
+const config = require('./gulp-config');
 
 const buildProdTaskList = [];
 const buildDevTaskList = [];
