@@ -13,6 +13,7 @@ export default class Calendar {
     this.daysFromNextMonth = this.daysFromNextMonth();
     this.calendarData = [];
   }
+
   /**
    * Builds a calendar starting on Monday and ending on Sunday
    * This means that the number of days is always %% 7
@@ -68,6 +69,7 @@ export default class Calendar {
       }
     }
   }
+
   /**
    * Evaluates if the current year is a leap year.
    * This is required to know the number of days of February
@@ -79,6 +81,7 @@ export default class Calendar {
     if ((this.year % 4 === 0 && this.year % 100 !== 0) || this.year % 400 === 0) return 29;
     return 28;
   }
+
   /**
    * Evaluates the number of days from the next month that
    * we need to push to the calendar
@@ -90,6 +93,7 @@ export default class Calendar {
     const lastDayOfPreviousMonth = new Date(this.year, this.month, 0).getDay();
     return 7 - (lastDayOfPreviousMonth !== 0 ? lastDayOfPreviousMonth : 7);
   }
+
   /**
    * Add user episodes to the calendar
    *

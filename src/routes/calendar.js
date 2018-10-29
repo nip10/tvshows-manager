@@ -1,5 +1,5 @@
 import express from 'express';
-import { getCalendar } from '../controllers/calendar';
+import getCalendar from '../controllers/calendar';
 import { isLoggedInWithMessage } from '../controllers/auth';
 
 const router = express.Router();

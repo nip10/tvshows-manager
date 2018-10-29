@@ -9,6 +9,7 @@ export default class Bug {
     this.day = description;
     this.userId = userId;
   }
+
   /**
    * Adds a new bug to the database
    *

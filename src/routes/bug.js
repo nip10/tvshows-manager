@@ -1,5 +1,5 @@
 import express from 'express';
-import { submitBug } from '../controllers/bug';
+import submitBug from '../controllers/bug';
 
 const router = express.Router();
 

@@ -1,6 +1,5 @@
-const config = require('./../gulp-config');
-
 const browserSync = require('browser-sync');
+const config = require('./../gulp-config');
 
 let browserSyncConfig;
 
