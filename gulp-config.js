@@ -21,7 +21,18 @@ module.exports = {
       source: ['public/js/app.js'],
       destination: 'public/js',
       destinationFile: 'app.js',
-      babelPresets: '@babel/env',
+      babelConfig: {
+        presets: [
+          [
+            '@babel/env',
+            {
+              targets: ['>0.25%', 'not ie 11', 'not op_mini all'],
+              useBuiltIns: 'usage',
+            },
+          ],
+        ],
+        plugins: ['@babel/plugin-proposal-object-rest-spread'],
+      },
       watch: true,
       buildDev: true,
     },
