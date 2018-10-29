@@ -8,60 +8,8 @@ import knex from '../db/connection';
 import { API } from '../utils/constants';
 
 const { THETVDB_API_KEY, THETVDB_API_USERKEY, THETVDB_API_USERNAME, OMDB_API_KEY, NODE_ENV } = process.env;
+let apiToken = null;
 
-/**
- * Initialize connection to the TheTVDb API and start
- * child process to renew the token every X hours
- */
-export function init() {
-  // get "initial" token from the thetvdb api
-  console.log('Requesting token from TheTvDb API');
-  return this.getToken()
-    .then(newToken => {
-      if (!_.isString(newToken) || _.isEmpty(newToken)) {
-        throw new Error('Token received is invalid.');
-      }
-      this.apiToken = newToken;
-      console.log(`Token received`);
-    })
-    .then(() => {
-      if (NODE_ENV !== 'development') {
-        // start child process to renew the token when needed
-        this.startChildProcess();
-      }
-    })
-    .catch(e => console.log(e));
-}
-/**
- * Start child process that renews the TheTVDB api token
- *
- * This child process is nothing more than a cronjob
- * that runs every X hours and sends the token back here
- */
-export function startChildProcess() {
-  // create child process using fork
-  const child = cp.fork(path.join(__dirname, '..', 'scripts', 'tvdb-api-cron'));
-
-  // listen to messages from the child process
-  child
-    .on('message', msg => {
-      // error getting the message
-      if (!msg) console.log('[PARENT] Received empty msg from child.');
-      if (msg === 'oldToken') {
-        // child process is requesting the old token
-        console.log('[PARENT] [2] Child process requested the old token');
-        // send the old token to the child process so it can be renewed
-        child.send(this.apiToken);
-      } else {
-        console.log('[PARENT] [5] Received new token from the child process');
-        // set the new token received from the child process
-        this.apiToken = msg;
-      }
-    })
-    .on('exit', () => {
-      console.log('[PARENT] Child process has been terminated.');
-    });
-}
 /**
  * Get TheTVDb api token
  *
@@ -87,6 +35,59 @@ export async function getToken() {
   }
 }
 /**
+ * Start child process that renews the TheTVDB api token
+ *
+ * This child process is nothing more than a cronjob
+ * that runs every X hours and sends the token back here
+ */
+export function startChildProcess() {
+  // create child process using fork
+  const child = cp.fork(path.join(__dirname, '..', 'scripts', 'tvdb-api-cron'));
+
+  // listen to messages from the child process
+  child
+    .on('message', msg => {
+      // error getting the message
+      if (!msg) console.log('[PARENT] Received empty msg from child.');
+      if (msg === 'oldToken') {
+        // child process is requesting the old token
+        console.log('[PARENT] [2] Child process requested the old token');
+        // send the old token to the child process so it can be renewed
+        child.send(apiToken);
+      } else {
+        console.log('[PARENT] [5] Received new token from the child process');
+        // set the new token received from the child process
+        apiToken = msg;
+      }
+    })
+    .on('exit', () => {
+      console.log('[PARENT] Child process has been terminated.');
+    });
+}
+/**
+ * Initialize connection to the TheTVDb API and start
+ * child process to renew the token every X hours
+ */
+export function init() {
+  // get "initial" token from the thetvdb api
+  console.log('Requesting token from TheTvDb API');
+  return getToken()
+    .then(newToken => {
+      if (!_.isString(newToken) || _.isEmpty(newToken)) {
+        throw new Error('Token received is invalid.');
+      }
+      apiToken = newToken;
+      console.log(`Token received`);
+    })
+    .then(() => {
+      if (NODE_ENV !== 'development') {
+        // start child process to renew the token when needed
+        startChildProcess();
+      }
+    })
+    .catch(e => console.log(e));
+}
+/**
  * Search for a tvshow
  *
  * @param {String} tvshowName - tvshow name
@@ -98,7 +99,7 @@ export async function search(tvshowName) {
     uri: API.THETVDB.SEARCH,
     headers: {
       'Accept-Language': 'en',
-      Authorization: `Bearer ${this.apiToken}`,
+      Authorization: `Bearer ${apiToken}`,
     },
     qs: {
       name: tvshowName,
@@ -130,7 +131,7 @@ export async function getInfoFromApi(tvshowId) {
     uri: API.THETVDB.INFO({ tvshowId }),
     headers: {
       'Accept-Language': 'en',
-      Authorization: `Bearer ${this.apiToken}`,
+      Authorization: `Bearer ${apiToken}`,
     },
     qs: {
       keys: 'seriesName,overview,status,imdbId,id,genre,firstAired,network,airsDayOfWeek,airsTime,rating,banner',
@@ -212,7 +213,7 @@ export async function getArtworkFromApi(tvshowId, imageType) {
     uri: API.THETVDB.IMAGES({ tvshowId }),
     headers: {
       'Accept-Language': 'en',
-      Authorization: `Bearer ${this.apiToken}`,
+      Authorization: `Bearer ${apiToken}`,
     },
     qs: {
       keyType: imageType,
@@ -242,7 +243,7 @@ export async function getLatestSeasonFromApi(tvshowId) {
     uri: API.THETVDB.SEASON({ tvshowId }),
     headers: {
       'Accept-Language': 'en',
-      Authorization: `Bearer ${this.apiToken}`,
+      Authorization: `Bearer ${apiToken}`,
     },
     json: true,
   };
@@ -270,7 +271,7 @@ export async function getEpisodesFromSeasonFromApi(tvshowId, season) {
     uri: API.THETVDB.EPISODES_QUERY({ tvshowId }),
     headers: {
       'Accept-Language': 'en',
-      Authorization: `Bearer ${this.apiToken}`,
+      Authorization: `Bearer ${apiToken}`,
     },
     qs: {
       airedSeason: season,
@@ -380,7 +381,7 @@ export async function addTvshowToDb(tvshowInfo) {
    * @param {Number} [page=1] - Page to fetch (defaults to 1)
    * @returns {Boolean} request successful
    */
-  async function requestPaginated(apiToken, page = 1) {
+  async function requestPaginated(page = 1) {
     const requestOptions = {
       method: 'GET',
       uri: API.THETVDB.EPISODES_QUERY({ tvshowId }),
@@ -405,7 +406,7 @@ export async function addTvshowToDb(tvshowInfo) {
         airdate: !_.isEmpty(episode.firstAired) ? episode.firstAired : null,
       }));
       Array.prototype.push.apply(episodes, filteredEpisodes);
-      if (res.links.next) return requestPaginated(apiToken, res.links.next);
+      if (res.links.next) return requestPaginated(res.links.next);
       return true;
     } catch (e) {
       console.log(e);
@@ -413,7 +414,7 @@ export async function addTvshowToDb(tvshowInfo) {
     }
   }
   try {
-    const requestEpisodes = await requestPaginated(this.apiToken);
+    const requestEpisodes = await requestPaginated(apiToken);
     if (!requestEpisodes) throw new Error('Error inserting episodes in the database.');
     // 2.2 Insert episodes in the database
     await knex('episodes').insert(episodes);
