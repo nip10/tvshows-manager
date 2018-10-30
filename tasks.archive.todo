@@ -1,4 +1,9 @@
 NOW:
+    ✘ Consider refactoring user model to be a class @low @cancelled(18-10-29 21:53)
+    ✔ Add Travis @done(18-10-29 21:52)
+        Should run linter, tests and build
+    ✔ Fix order of episodes in the tvshow view @done(18-10-29 20:11)
+        check screenshot
     ✔ Lint server files @done(18-10-29 01:22)
         Since the update to the newest version of eslint and eslint-import, there's an issue with the exports
         ✔ Change all exports to named exports @done(18-10-29 01:22)

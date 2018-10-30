@@ -1,11 +1,6 @@
 NOW:
-    ☐ Add Travis
-        Should run linter, tests and build
-    ☐ Fix order of episodes in the tvshow view
-        check screenshot
     ☐ Test using 2 different "devices" with the same account, at the same time @low
-    ☐ Consider refactoring user model to be a class @low
-    ☐ reset password AND resend activation token are broken @high
+    ☐ reset password AND resend activation token are broken @high @depends_on mail service
         - I've removed reset password from the login modal, while this is not resolved
     ☐ Use the Re:view chrome extention to check all breakpoints
     ☐ Check for unused classes in css
@@ -24,6 +19,17 @@ NOW:
         ☐ Add to model
 Global:
     ☐ Change email service to use an online service @high
+        ☐ Setup Sendgrid
+            ☐ Send emails
+                ☐ Make email templates with mixins
+                    https://github.com/sendgrid/sendgrid-nodejs/blob/master/packages/mail/USE_CASES.md#advanced-usage
+                    ✔ Signup @done(18-10-30 12:52)
+                    ☐ Recover password
+                    ☐ Request activation token
+                ☐ Test sending an email
+            ☐ Receive emails
+                https://app.sendgrid.com/settings/parse
+        ☐ Replace sendSignupEmail everywhere that's not signup
     ☐ Log failed login attemps
         ☐ Consider using redis for this
         ☐ Add columns to the users table (failed attemps: integer, login timeout: timestamp)

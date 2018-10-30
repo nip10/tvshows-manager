@@ -6,7 +6,7 @@ import _ from 'lodash';
 import passport from '../auth/local';
 import * as User from '../models/user';
 import { ERROR, SUCCESS } from '../utils/constants';
-import Mail from '../mail/mail';
+import { sendSignupEmail } from '../mail/mail';
 
 const { RECAPTCHA_SECRET, NODE_ENV, RECAPTCHA_VERIFY_URL, RESET_PASSWORD_TOKEN_EXPIRATION } = process.env;
 const isDev = NODE_ENV === 'development';
@@ -147,7 +147,7 @@ export async function resetPasswordRequest(req, res) {
     };
     const addedToken = await User.addResetTokenToUser(normalizedEmail, resetParams);
     if (!addedToken) throw new Error();
-    await Mail.sendEmail(normalizedEmail, 'reset', {
+    await sendSignupEmail(normalizedEmail, 'reset', {
       email: normalizedEmail,
       token: resetParams.token,
     });
@@ -307,25 +307,21 @@ export async function signup(req, res) {
   if (!_.isNil(validateSignup.error)) {
     return res.status(422).json({ error: validateSignup.error });
   }
-  // const activateAccountToken = uuidv4();
+  const activateAccountToken = uuidv4();
   try {
-    // await createUser(validateSignup.normalizedEmail, password, activateAccountToken);
-    await User.createUser(validateSignup.normalizedEmail, password, null);
-    return res.sendStatus(201);
+    await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
   } catch (e) {
     return res.status(422).json({ error: ERROR.AUTH.EMAIL_EXISTS });
   }
-  // try {
-  //   const sentEmail = await Mail.sendEmail(validateSignup.normalizedEmail, 'welcome', { token: activateAccountToken });
-  //   if (!sentEmail) {
-  //     return res.status(400).json({
-  //       error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail: validateSignup.normalizedEmail }) });
-  //   }
-  //   return res.sendStatus(201);
-  // } catch (e) {
-  //   console.log(e);
-  //   return res.status(500).json({ error: ERROR.SERVER });
-  // }
+  try {
+    await sendSignupEmail(validateSignup.normalizedEmail, { token: activateAccountToken });
+    return res.sendStatus(201);
+  } catch (e) {
+    console.log(e);
+    return res
+      .status(500)
+      .json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail: validateSignup.normalizedEmail }) });
+  }
 }
 /**
  * Change password
@@ -406,7 +402,7 @@ export async function resendActivateAccount(req, res) {
       const activationToken = uuidv4();
       const addedToken = await User.addActivationTokenToUser(normalizedEmail, activationToken);
       if (!addedToken) throw new Error();
-      const sentEmail = await Mail.sendEmail(normalizedEmail, 'welcome', { token: activationToken });
+      const sentEmail = await sendSignupEmail(normalizedEmail, 'welcome', { token: activationToken });
       if (!sentEmail) {
         return res.status(400).json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail }) });
       }

@@ -78,3 +78,10 @@ export const MISC = {
   },
   IMDB: _.template('https://imdb.com/title/${imdbId}'),
 };
+
+export const EMAIL = {
+  SIGNUP: {
+    SUBJECT: 'Welcome to TSM',
+    URL: _.template('https://p.dcdev.pt/tsm/auth/activate/${token}'),
+  },
+};
