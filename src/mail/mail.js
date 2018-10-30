@@ -1,47 +1,52 @@
-import Email from 'email-templates';
-import path from 'path';
 import dotenv from 'dotenv';
+import sgMail from '@sendgrid/mail';
+import { EMAIL } from '../utils/constants';
 
 dotenv.config();
+const { EMAIL_SENDGRID_API_KEY, EMAIL_ADDRESS } = process.env;
 
-const { NODE_ENV, EMAIL_HOST, EMAIL_PORT, EMAIL_AUTH_USER, EMAIL_AUTH_PASSWORD, EMAIL_REPLYTO, HOSTNAME } = process.env;
-const isDev = NODE_ENV === 'development';
+sgMail.setApiKey(EMAIL_SENDGRID_API_KEY);
 
-const Mail = {
-  sendEmail(to, template, locals) {
-    const email = new Email({
-      message: {
-        from: `${EMAIL_AUTH_USER}@${HOSTNAME}`,
-        to,
-        replyTo: `${EMAIL_REPLYTO}@${HOSTNAME}`,
-      },
-      send: !isDev,
-      transport: {
-        host: EMAIL_HOST,
-        port: EMAIL_PORT,
-        secure: false,
-        auth: {
-          user: EMAIL_AUTH_USER,
-          pass: EMAIL_AUTH_PASSWORD,
-        },
-        debug: isDev,
-        requireTLS: true,
-      },
-      views: {
-        root: path.join(__dirname, 'templates'),
-      },
-      juiceResources: {
-        webResources: {
-          relativeTo: path.join(__dirname, 'templates', template),
-        },
-      },
+// const isDev = NODE_ENV === 'development';
+
+export function sendSignupEmail(to, variables) {
+  const msg = {
+    to,
+    from: EMAIL_ADDRESS,
+    subject: EMAIL.SIGNUP.SUBJECT,
+    templateId: 'd-aafdf9bab3424fdd866af5734e3a4503',
+    dynamic_template_data: {
+      activationUrl: EMAIL.SIGNUP.URL({ token: variables.token }),
+    },
+  };
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log(`Sent email to ${to} for signup`);
+    })
+    .catch(error => {
+      console.error(error.toString());
     });
-    return email.send({
-      template,
-      message: { to },
-      locals,
-    });
-  },
-};
+}
 
-module.exports = Mail;
+export function sendPasswordResetEmail(to, variables) {
+  const msg = {
+    to,
+    from: EMAIL_ADDRESS,
+    subject: EMAIL.SIGNUP,
+    text: `Welcome to TSM ! Follow this url to activate your account: https://p.dcdev.pt/tsm/auth/activate/${
+      variables.token
+    }`,
+    html: `<strong> Welcome to TSM ! Follow this url to activate your account: https://p.dcdev.pt/tsm/auth/activate/${
+      variables.token
+    } </strong>`,
+  };
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log(`Sent email to ${to} for password reset`);
+    })
+    .catch(error => {
+      console.error(error.toString());
+    });
+}
