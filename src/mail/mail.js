@@ -33,18 +33,36 @@ export function sendPasswordResetEmail(to, variables) {
   const msg = {
     to,
     from: EMAIL_ADDRESS,
-    subject: EMAIL.SIGNUP,
-    text: `Welcome to TSM ! Follow this url to activate your account: https://p.dcdev.pt/tsm/auth/activate/${
-      variables.token
-    }`,
-    html: `<strong> Welcome to TSM ! Follow this url to activate your account: https://p.dcdev.pt/tsm/auth/activate/${
-      variables.token
-    } </strong>`,
+    subject: EMAIL.RESET_PW.SUBJECT,
+    templateId: 'd-8b15899ace694779b7a85867f1f92376',
+    dynamic_template_data: {
+      resetPasswordUrl: EMAIL.RESET_PW.URL({ email: to, token: variables.token }),
+    },
   };
   sgMail
     .send(msg)
     .then(() => {
-      console.log(`Sent email to ${to} for password reset`);
+      console.log(`Sent email to ${to} for reset password`);
+    })
+    .catch(error => {
+      console.error(error.toString());
+    });
+}
+
+export function sendActivationEmail(to, variables) {
+  const msg = {
+    to,
+    from: EMAIL_ADDRESS,
+    subject: EMAIL.ACTIVATE.SUBJECT,
+    templateId: 'd-332cdb8c7cd94a13ab4f4dd538986327',
+    dynamic_template_data: {
+      activationUrl: EMAIL.ACTIVATE.URL({ email: to, token: variables.token }),
+    },
+  };
+  sgMail
+    .send(msg)
+    .then(() => {
+      console.log(`Sent email to ${to} for (re)activation`);
     })
     .catch(error => {
       console.error(error.toString());
