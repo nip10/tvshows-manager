@@ -8,28 +8,8 @@ NOW:
     ☐ Create middleware for "validation" used in multiple places
         ☐ isFollowingTvshow
             This can be used when a user marks an episode/season as watched
-    ✘ Allow users to request a new activation token @cancelled(18-10-05 23:48)
-        Postponed until I get the email service back up.
-        ☐ Add button on the login modal 'Re-send activation email'
-            ☐ Create new modal
-                ☐ Email input
-                ☐ Captcha
-        ☐ Add route
-        ☐ Add to controller
-        ☐ Add to model
+    ☐ Check TODO and comments
 Global:
-    ☐ Change email service to use an online service @high
-        ☐ Setup Sendgrid
-            ☐ Send emails
-                ☐ Make email templates with mixins
-                    https://github.com/sendgrid/sendgrid-nodejs/blob/master/packages/mail/USE_CASES.md#advanced-usage
-                    ✔ Signup @done(18-10-30 12:52)
-                    ☐ Recover password
-                    ☐ Request activation token
-                ☐ Test sending an email
-            ☐ Receive emails
-                https://app.sendgrid.com/settings/parse
-        ☐ Replace sendSignupEmail everywhere that's not signup
     ☐ Log failed login attemps
         ☐ Consider using redis for this
         ☐ Add columns to the users table (failed attemps: integer, login timeout: timestamp)
