@@ -6,7 +6,7 @@ import _ from 'lodash';
 import passport from '../auth/local';
 import * as User from '../models/user';
 import { ERROR, SUCCESS } from '../utils/constants';
-import Mail from '../mail/mail';
+import { sendSignupEmail, sendPasswordResetEmail, sendActivationEmail } from '../mail/mail';
 
 const { RECAPTCHA_SECRET, NODE_ENV, RECAPTCHA_VERIFY_URL, RESET_PASSWORD_TOKEN_EXPIRATION } = process.env;
 const isDev = NODE_ENV === 'development';
@@ -147,10 +147,7 @@ export async function resetPasswordRequest(req, res) {
     };
     const addedToken = await User.addResetTokenToUser(normalizedEmail, resetParams);
     if (!addedToken) throw new Error();
-    await Mail.sendEmail(normalizedEmail, 'reset', {
-      email: normalizedEmail,
-      token: resetParams.token,
-    });
+    await sendPasswordResetEmail(normalizedEmail, { token: resetParams.token });
     return res.json({ message: SUCCESS.AUTH.EMAIL_SENT({ normalizedEmail }) });
   } catch (e) {
     return res.status(400).json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail }) });
@@ -250,8 +247,8 @@ export async function login(req, res, next) {
     if (err) return next(err);
     if (!user) return res.status(422).json({ error: info.message });
     try {
-      // const isUserAccountActive = await isAccountActiveByEmail(validateLogin.normalizedEmail);
-      // if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
+      const isUserAccountActive = await User.isAccountActiveByEmail(validateLogin.normalizedEmail);
+      if (!isUserAccountActive) return res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED });
       await User.updateLastLogin(user.id);
       return req.logIn(user, err2 => {
         if (err2) return next(err2);
@@ -307,25 +304,21 @@ export async function signup(req, res) {
   if (!_.isNil(validateSignup.error)) {
     return res.status(422).json({ error: validateSignup.error });
   }
-  // const activateAccountToken = uuidv4();
+  const activateAccountToken = uuidv4();
   try {
-    // await createUser(validateSignup.normalizedEmail, password, activateAccountToken);
-    await User.createUser(validateSignup.normalizedEmail, password, null);
-    return res.sendStatus(201);
+    await User.createUser(validateSignup.normalizedEmail, password, activateAccountToken);
   } catch (e) {
     return res.status(422).json({ error: ERROR.AUTH.EMAIL_EXISTS });
   }
-  // try {
-  //   const sentEmail = await Mail.sendEmail(validateSignup.normalizedEmail, 'welcome', { token: activateAccountToken });
-  //   if (!sentEmail) {
-  //     return res.status(400).json({
-  //       error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail: validateSignup.normalizedEmail }) });
-  //   }
-  //   return res.sendStatus(201);
-  // } catch (e) {
-  //   console.log(e);
-  //   return res.status(500).json({ error: ERROR.SERVER });
-  // }
+  try {
+    await sendSignupEmail(validateSignup.normalizedEmail, { token: activateAccountToken });
+    return res.sendStatus(201);
+  } catch (e) {
+    console.log(e);
+    return res
+      .status(500)
+      .json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail: validateSignup.normalizedEmail }) });
+  }
 }
 /**
  * Change password
@@ -366,7 +359,7 @@ export async function activateAccount(req, res) {
     if (isAccountActiveByToken) {
       res.cookie('message_error', ERROR.AUTH.ALREADY_ACTIVATED);
     } else {
-      const activatedAccount = await activateAccount(token);
+      const activatedAccount = await User.activateAccount(token);
       if (!activatedAccount) {
         res.cookie('message_error', ERROR.AUTH.INVALID_TOKEN);
       } else {
@@ -406,15 +399,12 @@ export async function resendActivateAccount(req, res) {
       const activationToken = uuidv4();
       const addedToken = await User.addActivationTokenToUser(normalizedEmail, activationToken);
       if (!addedToken) throw new Error();
-      const sentEmail = await Mail.sendEmail(normalizedEmail, 'welcome', { token: activationToken });
-      if (!sentEmail) {
-        return res.status(400).json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail }) });
-      }
-      return res.json({ message: SUCCESS.AUTH.EMAIL_SENT(normalizedEmail) });
+      await sendActivationEmail(normalizedEmail, { token: activationToken });
+      return res.json({ message: SUCCESS.AUTH.EMAIL_SENT({ normalizedEmail }) });
     }
     return res.status(400).json({ error: ERROR.AUTH.ALREADY_ACTIVATED });
   } catch (e) {
     console.log(e);
-    return res.status(500).json({ error: ERROR.SERVER });
+    return res.status(400).json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail }) });
   }
 }

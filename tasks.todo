@@ -1,11 +1,6 @@
 NOW:
-    ☐ Add Travis
-        Should run linter, tests and build
-    ☐ Fix order of episodes in the tvshow view
-        check screenshot
     ☐ Test using 2 different "devices" with the same account, at the same time @low
-    ☐ Consider refactoring user model to be a class @low
-    ☐ reset password AND resend activation token are broken @high
+    ☐ reset password AND resend activation token are broken @high @depends_on mail service
         - I've removed reset password from the login modal, while this is not resolved
     ☐ Use the Re:view chrome extention to check all breakpoints
     ☐ Check for unused classes in css
@@ -13,17 +8,8 @@ NOW:
     ☐ Create middleware for "validation" used in multiple places
         ☐ isFollowingTvshow
             This can be used when a user marks an episode/season as watched
-    ✘ Allow users to request a new activation token @cancelled(18-10-05 23:48)
-        Postponed until I get the email service back up.
-        ☐ Add button on the login modal 'Re-send activation email'
-            ☐ Create new modal
-                ☐ Email input
-                ☐ Captcha
-        ☐ Add route
-        ☐ Add to controller
-        ☐ Add to model
+    ☐ Check TODO and comments
 Global:
-    ☐ Change email service to use an online service @high
     ☐ Log failed login attemps
         ☐ Consider using redis for this
         ☐ Add columns to the users table (failed attemps: integer, login timeout: timestamp)
