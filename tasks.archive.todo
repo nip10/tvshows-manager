@@ -1,4 +1,37 @@
 NOW:
+    ✔ Change email service to use an online service @high @done(18-10-30 23:47)
+        ✔ Send emails @done(18-10-30 23:47)
+            ✔ Make email templates @done(18-10-30 21:43)
+                https://github.com/sendgrid/sendgrid-nodejs/blob/master/packages/mail/USE_CASES.md#advanced-usage
+                I've decided to make the email templates on the sendgrid online editor using plain html code (with
+                inline css).
+                ✔ Signup @done(18-10-30 12:52)
+                ✔ Reset password @done(18-10-30 21:20)
+                ✔ Request activation token @done(18-10-30 21:43)
+            ✔ Test sending an email @done(18-10-30 21:43)
+        ✔ Receive emails @done(18-10-30 23:47)
+            https://app.sendgrid.com/settings/parse
+            https://sendgrid.com/docs/for-developers/parsing-email/setting-up-the-inbound-parse-webhook/
+            Sendgrid is not a good option because they require you to setup an endpoint to receive the email data
+            Not only this, but I'd have to send the received email to me OR just save it in the database and set
+            alerts somehow.
+            ✔ Set up Mailgun @done(18-10-30 23:47)
+                https://www.mailgun.com/
+                They allow you to redirect received emails to another email address.
+        ✔ Replace sendSignupEmail everywhere that's not signup @done(18-10-30 23:47)
+    ✔ Allow users to request a new activation token @done(18-10-30 21:47)
+    on login we call isUserAccountActive
+    if this is false, this is returned: res.status(403).json({ error: ERROR.AUTH.NOT_ACTIVATED })
+    - When a user logs in but their account is not active
+    ✘ Add button on the login modal 'Re-send activation email' @cancelled(18-10-30 21:46)
+        This will be handled on login. If a user logs in with an inactive account, it'll prompt an alert informing
+        that their account is inactive and an email has been sent.
+        ✘ Create new modal @cancelled(18-10-30 21:46)
+            ✘ Email input @cancelled(18-10-30 21:46)
+            ✘ Captcha @cancelled(18-10-30 21:46)
+        ✔ Add route @done(18-10-30 21:34)
+        ✔ Add to controller @done(18-10-30 21:34)
+        ✔ Add to model @done(18-10-30 21:34)
     ✘ Consider refactoring user model to be a class @low @cancelled(18-10-29 21:53)
     ✔ Add Travis @done(18-10-29 21:52)
         Should run linter, tests and build
