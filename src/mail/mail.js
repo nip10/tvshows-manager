@@ -19,14 +19,7 @@ export function sendSignupEmail(to, variables) {
       activationUrl: EMAIL.SIGNUP.URL({ token: variables.token }),
     },
   };
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log(`Sent email to ${to} for signup`);
-    })
-    .catch(error => {
-      console.error(error.toString());
-    });
+  return sgMail.send(msg);
 }
 
 export function sendPasswordResetEmail(to, variables) {
@@ -39,14 +32,7 @@ export function sendPasswordResetEmail(to, variables) {
       resetPasswordUrl: EMAIL.RESET_PW.URL({ email: to, token: variables.token }),
     },
   };
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log(`Sent email to ${to} for reset password`);
-    })
-    .catch(error => {
-      console.error(error.toString());
-    });
+  return sgMail.send(msg);
 }
 
 export function sendActivationEmail(to, variables) {
@@ -59,12 +45,5 @@ export function sendActivationEmail(to, variables) {
       activationUrl: EMAIL.ACTIVATE.URL({ email: to, token: variables.token }),
     },
   };
-  sgMail
-    .send(msg)
-    .then(() => {
-      console.log(`Sent email to ${to} for (re)activation`);
-    })
-    .catch(error => {
-      console.error(error.toString());
-    });
+  return sgMail.send(msg);
 }
