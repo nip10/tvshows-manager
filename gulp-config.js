@@ -66,11 +66,6 @@ module.exports = {
       destination: 'public',
       buildDev: true,
     },
-    emailTemplates: {
-      source: ['mail/templates/**/*.*'],
-      destination: 'mail/templates',
-      buildDev: true,
-    },
     env: {
       source: ['.env'],
       buildDev: true,
