@@ -477,10 +477,22 @@ module.exports = {
   },
   forgotPasswordModal(event) {
     event.preventDefault();
+    // If the recaptcha was already rendered, don't render it again
+    let recaptcha2Rendered = false;
     $('#login-modal')
       .modal('hide')
       .on('hidden.bs.modal', () => {
-        $('#forgotpw-modal').modal('show');
+        $('#forgotpw-modal')
+          .on('shown.bs.modal', () => {
+            if (!recaptcha2Rendered) {
+              grecaptcha.render('id2', { sitekey: '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg' });
+              recaptcha2Rendered = true;
+            }
+          })
+          .on('hidden.bs.modal', () => {
+            grecaptcha.reset();
+          })
+          .modal('show');
         // Remove the 'on' event binding
         $(this).off('hidden.bs.modal');
       });
