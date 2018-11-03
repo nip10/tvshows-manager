@@ -103,12 +103,19 @@ $shadow: rgba($black, 0.1) 0 2px 4px, rgba($black, 0.1) 0 0 3px;
         padding: 0;
         margin: 0;
         li {
+            align-items: center;
             border: 1px solid $gray-500;
-            padding: 10px 10px;
-            height: 70px;
+            display: flex;
+            padding: 10px;
+            div:first-child() {
+                flex: 1;
+            }
         }
         .watched {
             opacity: 0.5;
+        }
+        p {
+            margin: 0;
         }
     }
     &__nav {

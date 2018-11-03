@@ -603,7 +603,6 @@ export function selectCalendarDay(event) {
     // Note: The 'first()' call is needed for the first time that this function is called.
     // For some unknown reason, the selector $(`#eplist :nth-child(2)`) returns an array
     // of "p"'s instead of the 1st "p".
-    // TODO: this code wont probably work. Just remove all eplists.
     $(`#eplist :nth-child(${previousSelectedDayId + 2})`)
       .first()
       .addClass('d-none');
