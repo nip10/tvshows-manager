@@ -2,8 +2,6 @@ extends layout/base
 include mixins/genre
 
 block content
-    include partials/sidebar
-    include partials/topbar
     #page-content-wrapper
         .main-container
             .row
@@ -92,4 +90,3 @@ block content
                     else
                         p Ooops. Something went wrong while fetching the episodes. Please try again later.
     include modals/login
-    include modals/bug
