@@ -8,7 +8,7 @@ export function renderEpisodesTable(episodes) {
   table.empty();
   episodes.forEach(episode => {
     table.append(
-      `<tr> <td class="num">${episode.num}</td> <td class="title">${episode.name}</td> <td class="airdate">
+      `<tr> <td class="num">${episode.epnum}</td> <td class="title">${episode.name}</td> <td class="airdate">
       ${episode.airdate}</td> <td class="markwatched"><i class="fa fa-eye" aria-hidden="true"></i></td> </tr>`
     );
   }, this);

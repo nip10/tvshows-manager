@@ -186,7 +186,7 @@ export async function getData(req, res) {
       const watchedEpisodesIds = await User.getWatchedEpisodesById(episodeIds, userId);
       tvshowData.episodes = _.map(tvshowData.episodes, episode => ({
         id: episode.id,
-        epnum: episode.num,
+        epnum: episode.epnum,
         name: episode.name,
         airdate: episode.airdate,
         watched: _.includes(watchedEpisodesIds, episode.id),
