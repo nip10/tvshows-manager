@@ -1,6 +1,4 @@
-'use strict';
-
-const toastrOptions = require('./config/toastr');
+import toastrOptions from './config/toastr';
 
 toastr.options = toastrOptions;
 

@@ -1,8 +1,6 @@
-'use strict';
+import tvshowsSearch from './bloodhound';
 
-const tvshowsSearch = require('./bloodhound');
-
-module.exports = [
+export default [
   {
     hint: true,
     highlight: true,
