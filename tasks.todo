@@ -1,12 +1,9 @@
 NOW:
-    ☐ Remove code related to sidebar in handlers.js
     ☐ Fix error in manifest.json
         Failed to load resource: the server responded with a status of 404 (Not Found)
         tsm/manifest.json:1 Manifest: Line: 1, column: 1, Unexpected token.
 
         I'm pretty sure this is caused by nginx not serving .json files.
-    ☐ Fix episode div on the calendar on mobile view.
-        check sharex screenshot
     ☐ Test using 2 different "devices" with the same account, at the same time @low
     ☐ reset password AND resend activation token are broken @high
         I've removed reset password from the login modal, while this is not resolved
@@ -19,7 +16,6 @@ NOW:
     ☐ Create middleware for "validation" used in multiple places
         ☐ isFollowingTvshow
             This can be used when a user marks an episode/season as watched
-    ☐ Check TODO and comments
 Global:
     ☐ Log failed login attemps
         ☐ Consider using redis for this
@@ -37,6 +33,10 @@ User page:
     ☐ List all following tvshows
     ☐ Stats page (time viewed)
 Deploy:
+    ☐ Check how to automate deployment
+        Either with or without docker
+        Without docker:
+            If the build on Travis passes, pull from git, build, and run with pm2
     ☐ Check if docker is still working
         ☐ Find a way to use env vars on the docker compose yml
     ☐ Write notes about the procedure
