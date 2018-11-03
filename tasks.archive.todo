@@ -1,10 +1,19 @@
 NOW:
+    ✔ Update client side js @done(18-11-03 01:21)
+    ✔ Replace module.exports and require by export and import @done(18-11-03 01:10)
+    ✔ Update eslint to allow import/export syntax @done(18-11-03 01:21)
+        [eslint] Parsing error: 'import' and 'export' may appear only with 'sourceType: module'
+    ✔ Fix error handling on the email service. @done(18-11-02 21:27)
+    eg: On signup, if the email is not sent, the user is still created and client will get a success message.
+        This is not what's supposed to happen.
+    ✔ Re-enable login with facebook @done(18-11-02 19:53)
+    ✔ New accounts shouldn't be active by default @done(18-11-02 19:53)
     ✔ Change email service to use an online service @high @done(18-10-30 23:47)
         ✔ Send emails @done(18-10-30 23:47)
             ✔ Make email templates @done(18-10-30 21:43)
                 https://github.com/sendgrid/sendgrid-nodejs/blob/master/packages/mail/USE_CASES.md#advanced-usage
                 I've decided to make the email templates on the sendgrid online editor using plain html code (with
-                inline css).
+                inline css). They also support EJS, in case I ever want to go that route.
                 ✔ Signup @done(18-10-30 12:52)
                 ✔ Reset password @done(18-10-30 21:20)
                 ✔ Request activation token @done(18-10-30 21:43)
@@ -13,11 +22,11 @@ NOW:
             https://app.sendgrid.com/settings/parse
             https://sendgrid.com/docs/for-developers/parsing-email/setting-up-the-inbound-parse-webhook/
             Sendgrid is not a good option because they require you to setup an endpoint to receive the email data
-            Not only this, but I'd have to send the received email to me OR just save it in the database and set
-            alerts somehow.
+            Not only this, but I'd have to forwartd the received email to my email acc OR just save it in the database
+            and set alerts somehow.
             ✔ Set up Mailgun @done(18-10-30 23:47)
                 https://www.mailgun.com/
-                They allow you to redirect received emails to another email address.
+                They allow you to forward received emails to another email address.
         ✔ Replace sendSignupEmail everywhere that's not signup @done(18-10-30 23:47)
     ✔ Allow users to request a new activation token @done(18-10-30 21:47)
     on login we call isUserAccountActive

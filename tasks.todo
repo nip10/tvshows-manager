@@ -1,7 +1,18 @@
 NOW:
+    ☐ Remove code related to sidebar in handlers.js
+    ☐ Fix error in manifest.json
+        Failed to load resource: the server responded with a status of 404 (Not Found)
+        tsm/manifest.json:1 Manifest: Line: 1, column: 1, Unexpected token.
+
+        I'm pretty sure this is caused by nginx not serving .json files.
+    ☐ Fix episode div on the calendar on mobile view.
+        check sharex screenshot
     ☐ Test using 2 different "devices" with the same account, at the same time @low
-    ☐ reset password AND resend activation token are broken @high @depends_on mail service
-        - I've removed reset password from the login modal, while this is not resolved
+    ☐ reset password AND resend activation token are broken @high
+        I've removed reset password from the login modal, while this is not resolved
+        ✔ Recaptcha is not showing @done(18-11-03 01:00)
+            This is caused by the shown.bs.modal event not being triggered when the modal is shown
+        ☐ Make sure to check if the user is registred under facebook and not email+pw when a reset password request is made
     ☐ Use the Re:view chrome extention to check all breakpoints
     ☐ Check for unused classes in css
     ☐ Fix icons line-height
