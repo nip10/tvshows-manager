@@ -420,7 +420,7 @@ export async function addTvshowToDb(tvshowInfo) {
     // 2.2 Insert episodes in the database
     await knex('episodes').insert(episodes);
   } catch (e) {
-    console.log(`Error fetching episodes. Error details: ${e}`);
+    console.log(e);
   }
 }
 /**
