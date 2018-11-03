@@ -2,8 +2,6 @@ extends layout/base
 include mixins/index
 
 block content
-    include partials/sidebar
-    include partials/topbar
     #page-content-wrapper
         .main-container
             .row
@@ -78,4 +76,3 @@ block content
                             else
                                 p(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}) No episodes
                         - }
-    include modals/bug.pug
