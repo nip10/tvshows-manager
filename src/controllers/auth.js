@@ -134,6 +134,7 @@ export async function resetPasswordRequest(req, res) {
     return res.status(422).json({ error: ERROR.AUTH.EMAIL_MATCH });
   }
   const normalizedEmail = validator.normalizeEmail(email);
+  const encodedEmail = encodeURIComponent(normalizedEmail);
   try {
     const userId = await User.getUserIdByEmail(normalizedEmail);
     if (!_.isFinite(userId)) {
@@ -147,7 +148,7 @@ export async function resetPasswordRequest(req, res) {
     };
     const addedToken = await User.addResetTokenToUser(normalizedEmail, resetParams);
     if (!addedToken) throw new Error();
-    await sendPasswordResetEmail(normalizedEmail, { token: resetParams.token });
+    await sendPasswordResetEmail(encodedEmail, { token: resetParams.token });
     return res.json({ message: SUCCESS.AUTH.EMAIL_SENT({ normalizedEmail }) });
   } catch (e) {
     return res.status(400).json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail }) });
