@@ -60,10 +60,13 @@ block content
                     div#eplist.d-md-none.mt-3
                         - const dt = new Date();
                         - const locale = 'en-us';
-                        h4#selectedday= `${dt.getDate()} ${dt.toLocaleString(locale, { month: 'long' })}`
+                        - const selectedDayText = `${dt.getDate()} ${monthNavigation.month}`;
+                        h4#selectedday= monthNavigation.isCurrentMonth ? selectedDayText : ''
                         - for(let i = 0; i < calendar.calendarData.length; i++) {
+                            //- p= (i !== calendar.daysFromPreviousMonth + dt.getDate() - 1)
+                            //- p= monthNavigation.isCurrentMonth
                             if (calendar.calendarData[i].episodes.length > 0)
-                                ul(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}).calendar__eplist
+                                ul(class={'d-none' : ((i !== calendar.daysFromPreviousMonth + dt.getDate() - 1) || !monthNavigation.isCurrentMonth)}).calendar__eplist
                                     each episode in calendar.calendarData[i].episodes
                                         li(data-episodeid=episode.id, data-tvshowid=episode.thetvdb)
                                             div.d-inline-block
@@ -74,5 +77,5 @@ block content
                                             div.d-inline-block.float-right(class={'watched' : episode.watched})
                                                 span.icon-eye
                             else
-                                p(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}) No episodes
+                                p(class={'d-none' : ((i !== calendar.daysFromPreviousMonth + dt.getDate() - 1) || !monthNavigation.isCurrentMonth)}) No episodes
                         - }

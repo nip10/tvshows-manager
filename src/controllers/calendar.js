@@ -39,6 +39,7 @@ export default async function getCalendar(req, res) {
     .join('-');
   const dt = new Date();
   const currentMonth = dt.getMonth() + 1;
+  const isCurrentMonth = currentMonth === month;
   const isPastMonth = month < currentMonth && dt.getFullYear() <= year;
   try {
     const episodes = await User.getEpisodes(userId, startInterval, endInterval);
@@ -59,6 +60,7 @@ export default async function getCalendar(req, res) {
         previousMonth: month === 1 ? 12 : month - 1,
         nextMonth: month === 12 ? 1 : month + 1,
         isPastMonth,
+        isCurrentMonth,
         month: moment.months(month - 1),
         year,
       },

@@ -593,20 +593,24 @@ export function search(event) {
 export function selectCalendarDay(event) {
   // Get the previous selected day
   const previousSelectedDay = $('.calendar__day.highlight');
-  // Get the cellid from the previous selected day
-  const previousSelectedDayId = Number.parseInt(previousSelectedDay[0].dataset.cellid, 10);
-  // Remove highlight from the previous selected day
-  previousSelectedDay.removeClass('highlight');
+  // If this is undefined, it means we are on a past/future month (where there isnt a highlighted day)
+  if (previousSelectedDay.length > 0) {
+    // Get the cellid from the previous selected day
+    const previousSelectedDayId = Number.parseInt(previousSelectedDay[0].dataset.cellid, 10);
+    // Remove highlight from the previous selected day
+    previousSelectedDay.removeClass('highlight');
+    // Hide current episode list
+    // Note: The 'first()' call is needed for the first time that this function is called.
+    // For some unknown reason, the selector $(`#eplist :nth-child(2)`) returns an array
+    // of "p"'s instead of the 1st "p".
+    // TODO: this code wont probably work. Just remove all eplists.
+    $(`#eplist :nth-child(${previousSelectedDayId + 2})`)
+      .first()
+      .addClass('d-none');
+  }
   // Add highlight to the selected day
   const selectedDayEl = $(event.currentTarget);
   selectedDayEl.addClass('highlight');
-  // Hide current episode list
-  // Note: The 'first()' call is needed for the first time that this function is called.
-  // For some unknown reason, the selector $(`#eplist :nth-child(2)`) returns an array
-  // of "p"'s instead of the 1st "p".
-  $(`#eplist :nth-child(${previousSelectedDayId + 2})`)
-    .first()
-    .addClass('d-none');
   // Update h4 text to the selected day
   const selectedDayCellId = Number.parseInt(event.currentTarget.dataset.cellid, 10);
   const previousMonthDays = Number.parseInt($('.calendar__day-pastmonth').length, 10);
