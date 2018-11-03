@@ -340,7 +340,7 @@ module.exports = {
     const passwordDuplicate = $('#resetpw-password-d').val();
     const urlParams = window.location.href.split('/');
     const token = urlParams[urlParams.length - 1];
-    const email = urlParams[urlParams.length - 2];
+    const email = decodeURIComponent(urlParams[urlParams.length - 2]);
     // validate password(s) length
     if (!password || !passwordDuplicate || password.length < 8 || password.length > 30) {
       return $('#resetpw-form').before(
