@@ -1,5 +1,3 @@
-'use strict';
-
 const bloodhoundConfig = {
   datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
   queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -9,4 +7,4 @@ const bloodhoundConfig = {
   },
 };
 
-module.exports = new Bloodhound(bloodhoundConfig);
+export default new Bloodhound(bloodhoundConfig);

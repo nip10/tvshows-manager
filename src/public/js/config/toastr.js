@@ -1,6 +1,4 @@
-'use strict';
-
-module.exports = {
+export default {
   closeButton: true,
   newestOnTop: true,
   positionClass: 'toast-bottom-right',

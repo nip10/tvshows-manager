@@ -25,7 +25,8 @@
         "es6": true
     },
     "plugins": [
-        "prettier"
+        "prettier",
+        "import"
     ],
     "overrides": [
         {
@@ -33,11 +34,12 @@
                 "src/public/js/**/*.js"
             ],
             "parserOptions": {
-                "sourceType": "script"
+                "sourceType": "module"
             },
             "env": {
                 "browser": true,
-                "jquery": true
+                "jquery": true,
+                "es6": true
             },
             "globals": {
                 "toastr": true,

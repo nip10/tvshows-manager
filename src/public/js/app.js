@@ -1,12 +1,10 @@
 /* eslint-disable func-names */
 
-'use strict';
-
-const handlers = require('./handlers');
-const functions = require('./functions');
-const typeahead = require('./config/typeahead');
-const toastrOptions = require('./config/toastr');
-require('./cookies');
+import * as handlers from './handlers';
+import * as functions from './functions';
+import typeahead from './config/typeahead';
+import toastrOptions from './config/toastr';
+import './cookies';
 
 (function($) {
   $(() => {
