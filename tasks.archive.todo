@@ -1,4 +1,33 @@
 NOW:
+    ✔ When going to a past/future month, the eplist will assume the current day index and show the eps (or no eps) @done(18-11-03 20:53)
+    for that day
+        It shouldnt show anything since there's no selected day.
+
+        The problem is here:
+            ul(class={'d-none' : i !== calendar.daysFromPreviousMonth + dt.getDate() - 1}).calendar__eplist
+
+        The 'i' is the array and calendar.daysFromPreviousMonth + dt.getDate() - 1 gets the index for the current day
+
+        This is now fixed for the past months but NOT for the future months
+    ✔ When going to a past/future month, the date on the eplist is always the current date @done(18-11-03 20:53)
+        It should be blank since in a past/future month, there isnt an highlighted day
+
+        The problem is here:
+            h4#selectedday= `${dt.getDate()} ${dt.toLocaleString(locale, { month: 'long' })}`
+
+    ✔ Fix bug on selecting day from past/future month on mobile calendar @done(18-11-03 21:01)
+        The function called on a touch event is selectCalendarDay.
+
+        The first steps are getting the previous highlighted day so we can remove the highlight class and hide
+        the episodes list.
+        The problem is that on past/future months, there's no highlighted day, so this is undefined.
+
+        // Get the previous selected day
+        const previousSelectedDay = $('.calendar__day.highlight');
+        // Get the cellid from the previous selected day
+        const previousSelectedDayId = Number.parseInt(previousSelectedDay[0].dataset.cellid, 10);
+    ✔ Fix episode div on the calendar on mobile view. @done(18-11-03 21:11)
+        check sharex screenshot
     ✔ Update client side js @done(18-11-03 01:21)
     ✔ Replace module.exports and require by export and import @done(18-11-03 01:10)
     ✔ Update eslint to allow import/export syntax @done(18-11-03 01:21)
