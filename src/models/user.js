@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs';
 import validator from 'validator';
 import _ from 'lodash';
+import moment from 'moment';
 import knex from '../db/connection';
 import { ERROR } from '../utils/constants';
 
@@ -75,7 +76,8 @@ export async function getUserIdByEmail(email) {
   try {
     const emailExistsOnDb = await knex('users')
       .select('id')
-      .where({ email });
+      .where({ email })
+      .first();
     return _.defaultTo(emailExistsOnDb.id, null);
   } catch (e) {
     console.log(e);
@@ -445,8 +447,20 @@ export function updateLastLogin(userId) {
     .update('last_login', knex.fn.now())
     .where('id', userId);
 }
+
 export function getUserById(id) {
   return knex('users')
     .where({ id })
     .first();
+}
+
+export function isResetTokenValid(email, token) {
+  return knex('users')
+    .select('resetpwexp')
+    .where({ email, resetpwtoken: token })
+    .first()
+    .then(dbRes => {
+      const timeDiff = moment(dbRes.resetpwexp).diff(moment(), 'minutes');
+      return timeDiff > 0;
+    });
 }
