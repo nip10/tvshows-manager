@@ -1,0 +1,32 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.13.5
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-450202:
+    - pug > pug-filters > constantinople > babel-types > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - email-templates > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - request-promise > request-promise-core > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - email-templates > html-to-text > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - email-templates > @ladjs/i18n > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - knex > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - email-templates > juice > web-resource-inliner > async > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - pug > pug-code-gen > constantinople > babel-types > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - pug > pug-code-gen > pug-attrs > constantinople > babel-types > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - email-templates > preview-email > pug > pug-code-gen > constantinople > babel-types > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - email-templates > preview-email > pug > pug-filters > constantinople > babel-types > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
+    - email-templates > preview-email > pug > pug-code-gen > pug-attrs > constantinople > babel-types > lodash:
+        patched: '2019-07-04T23:27:07.753Z'
