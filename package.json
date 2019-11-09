@@ -42,7 +42,7 @@
     "express": "^4.17.1",
     "express-session": "^1.16.2",
     "helmet": "^3.20.0",
-    "knex": "^0.19.2",
+    "knex": "^0.20.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "morgan": "^1.9.1",
