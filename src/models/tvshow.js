@@ -25,6 +25,7 @@ export async function getToken() {
       username: THETVDB_API_USERNAME,
     },
     json: true,
+    rejectUnauthorized: false,
   };
   try {
     const { token } = await rp(requestOptions);
@@ -91,7 +92,7 @@ export function init() {
  * Search for a tvshow
  *
  * @param {String} tvshowName - tvshow name
- * @returns {{id: Number, seriesName: String}[]} array of tvshow objects
+ * @returns {Promise<{id: Number, seriesName: String}[]>} array of tvshow objects
  */
 export async function search(tvshowName) {
   const requestOptions = {
@@ -105,6 +106,7 @@ export async function search(tvshowName) {
       name: tvshowName,
     },
     json: true,
+    rejectUnauthorized: false,
   };
   // There's no need to check if the data exist because the api returns 404 when there are
   // no results.
@@ -137,6 +139,7 @@ export async function getInfoFromApi(tvshowId) {
       keys: 'seriesName,overview,status,imdbId,id,genre,firstAired,network,airsDayOfWeek,airsTime,rating,banner',
     },
     json: true,
+    rejectUnauthorized: false,
   };
   try {
     const { data } = await rp(requestOptions);
@@ -219,6 +222,7 @@ export async function getArtworkFromApi(tvshowId, imageType) {
       keyType: imageType,
     },
     json: true,
+    rejectUnauthorized: false,
   };
   try {
     const { data } = await rp(requestOptions);
@@ -246,6 +250,7 @@ export async function getLatestSeasonFromApi(tvshowId) {
       Authorization: `Bearer ${apiToken}`,
     },
     json: true,
+    rejectUnauthorized: false,
   };
   try {
     const { data } = await rp(requestOptions);
@@ -277,6 +282,7 @@ export async function getEpisodesFromSeasonFromApi(tvshowId, season) {
       airedSeason: season,
     },
     json: true,
+    rejectUnauthorized: false,
   };
   try {
     const { data } = await rp(requestOptions);
@@ -394,6 +400,7 @@ export async function addTvshowToDb(tvshowInfo) {
         page,
       },
       json: true,
+      rejectUnauthorized: false,
     };
     try {
       const res = await rp(requestOptions);

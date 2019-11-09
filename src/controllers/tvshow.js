@@ -103,7 +103,11 @@ export async function getData(req, res) {
         Tvshow.getInfoFromDb(tvshowId),
         Tvshow.getEpisodesFromSeasonFromDb(tvshowId, latestSeason),
       ]);
-      tvshowData = Object.assign({}, getTvshowData[0], { episodes: getTvshowData[1] }, { latestSeason });
+      tvshowData = {
+        ...getTvshowData[0],
+        episodes: getTvshowData[1],
+        latestSeason,
+      };
     } catch (e) {
       console.log(e);
       return res.status(500).render('error', {
@@ -123,25 +127,23 @@ export async function getData(req, res) {
         Tvshow.getEpisodesFromSeasonFromApi(tvshowId, latestSeason),
       ]);
       // Change date format in episodes' airdate
-      getTvshowData[2] = _.map(getTvshowData[2], ep =>
-        Object.assign({}, ep, {
-          airdate: ep.airdate
-            .split('-')
-            .reverse()
-            .join('-'),
-        })
-      );
+      getTvshowData[2] = _.map(getTvshowData[2], ep => ({
+        ...ep,
+        airdate: ep.airdate
+          .split('-')
+          .reverse()
+          .join('-'),
+      }));
       // Get tvshow imdb rating
       const imdbRating = await Tvshow.getImdbRating(getTvshowData[0].imdb);
       // Merge tvshow info and artwork
-      tvshowData = Object.assign(
-        {},
-        getTvshowData[0],
-        { images: [getTvshowData[0].images[0], getTvshowData[1]] },
-        { imdbRating },
-        { episodes: getTvshowData[2] },
-        { latestSeason }
-      );
+      tvshowData = {
+        ...getTvshowData[0],
+        images: [getTvshowData[0].images[0], getTvshowData[1]],
+        imdbRating,
+        episodes: getTvshowData[2],
+        latestSeason,
+      };
       // Add tvshow info to the db (in the background)
       const keysToPick = [
         'name',

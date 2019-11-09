@@ -24,8 +24,8 @@ export default async function getCalendar(req, res) {
   if (!_.isFinite(month) || !_.isFinite(year)) {
     // If month/year is not defined, default to the current month/year
     const date = new Date();
-    month = Number.parseInt(date.getMonth() + 1, 10, 10);
-    year = Number.parseInt(date.getFullYear(), 10, 10);
+    month = Number.parseInt(date.getMonth() + 1, 10);
+    year = Number.parseInt(date.getFullYear(), 10);
   }
   const calendar = new Calendar(month, year);
   calendar.buildCalendar();

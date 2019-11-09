@@ -312,13 +312,17 @@ export async function signup(req, res) {
     return res.status(422).json({ error: ERROR.AUTH.EMAIL_EXISTS });
   }
   try {
-    await sendSignupEmail(validateSignup.normalizedEmail, { token: activateAccountToken });
+    await sendSignupEmail(validateSignup.normalizedEmail, {
+      token: activateAccountToken,
+    });
     return res.sendStatus(201);
   } catch (e) {
     console.log(e);
-    return res
-      .status(500)
-      .json({ error: ERROR.AUTH.EMAIL_NOT_SENT({ normalizedEmail: validateSignup.normalizedEmail }) });
+    return res.status(500).json({
+      error: ERROR.AUTH.EMAIL_NOT_SENT({
+        normalizedEmail: validateSignup.normalizedEmail,
+      }),
+    });
   }
 }
 /**
@@ -401,7 +405,9 @@ export async function resendActivateAccount(req, res) {
       const addedToken = await User.addActivationTokenToUser(normalizedEmail, activationToken);
       if (!addedToken) throw new Error();
       await sendActivationEmail(normalizedEmail, { token: activationToken });
-      return res.json({ message: SUCCESS.AUTH.EMAIL_SENT({ normalizedEmail }) });
+      return res.json({
+        message: SUCCESS.AUTH.EMAIL_SENT({ normalizedEmail }),
+      });
     }
     return res.status(400).json({ error: ERROR.AUTH.ALREADY_ACTIVATED });
   } catch (e) {

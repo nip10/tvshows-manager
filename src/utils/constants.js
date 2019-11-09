@@ -74,7 +74,7 @@ export const API = {
 
 export const MISC = {
   THETVDB: {
-    GRAPHICS: _.template('https://www.thetvdb.com/banners/${id}'),
+    GRAPHICS: _.template('https://artworks.thetvdb.com/banners/${id}'),
   },
   IMDB: _.template('https://imdb.com/title/${imdbId}'),
 };

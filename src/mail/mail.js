@@ -29,7 +29,10 @@ export function sendPasswordResetEmail(to, variables) {
     subject: EMAIL.RESET_PW.SUBJECT,
     templateId: 'd-8b15899ace694779b7a85867f1f92376',
     dynamic_template_data: {
-      resetPasswordUrl: EMAIL.RESET_PW.URL({ email: to, token: variables.token }),
+      resetPasswordUrl: EMAIL.RESET_PW.URL({
+        email: to,
+        token: variables.token,
+      }),
     },
   };
   return sgMail.send(msg);
