@@ -1,145 +1,145 @@
 $shadow: rgba($black, 0.1) 0 2px 4px, rgba($black, 0.1) 0 0 3px;
 
 .calendar {
-    &__table {
-        width: 100%;
-        table-layout: fixed;
-        box-shadow: $shadow;
-        tr {
-            td {
-                height: 130px;
-                vertical-align: top;
-                font-size: 14px;
-                &:not(:last-child) {
-                    border-right: 1px solid $black;
-                }
-                @include media-breakpoint-down(md) {
-                    height: 50px;
-                    &.highlight {
-                        background-color: $amber;
-                    }
-                }
-                &.highlight {
-                    background-color: rgba($amber, 0.5);
-                }
-            }
-            @include media-breakpoint-down(md) {
-                border-bottom: 1px solid $black;
-                &:last-child {
-                    border-bottom: 0;
-                }
-            }
+  &__table {
+    width: 100%;
+    table-layout: fixed;
+    box-shadow: $shadow;
+    tr {
+      td {
+        height: 130px;
+        vertical-align: top;
+        font-size: 14px;
+        &:not(:last-child) {
+          border-right: 1px solid $black;
         }
-    }
-    &__weekday {
-        background-color: $deeppurple;
-        color: $white;
-        padding: 7px 12px;
-        font-size: 0.8em;
-        text-align: center;
-    }
-    &__date {
-        background-color: $gray;
-        padding: 5px;
-        font-size: 13px;
-        height: 28px;
-    }
-    &__day {
-        &-pastmonth,
-        &-nextmonth {
-            opacity: 0.5;
-        }
-    }
-    &__cell {
-        padding: 5px;
         @include media-breakpoint-down(md) {
-            text-align: center;
+          height: 50px;
+          &.highlight {
+            background-color: $amber;
+          }
         }
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            li {
-                &:not(:last-child) {
-                    padding-bottom: 10px;
-                }
-                &.watched {
-                    text-decoration: line-through;
-                    opacity: 0.5;
-                }
-            }
+        &.highlight {
+          background-color: rgba($amber, 0.5);
         }
-        &--checkbox {
-            display: inline-block;
-            padding-right: 0.3em;
+      }
+      @include media-breakpoint-down(md) {
+        border-bottom: 1px solid $black;
+        &:last-child {
+          border-bottom: 0;
         }
-        &--episode {
-            font-size: 0.8em;
-            display: block;
-        }
-        &--tvshow {
-            font-weight: bold;
-        }
-        &--dot {
-            display: inline-block;
-            height: 6px;
-            width: 6px;
-            border-radius: 6px;
-            margin: 1px;
-            background-color: $black;
-            &.red {
-                background-color: $red;
-            }
-            &.green {
-                background-color: $green;
-            }
-            &.watched {
-                opacity: 0.5;
-            }
-        }
+      }
     }
-    &__eplist {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        li {
-            align-items: center;
-            border: 1px solid $gray-500;
-            display: flex;
-            padding: 10px;
-            div:first-child() {
-                flex: 1;
-            }
-        }
-        .watched {
-            opacity: 0.5;
-        }
-        p {
-            margin: 0;
-        }
+  }
+  &__weekday {
+    background-color: $deeppurple;
+    color: $white;
+    padding: 7px 12px;
+    font-size: 0.8em;
+    text-align: center;
+  }
+  &__date {
+    background-color: $gray;
+    padding: 5px;
+    font-size: 13px;
+    height: 28px;
+  }
+  &__day {
+    &-pastmonth,
+    &-nextmonth {
+      opacity: 0.5;
     }
-    &__nav {
-        &-year {
-            font-size: 0.75rem;
-        }
-        &-month {
-            :nth-child(2) {
-                width: 10rem;
-                @include media-breakpoint-down(md) {
-                    width: auto;
-                }
-            }
-        }
-        &-item {
-            width: 40%;
-            @include media-breakpoint-down(md) {
-                width: auto;
-            }
-        }
+  }
+  &__cell {
+    padding: 5px;
+    @include media-breakpoint-down(md) {
+      text-align: center;
     }
-    &__header {
-        transition: box-shadow .25s;
-        box-shadow: 0 2px 5px 0 rgba($black, .16), 0 2px 10px 0 rgba($black, .12);
-        border-radius: 2px;
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      li {
+        &:not(:last-child) {
+          padding-bottom: 10px;
+        }
+        &.watched {
+          text-decoration: line-through;
+          opacity: 0.5;
+        }
+      }
     }
+    &--checkbox {
+      display: inline-block;
+      padding-right: 0.3em;
+    }
+    &--episode {
+      font-size: 0.8em;
+      display: block;
+    }
+    &--tvshow {
+      font-weight: bold;
+    }
+    &--dot {
+      display: inline-block;
+      height: 6px;
+      width: 6px;
+      border-radius: 6px;
+      margin: 1px;
+      background-color: $black;
+      &.red {
+        background-color: $red;
+      }
+      &.green {
+        background-color: $green;
+      }
+      &.watched {
+        opacity: 0.5;
+      }
+    }
+  }
+  &__eplist {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    li {
+      align-items: center;
+      border: 1px solid $gray-500;
+      display: flex;
+      padding: 10px;
+      div:first-child() {
+        flex: 1;
+      }
+    }
+    .watched {
+      opacity: 0.5;
+    }
+    p {
+      margin: 0;
+    }
+  }
+  &__nav {
+    &-year {
+      font-size: 0.75rem;
+    }
+    &-month {
+      :nth-child(2) {
+        width: 10rem;
+        @include media-breakpoint-down(md) {
+          width: auto;
+        }
+      }
+    }
+    &-item {
+      width: 40%;
+      @include media-breakpoint-down(md) {
+        width: auto;
+      }
+    }
+  }
+  &__header {
+    transition: box-shadow 0.25s;
+    box-shadow: 0 2px 5px 0 rgba($black, 0.16), 0 2px 10px 0 rgba($black, 0.12);
+    border-radius: 2px;
+  }
 }

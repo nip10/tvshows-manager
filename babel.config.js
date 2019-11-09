@@ -1,21 +1,23 @@
 /* eslint-disable */
-module.exports = function (api) {
+module.exports = function(api) {
   api.cache(true);
   const presets = [
     [
-      '@babel/env',
+      "@babel/env",
       {
         targets: {
-          node: 'current',
-        },
-        useBuiltIns: 'usage',
-      },
-    ],
+          node: "current"
+        }
+      }
+    ]
   ];
-  const plugins = ['@babel/plugin-proposal-object-rest-spread', '@babel/plugin-proposal-class-properties'];
+  const plugins = [
+    "@babel/plugin-proposal-object-rest-spread",
+    "@babel/plugin-proposal-class-properties"
+  ];
 
   return {
     presets,
-    plugins,
+    plugins
   };
 };

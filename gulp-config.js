@@ -6,7 +6,6 @@ module.exports = {
     sass: {
       source: ['public/sass/**/*.scss'],
       destination: 'public/css',
-      browsers: ['>0.25%', 'not ie 11', 'not op_mini all'],
       config: {
         includePaths: [],
       },
@@ -22,15 +21,7 @@ module.exports = {
       destination: 'public/js',
       destinationFile: 'app.js',
       babelConfig: {
-        presets: [
-          [
-            '@babel/env',
-            {
-              targets: ['>0.25%', 'not ie 11', 'not op_mini all'],
-              useBuiltIns: 'usage',
-            },
-          ],
-        ],
+        presets: [['@babel/env']],
         plugins: ['@babel/plugin-proposal-object-rest-spread'],
       },
       watch: true,

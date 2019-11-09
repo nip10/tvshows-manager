@@ -1,33 +1,33 @@
-@import 'calendar';
-@import 'index';
-@import 'search';
-@import 'sidebar';
-@import 'topbar';
-@import 'tvshows';
-@import 'watchlist';
+@import "calendar";
+@import "index";
+@import "search";
+@import "sidebar";
+@import "topbar";
+@import "tvshows";
+@import "watchlist";
 
 .main-container {
-    @extend .container-fluid;
-    padding-left: 200px;
-    padding-right: 0;
-    .row {
-        margin: 0;
-    }
-    &.reduced {
-        padding-left: 70px;
-    }
-    @include media-breakpoint-down(sm) {
-        padding-left: 0;
-        padding-top: 70px;
-    }
+  @extend .container-fluid;
+  padding-left: 200px;
+  padding-right: 0;
+  .row {
+    margin: 0;
+  }
+  &.reduced {
+    padding-left: 70px;
+  }
+  @include media-breakpoint-down(sm) {
+    padding-left: 0;
+    padding-top: 70px;
+  }
 }
 
 #wrapper {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 #page-content-wrapper {
-    width: 100%;
-    position: absolute;
-    z-index: 100;
+  width: 100%;
+  position: absolute;
+  z-index: 100;
 }

@@ -1,17 +1,17 @@
 @font-face {
-  font-family: 'icomoon';
-  src:  url('../fonts/icomoon.eot?yp26z4');
-  src:  url('../fonts/icomoon.eot?yp26z4#iefix') format('embedded-opentype'),
-    url('../fonts/icomoon.ttf?yp26z4') format('truetype'),
-    url('../fonts/icomoon.woff?yp26z4') format('woff'),
-    url('../fonts/icomoon.svg?yp26z4#icomoon') format('svg');
+  font-family: "icomoon";
+  src: url("../fonts/icomoon.eot?yp26z4");
+  src: url("../fonts/icomoon.eot?yp26z4#iefix") format("embedded-opentype"),
+    url("../fonts/icomoon.ttf?yp26z4") format("truetype"),
+    url("../fonts/icomoon.woff?yp26z4") format("woff"),
+    url("../fonts/icomoon.svg?yp26z4#icomoon") format("svg");
   font-weight: normal;
   font-style: normal;
 }
 
 [class^="icon-"],
 [class*=" icon-"] {
-  font-family: 'icomoon' !important;
+  font-family: "icomoon" !important;
   speak: none;
   font-style: normal;
   font-weight: normal;

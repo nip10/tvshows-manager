@@ -15,7 +15,7 @@ module.exports = function() {
   const sassConfig = config.tasks.sass;
   const isProd = process.env.NODE_ENV === 'production';
   const isWatching = ['serve', 'watch'].indexOf(process.argv[2]) >= 0;
-  const plugins = [autoprefixer({ browsers: sassConfig.browsers }), cssnano()];
+  const plugins = [autoprefixer(), cssnano()];
 
   return gulp
     .src(sassConfig.source, { cwd: config.sourceRoot })

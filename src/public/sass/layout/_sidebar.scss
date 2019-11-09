@@ -1,141 +1,141 @@
 #sidebar-wrapper {
-    z-index: 1000;
+  z-index: 1000;
+  position: fixed;
+  left: 0;
+  width: 0;
+  height: 100%;
+  overflow-y: auto;
+  background: $black;
+  > nav {
+    min-height: 100vh;
+    transition: width 0.3s ease-in-out;
+    width: 200px;
     position: fixed;
-    left: 0;
-    width: 0;
-    height: 100%;
-    overflow-y: auto;
-    background: $black;
-    > nav {
-        min-height: 100vh;
-        transition: width .3s ease-in-out;
-        width: 200px;
-        position: fixed;
-        background-color: $gray-900;
-        &.mobile {
-            width: 65%;
-            z-index: 103;
-            > span {
-                position: absolute;
-                right: -30px;
-                color: $gray-400;
-                span.icon-close,
-                span.icon-caret-left {
-                    color: $gray-900;
-                    font-size: 2em;
-                }
-            }
-        }
-        a.logo {
-            > img {
-                max-width: 150px;
-                margin: 0 auto;
-            }
-        }
-        form {
-            width: 90%;
-            margin-left: auto;
-            margin-right: auto;
-            input,
-            button {
-                background-color: transparent;
-                color: $white;
-                &[type="submit"] {
-                    color: $gray;
-                    border: 1px solid $gray-700;
-                    cursor: pointer;
-                }
-            }
-            span.input-group-prepend {
-                background-color: transparent;
-                border: 1px solid $gray-700;
-                border-right: 0;
-                > span.icon-search {
-                    color: $gray;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
-            }
-        }
-        ul {
-            li.nav-item {
-                a.nav-link {
-                    color: $gray;
-                }
-                &.active:not(:first-child),
-                &:hover:not(:first-child) {
-                    background-color: $gray-800;
-                    a {
-                        background-color: transparent !important;
-                        span {
-                            color: $white;
-                        }
-                    }
-                    span[class^='icon-'],
-                    span[class*=' icon-'] {
-                        color: $amber;
-                    }
-                }
-                &:not(.active):not(:first-child) {
-                    a {
-                        &:hover {
-                            color: $gray;
-                        }
-                        &span:hover {
-                            color: $white;
-                        }
-                    }
-                }
-                span[class^='icon-'],
-                span[class*=' icon-'] {
-                    width: 21px;
-                    text-align: center;
-                }
-            }
-        }
-    }
-
-    .input-loading {
-        @include media-breakpoint-up(md) {
-            background-color: $gray-900 !important;
-            background-image: url("../img/loading.gif") !important;
-            background-size: 15px 15px !important;
-            background-position: right 10px center !important;
-            background-repeat: no-repeat !important;
-        }
-    }
-
-    .beta {
-        width: 100%;
+    background-color: $gray-900;
+    &.mobile {
+      width: 65%;
+      z-index: 103;
+      > span {
         position: absolute;
-        bottom: 0;
-        background-color: $indigo;
-        text-align: center;
-        font-weight: bold;
-        padding: 1em 0;
-        span {
-            color: $white;
-            font-size: 1.5em;
+        right: -30px;
+        color: $gray-400;
+        span.icon-close,
+        span.icon-caret-left {
+          color: $gray-900;
+          font-size: 2em;
         }
-        button {
-            width: 80%;
-            text-align: center;
-            margin: 0.5em auto;
-            background-color: transparent;
-            border-width: 2px;
-            border-color: $white;
-        }
+      }
     }
+    a.logo {
+      > img {
+        max-width: 150px;
+        margin: 0 auto;
+      }
+    }
+    form {
+      width: 90%;
+      margin-left: auto;
+      margin-right: auto;
+      input,
+      button {
+        background-color: transparent;
+        color: $white;
+        &[type="submit"] {
+          color: $gray;
+          border: 1px solid $gray-700;
+          cursor: pointer;
+        }
+      }
+      span.input-group-prepend {
+        background-color: transparent;
+        border: 1px solid $gray-700;
+        border-right: 0;
+        > span.icon-search {
+          color: $gray;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+    ul {
+      li.nav-item {
+        a.nav-link {
+          color: $gray;
+        }
+        &.active:not(:first-child),
+        &:hover:not(:first-child) {
+          background-color: $gray-800;
+          a {
+            background-color: transparent !important;
+            span {
+              color: $white;
+            }
+          }
+          span[class^="icon-"],
+          span[class*=" icon-"] {
+            color: $amber;
+          }
+        }
+        &:not(.active):not(:first-child) {
+          a {
+            &:hover {
+              color: $gray;
+            }
+            &span:hover {
+              color: $white;
+            }
+          }
+        }
+        span[class^="icon-"],
+        span[class*=" icon-"] {
+          width: 21px;
+          text-align: center;
+        }
+      }
+    }
+  }
+
+  .input-loading {
+    @include media-breakpoint-up(md) {
+      background-color: $gray-900 !important;
+      background-image: url("../img/loading.gif") !important;
+      background-size: 15px 15px !important;
+      background-position: right 10px center !important;
+      background-repeat: no-repeat !important;
+    }
+  }
+
+  .beta {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background-color: $indigo;
+    text-align: center;
+    font-weight: bold;
+    padding: 1em 0;
+    span {
+      color: $white;
+      font-size: 1.5em;
+    }
+    button {
+      width: 80%;
+      text-align: center;
+      margin: 0.5em auto;
+      background-color: transparent;
+      border-width: 2px;
+      border-color: $white;
+    }
+  }
 }
 
 #sidebar-counter {
-    display: none;
-    color: $amber;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    right: 1em;
-    padding: 4px;
-    background-color: $gray-800;
+  display: none;
+  color: $amber;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 1em;
+  padding: 4px;
+  background-color: $gray-800;
 }

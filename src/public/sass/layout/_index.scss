@@ -1,27 +1,27 @@
 h1.title {
-    font-size: 3rem;
+  font-size: 3rem;
 }
 
 .center-vh {
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
 }
 
 .action {
-    @include media-breakpoint-down(md) {
-        height: calc(100vh - 70px);
-        padding: 0 !important;
-    }
+  @include media-breakpoint-down(md) {
+    height: calc(100vh - 70px);
+    padding: 0 !important;
+  }
 }
 
 a.btn-facebook {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    span.icon-facebook-official {
-        font-size: 1.5em;
-        margin-right: 0.5em;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  span.icon-facebook-official {
+    font-size: 1.5em;
+    margin-right: 0.5em;
+  }
 }

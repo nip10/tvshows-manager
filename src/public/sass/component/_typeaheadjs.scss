@@ -1,50 +1,50 @@
 span.twitter-typeahead {
-    .tt-suggestion {
-        @extend .dropdown-item;
-        color: $white;
-        font-size: 14px;
-        &.tt-cursor {
-            @extend .dropdown-item.active;
-        }
-        &:hover {
-            cursor: pointer;
-        }
+  .tt-suggestion {
+    @extend .dropdown-item;
+    color: $white;
+    font-size: 14px;
+    &.tt-cursor {
+      @extend .dropdown-item.active;
     }
-    .input-group & {
-        display: flex !important;
-        align-items: center;
-        position: relative;
-        flex: 1 1 auto;
-        width: 1%;
+    &:hover {
+      cursor: pointer;
     }
-    .tt-menu,
-    .tt-hint,
-    .tt-input {
-        width: 100%;
-        background-color: $gray-900 !important;
-        border: 1px solid $gray-700;
-        color: $white;
-    }
-    .tt-input::placeholder {
-        color: $gray;
-    }
-    .tt-menu {
-        @extend .dropdown-menu;
-        left: 160px !important;
-        top: -5px !important;
-        width: 250px !important;
-        background-color: $gray-900 !important;
-        border: 1px solid $gray-200;
-        color: $white;
-        .tt-dataset {
-            padding: 0 5px;
-        }
-    }
-}
-
-input.typeahead {
+  }
+  .input-group & {
+    display: flex !important;
+    align-items: center;
+    position: relative;
+    flex: 1 1 auto;
+    width: 1%;
+  }
+  .tt-menu,
+  .tt-hint,
+  .tt-input {
     width: 100%;
     background-color: $gray-900 !important;
     border: 1px solid $gray-700;
     color: $white;
+  }
+  .tt-input::placeholder {
+    color: $gray;
+  }
+  .tt-menu {
+    @extend .dropdown-menu;
+    left: 160px !important;
+    top: -5px !important;
+    width: 250px !important;
+    background-color: $gray-900 !important;
+    border: 1px solid $gray-200;
+    color: $white;
+    .tt-dataset {
+      padding: 0 5px;
+    }
+  }
+}
+
+input.typeahead {
+  width: 100%;
+  background-color: $gray-900 !important;
+  border: 1px solid $gray-700;
+  color: $white;
 }
