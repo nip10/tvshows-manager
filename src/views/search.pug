@@ -13,7 +13,7 @@ block content
                       div.poster-container
                         a(href=`/tsm/tvshows/${tvshow.id}`)
                           - if (tvshow.banner) {
-                            img(src=`https://www.thetvdb.com/banners/${tvshow.banner}`, alt=`${tvshow.seriesName} banner`)
+                            img(src=`https://artworks.thetvdb.com/banners/${tvshow.banner}`, alt=`${tvshow.seriesName} banner`)
                           - } else {
                             img(src=`http://via.placeholder.com/218x40`, alt=`${tvshow.seriesName} banner`)
                           - }
