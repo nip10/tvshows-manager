@@ -82,7 +82,9 @@ import './cookies';
     let recaptcha1Rendered = false;
     $('#signup-modal').on('shown.bs.modal', () => {
       if (!recaptcha1Rendered) {
-        grecaptcha.render('id1', { sitekey: '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg' });
+        grecaptcha.render('id1', {
+          sitekey: '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg',
+        });
         recaptcha1Rendered = true;
       }
     });

@@ -301,7 +301,11 @@ export function forgotPassword(event) {
   }
   const normalizedEmail = validator.normalizeEmail(email);
   const normalizedEmailDuplicate = validator.normalizeEmail(emailDuplicate);
-  $.post(`/tsm/auth/reset`, { email: normalizedEmail, emailDuplicate: normalizedEmailDuplicate, recaptcha })
+  $.post(`/tsm/auth/reset`, {
+    email: normalizedEmail,
+    emailDuplicate: normalizedEmailDuplicate,
+    recaptcha,
+  })
     .done((data, textStatus, jqXHR) => {
       if (jqXHR.status === 200) {
         $('#forgotpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
@@ -358,7 +362,10 @@ export function resetPassword(event) {
     return $('#resetpw-form').before('<div class="alert alert-danger" role="alert"> Error: Invalid token ! </div>');
   }
   const normalizedEmail = validator.normalizeEmail(email);
-  $.post(`/tsm/auth/reset/${normalizedEmail}/${token}`, { password, passwordDuplicate })
+  $.post(`/tsm/auth/reset/${normalizedEmail}/${token}`, {
+    password,
+    passwordDuplicate,
+  })
     .done((data, textStatus, jqXHR) => {
       if (jqXHR.status === 200) {
         $('#resetpw-form').before(`<div class="alert alert-success" role="alert"> ${data.message} </div>`);
@@ -479,7 +486,9 @@ export function forgotPasswordModal(event) {
       $('#forgotpw-modal')
         .on('shown.bs.modal', () => {
           if (!recaptcha2Rendered) {
-            grecaptcha.render('id2', { sitekey: '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg' });
+            grecaptcha.render('id2', {
+              sitekey: '6LdypToUAAAAAO1lwC4KARcjELhIhBAL5f2gCagg',
+            });
             recaptcha2Rendered = true;
           }
         })
